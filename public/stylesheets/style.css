@@ -331,10 +331,20 @@ nav a:hover {
 	color: var(--primary_header_color);
 }
 
-#current-page {
+.current-page {
 	background-color: var(--primary_text_color) !important;
 	color: var(--primary_header_color) !important;
 	cursor: default;
+}
+
+.current-page #clubs-icon g,
+.current-page #profile-icon g {
+	fill: var(--primary_header_color);
+}
+
+.current-page #calendar-icon g,
+.current-page #settings-cog g {
+	stroke: var(--primary_header_color);
 }
 
 .event-details span {
@@ -453,7 +463,7 @@ nav a:hover {
 	align-items: center;
 }
 
-#current-page #notifications,
+.current-page #notifications,
 #popout-menu a:hover #notifications {
 	transition: all 0.2s ease-in;
 	border: 2px var(--primary_header_color) solid;

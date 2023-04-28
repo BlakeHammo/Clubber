@@ -68,6 +68,18 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    if (window.location.pathname === "/clubs.html") {
+        document.getElementById("clubs-nav").className = "current-page";
+    } else if (window.location.pathname === "/feed.html") {
+        document.getElementById("feed-nav").className = "current-page";
+    } else if (window.location.pathname === "/events.html") {
+        document.getElementById("events-nav").className = "current-page";
+    } else if (window.location.pathname === "/profile.html") {
+        document.getElementById("profile-nav").className = "current-page";
+    } else if (window.location.pathname === "/notifications.html") {
+        document.getElementById("notifications-nav").className = "current-page";
+    }
+
     if (window.location.pathname === "/events.html" || window.location.pathname === "/feed.html") {
         // Adding posts
         const rsvp = `
