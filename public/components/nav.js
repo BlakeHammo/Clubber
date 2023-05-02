@@ -65,6 +65,14 @@ class Nav extends HTMLElement {
                     </svg>
                     NOTIFICATION SETTINGS</a
                 >
+                <a href="./manage-users.html" id="manage-users-nav" title="Manage Users">
+                    <i id="manage-users-icon" class="fa fa-solid fa-users-gear fa-2xl"></i>
+                    MANAGE USERS</a
+                >
+                <a href="./manage-clubs.html" id="manage-clubs-nav" title="Manage Clubs">
+                    <i id="manage-clubs-icon" class="fa-solid fa-building-columns fa-2xl"></i>
+                    MANAGE CLUBS</a
+                >
             </nav>`;
     }
 }
