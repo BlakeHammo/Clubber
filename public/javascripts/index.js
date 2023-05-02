@@ -78,6 +78,10 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("profile-nav").className = "current-page";
     } else if (window.location.pathname === "/notifications.html") {
         document.getElementById("notifications-nav").className = "current-page";
+    } else if (window.location.pathname === "/manage-users.html") {
+        document.getElementById("manage-users-nav").className = "current-page";
+    } else if (window.location.pathname === "/manage-clubs.html") {
+        document.getElementById("manage-clubs-nav").className = "current-page";
     }
 
     if (window.location.pathname === "/events.html" || window.location.pathname === "/feed.html") {
