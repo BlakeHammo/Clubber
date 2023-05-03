@@ -7,43 +7,68 @@
         <link rel="stylesheet" href="./stylesheets/style.css" />
         <link rel="icon" href="./images/icon.png" />
         <script src="https://kit.fontawesome.com/9ee0ab41a9.js" crossorigin="anonymous"></script>
-        <script src="./javascripts/index.js"></script>
+        <script src="./javascripts/feed.js" defer></script>
         <script src="./components/header.js"></script>
         <script src="./components/nav.js"></script>
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <title>CLUBER - Feed</title>
     </head>
     <body>
-        <header-component></header-component>
-        <div id="main-body">
-            <nav-component></nav-component>
-            <main>
-                <div id="filter-background">
-                    <div id="filters">
-                        <select name="club-filter" id="club-filter" title="Filter by Clubs">
-                            <option value="" selected>all clubs</option>
-                        </select>
-                        <select name="tags" id="tags" title="Filter by Event or Post">
-                            <option value="" selected>all tags</option>
-                            <option value="event">Event</option>
-                            <option value="post">Post</option>
-                        </select>
+        <div id="app">
+            <header-component></header-component>
+            <div id="main-body">
+                <nav-component></nav-component>
+                <main>
+                    <div id="filter-background">
+                        <div id="filters">
+                            <select name="club-filter" id="club-filter" title="Filter by Clubs">
+                                <option value="" selected>all clubs</option>
+                                <option v-for="club in userFollowedClubs" v-bind:value="club.clubId">{{club.clubName}}</option>
+                            </select>
+                            <select name="tags" id="tags" title="Filter by Event or Post">
+                                <option value="" selected>all tags</option>
+                                <option value="event">Event</option>
+                                <option value="post">Post</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
-
-                <section id="posts">
-                    <!-- <div class="no-content">
-                    <p>
-                        You are not following any Clubs. Browse Clubs and pick some Clubs to
-                        follow!
-                    </p>
-                    <a href="./clubs">BROWSE CLUBS</a>
-                </div> -->
-                </section>
-                <a href="#" title="Back to the top" id="back-to-top"><img src="./images/to-top.svg" alt="To top icon" /></a>
-                <div class="general-button">
-                    <button type="button">Load more posts...</button>
-                </div>
-            </main>
+                    <section v-if="numberOfPostsDisplaying !== 0" id="posts">
+                        <article v-for="post in posts" v-bind:id="post.postId" v-bind:class="[{'unread': !(post.read)}, 'post']" v-on:click="post.read = true" @mouseover="post.isHovered = true" @mouseleave="post.isHovered = false">
+                            <img v-if="!(post.read)" v-bind:src="post.isHovered ? unreadPostHoverImage : unreadPostImage" alt="Unread Post">
+                            <h3>{{post.clubName}}</h3>
+                            <h4 v-if="post.tag === 'Post'">{{post.creationDate}}</h4>
+                            <h2>{{post.title}}</h2>
+                            <h4 v-if="post.tag === 'Event'" class="event-details"><span>When: </span>{{post.eventDate}}</h4>
+                            <h4 v-if="post.tag === 'Event'" class="event-details">
+                                <span> Where: </span>{{post.location}}
+                            </h4>
+                            <p v-bind:class="['post-content', {'post-content-hidden': !(post.isExpanded)}]">{{post.content}}</p>
+                            <button class="see-more" type="button" v-on:click="post.isExpanded = !post.isExpanded"><u v-if="post.isExpanded === false">View more</u><u v-else>View less</u></button>
+                            <div class="tag">{{post.tag}}</div>
+                            <div class="space"></div>
+                            <div class="rsvp">
+                                <select v-if="post.tag === 'Event'" name="rsvp" id="rsvp">
+                                    <option value="" selected hidden disabled>rsvp</option>
+                                    <option value="attending">ATTENDING</option>
+                                    <option value="not_attending" >NOT ATTENDING</option>
+                                    <option value="maybe">MAYBE</option>
+                                </select>
+                            </div>
+                        </article>
+                    </section>
+                    <div v-else class="no-content">
+                        <p>
+                            You are not following any Clubs. Browse Clubs and pick some Clubs to
+                            follow!
+                        </p>
+                        <a href="./clubs.html">BROWSE CLUBS</a>
+                    </div>
+                    <a href="#" title="Back to the top" id="back-to-top"><img src="./images/to-top.svg" alt="To top icon" /></a>
+                    <div class="general-button">
+                        <button type="button">Load more posts...</button>
+                    </div>
+                </main>
+            </div>
         </div>
     </body>
 </html>

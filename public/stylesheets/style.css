@@ -279,7 +279,7 @@ nav a:hover {
 #popout-menu {
 	flex-direction: column;
 	width: 100%;
-	height: calc(100vh - 3.125rem);
+	height: calc(100% - 3.125rem);
 	position: fixed;
 	top: 3.125rem;
 	z-index: 1;
@@ -304,6 +304,7 @@ nav a:hover {
 		height: 80%;
 		margin-top: 20px;
 		margin-left: 5px;
+		max-height: 900px;
 	}
 }
 
