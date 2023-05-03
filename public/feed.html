@@ -7,10 +7,10 @@
         <link rel="stylesheet" href="./stylesheets/style.css" />
         <link rel="icon" href="./images/icon.png" />
         <script src="https://kit.fontawesome.com/9ee0ab41a9.js" crossorigin="anonymous"></script>
-        <script src="./javascripts/feed.js" defer></script>
         <script src="./components/header.js"></script>
         <script src="./components/nav.js"></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <script src="./javascripts/feed.js" defer></script>
         <title>CLUBER - Feed</title>
     </head>
     <body>
@@ -21,11 +21,11 @@
                 <main>
                     <div id="filter-background">
                         <div id="filters">
-                            <select name="club-filter" id="club-filter" title="Filter by Clubs">
+                            <select name="club-filter" id="club-filter" title="Filter by Clubs" v-model="club_filter_value" v-on:change="filter">
                                 <option value="" selected>all clubs</option>
-                                <option v-for="club in userFollowedClubs" v-bind:value="club.clubId">{{club.clubName}}</option>
+                                <option v-for="club in userFollowedClubs" v-bind:value="club.id">{{club.name}}</option>
                             </select>
-                            <select name="tags" id="tags" title="Filter by Event or Post">
+                            <select name="tags" id="tags" title="Filter by Event or Post" v-model="tag_filter_value" v-on:change="filter">
                                 <option value="" selected>all tags</option>
                                 <option value="event">Event</option>
                                 <option value="post">Post</option>

@@ -21,11 +21,11 @@
                 <main>
                     <div id="filter-background">
                         <div id="filters">
-                            <select name="club-filter" id="club-filter" title="Filter by Clubs">
+                            <select name="club-filter" id="club-filter" title="Filter by Clubs" v-model="club_filter_value" v-on:change="filter">
                                 <option value="" selected>all clubs</option>
-                                <option v-for="club in userFollowedClubs" v-bind:value="club.clubId">{{club.clubName}}</option>
+                                <option v-for="club in userFollowedClubs" v-bind:value="club.id">{{club.name}}</option>
                             </select>
-                            <select name="tags" id="tags" title="Filter by Event type">
+                            <select name="tags" id="tags" title="Filter by Event type" v-model="tag_filter_value" v-on:change="filter">
                                 <option value="" selected>all tags</option>
                                 <option value="public">Public</option>
                                 <option value="private">Private</option>

@@ -1,6 +1,6 @@
 // The following are to be obtained from the server
 
-let clubsArray = clubs.map((v) => ({ ...v, isExpanded: false }));
+let clubsArray = clubs.map((v) => ({ ...v, isExpanded: false, userFollows: true }));
 
 function uniqueClubTags(tag, index, array) {
     return array.indexOf(tag) === index;
@@ -17,15 +17,29 @@ clubTagsArray = clubTagsArray.filter(uniqueClubTags);
 const vueinst = Vue.createApp({
     data() {
         return {
-            hamburgerVisible: true,
             numberOfClubsDisplaying: 1,
             clubs: clubsArray,
-            clubTags: clubTagsArray
+            clubTags: clubTagsArray,
+            tag_filter_value: "",
+            club_filter_value: -1
         };
     },
     computed: {
         updateNumberOfClubsDisplaying() {
             vueinst.numberOfClubsDisplaying = vueinst.clubs.length;
+        }
+    },
+    methods: {
+        filter() {
+            if (vueinst.tag_filter_value === "" && Number(vueinst.club_filter_value) !== -1) {
+                vueinst.clubs = clubsArray.filter((club) => club.userFollows == vueinst.club_filter_value);
+            } else if (Number(vueinst.club_filter_value) === -1 && vueinst.tag_filter_value !== "") {
+                vueinst.clubs = clubsArray.filter((club) => club.tag === vueinst.tag_filter_value);
+            } else if (vueinst.tag_filter_value !== "" && Number(vueinst.club_filter_value) !== -1) {
+                vueinst.clubs = clubsArray.filter((club) => club.userFollows == vueinst.club_filter_value && club.tag === vueinst.tag_filter_value);
+            } else {
+                vueinst.clubs = clubsArray;
+            }
         }
     }
 }).mount("#app");

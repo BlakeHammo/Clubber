@@ -162,6 +162,7 @@ h2 {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
+	margin-bottom: 10px;
 }
 
 .post-content-hidden {
