@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="./stylesheets/style.css" />
         <link rel="icon" href="./images/icon.png" />
         <script src="https://kit.fontawesome.com/9ee0ab41a9.js" crossorigin="anonymous"></script>
+        <script src="./data/clubs.js" defer></script>
         <script src="./javascripts/clubs.js" defer></script>
         <script src="./components/header.js"></script>
         <script src="./components/nav.js"></script>
@@ -35,7 +36,7 @@
                     <section v-if="numberOfClubsDisplaying !== 0" id="posts">
                         <article v-for="club in clubs" v-bind:id="club.clubId" class="post">
                             <h3 v-bind:style="{'background-color': club.color}">{{club.followers}} followers</h3>
-                            <h2>{{club.clubName}}</h2>
+                            <h2>{{club.name}}</h2>
                             <p v-bind:class="['post-content', {'post-content-hidden': !(club.isExpanded)}]">{{club.description}}</p>
                             <button class="see-more" type="button" v-on:click="club.isExpanded = !club.isExpanded"><u v-if="club.isExpanded === false">View more</u><u v-else>View less</u></button>
                             <div class="tag">{{club.tag}}</div>
