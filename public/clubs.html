@@ -19,26 +19,25 @@
             <header-component></header-component>
             <div id="main-body">
                 <nav-component></nav-component>
-                <main>
+                <main v-if="viewing_club === -1">
                     <div id="filter-background">
                         <div id="filters">
-                            <select name="club-filter" id="club-filter" title="Filter by Clubs" v-model="club_filter_value" v-on:change="filter">
+                            <select name="club-filter" id="club-filter" title="Filter by Clubs" v-model="club_filter_value" v-on:change="filterClubs">
                                 <option value=-1 selected>all clubs</option>
                                 <option value=1>clubs I follow</option>
                                 <option value=0>clubs I don't follow</option>
                             </select>
-                            <select name="tags" id="tags" title="Filter by Category" v-model="tag_filter_value" v-on:change="filter">
+                            <select name="tags" id="tags" title="Filter by Category" v-model="tag_filter_value" v-on:change="filterClubs">
                                 <option value="" selected>all tags</option>
                                 <option v-for="tag in clubTags" v-bind:value="tag">{{tag}}</option>
                             </select>
                         </div>
                     </div>
                     <section v-if="numberOfClubsDisplaying !== 0" id="posts">
-                        <article v-for="club in clubs" v-bind:id="club.clubId" class="post">
+                        <article v-for="club in clubs" v-bind:id="club.id" class="post club" v-on:click="viewing_club = club.id; getPosts();" title="Enter Club">
                             <h3 v-bind:style="{'background-color': club.color}">{{club.followers}} followers</h3>
                             <h2>{{club.name}}</h2>
-                            <p v-bind:class="['post-content', {'post-content-hidden': !(club.isExpanded)}]">{{club.description}}</p>
-                            <button class="see-more" type="button" v-on:click="club.isExpanded = !club.isExpanded"><u v-if="club.isExpanded === false">View more</u><u v-else>View less</u></button>
+                            <p class="post-content">{{club.description}}</p>
                             <div class="tag">{{club.tag}}</div>
                             <div class="space"></div>
                         </article>
@@ -46,6 +45,47 @@
                     <div v-else class="no-content">
                         <p>
                             There are no Clubs!
+                        </p>
+                    </div>
+                    <a href="#" title="Back to the top" id="back-to-top"><img src="./images/to-top.svg" alt="To top icon" /></a>
+                </main>
+                <main v-else>
+                    <div id="filter-background">
+                        <div id="filters">
+                            <select name="tags" id="tags" title="Filter by Event or Post" v-model="post_tag_filter_value" v-on:change="filterPosts">
+                                <option value="" selected>all tags</option>
+                                <option value="event">Event</option>
+                                <option value="post">Post</option>
+                            </select>
+                        </div>
+                    </div>
+                    <section v-if="numberOfPostsDisplaying !== 0" id="posts">
+                        <article v-for="post in posts" v-bind:id="post.postId" v-bind:class="[{'unread': !(post.read)}, 'post']" v-on:click="post.read = true" @mouseover="post.isHovered = true" @mouseleave="post.isHovered = false">
+                            <img v-if="!(post.read)" v-bind:src="post.isHovered ? unreadPostHoverImage : unreadPostImage" alt="Unread Post">
+                            <h3>{{post.clubName}}</h3>
+                            <h4>{{post.creationDate}}</h4>
+                            <h2>{{post.title}}</h2>
+                            <h4 v-if="post.tag === 'event'" class="event-details"><span>When: </span>{{post.eventDate}}</h4>
+                            <h4 v-if="post.tag === 'event'" class="event-details">
+                                <span> Where: </span>{{post.location}}
+                            </h4>
+                            <p v-bind:class="['post-content', {'post-content-hidden': !(post.isExpanded)}]">{{post.content}}</p>
+                            <button class="see-more" type="button" v-on:click="post.isExpanded = !post.isExpanded"><u v-if="post.isExpanded === false">View more</u><u v-else>View less</u></button>
+                            <div class="tag">{{post.tag}}</div>
+                            <div class="space"></div>
+                            <div class="rsvp" v-if="post.tag === 'event'">
+                                <select name="rsvp" id="rsvp">
+                                    <option value="" selected hidden disabled>rsvp</option>
+                                    <option value="attending">ATTENDING</option>
+                                    <option value="not_attending" >NOT ATTENDING</option>
+                                    <option value="maybe">MAYBE</option>
+                                </select>
+                            </div>
+                        </article>
+                    </section>
+                    <div v-else class="no-content">
+                        <p>
+                            This Club has no posts!
                         </p>
                     </div>
                     <a href="#" title="Back to the top" id="back-to-top"><img src="./images/to-top.svg" alt="To top icon" /></a>

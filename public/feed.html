@@ -36,18 +36,18 @@
                         <article v-for="post in posts" v-bind:id="post.postId" v-bind:class="[{'unread': !(post.read)}, 'post']" v-on:click="post.read = true" @mouseover="post.isHovered = true" @mouseleave="post.isHovered = false">
                             <img v-if="!(post.read)" v-bind:src="post.isHovered ? unreadPostHoverImage : unreadPostImage" alt="Unread Post">
                             <h3>{{post.clubName}}</h3>
-                            <h4 v-if="post.tag === 'Post'">{{post.creationDate}}</h4>
+                            <h4>{{post.creationDate}}</h4>
                             <h2>{{post.title}}</h2>
-                            <h4 v-if="post.tag === 'Event'" class="event-details"><span>When: </span>{{post.eventDate}}</h4>
-                            <h4 v-if="post.tag === 'Event'" class="event-details">
+                            <h4 v-if="post.tag === 'event'" class="event-details"><span>When: </span>{{post.eventDate}}</h4>
+                            <h4 v-if="post.tag === 'event'" class="event-details">
                                 <span> Where: </span>{{post.location}}
                             </h4>
                             <p v-bind:class="['post-content', {'post-content-hidden': !(post.isExpanded)}]">{{post.content}}</p>
                             <button class="see-more" type="button" v-on:click="post.isExpanded = !post.isExpanded"><u v-if="post.isExpanded === false">View more</u><u v-else>View less</u></button>
                             <div class="tag">{{post.tag}}</div>
                             <div class="space"></div>
-                            <div class="rsvp">
-                                <select v-if="post.tag === 'Event'" name="rsvp" id="rsvp">
+                            <div class="rsvp" v-if="post.tag === 'event'">
+                                <select name="rsvp" id="rsvp">
                                     <option value="" selected hidden disabled>rsvp</option>
                                     <option value="attending">ATTENDING</option>
                                     <option value="not_attending" >NOT ATTENDING</option>

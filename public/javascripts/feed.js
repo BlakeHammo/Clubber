@@ -414,8 +414,7 @@ const vueinst = Vue.createApp({
     computed: {
         updateNumberOfPostsDisplaying() {
             vueinst.numberOfPostsDisplaying = vueinst.posts.length;
-        },
-
+        }
     },
     methods: {
         filter() {
