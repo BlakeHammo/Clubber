@@ -8,6 +8,7 @@
         <link rel="icon" href="./images/icon.png" />
         <script src="https://kit.fontawesome.com/9ee0ab41a9.js" crossorigin="anonymous"></script>
         <script src="./data/clubs.js" defer></script>
+        <script src="./data/posts.js" defer></script>
         <script src="./javascripts/clubs.js" defer></script>
         <script src="./components/header.js"></script>
         <script src="./components/nav.js"></script>
@@ -62,7 +63,7 @@
                     <section v-if="numberOfPostsDisplaying !== 0" id="posts">
                         <article v-for="post in posts" v-bind:id="post.postId" v-bind:class="[{'unread': !(post.read)}, 'post']" v-on:click="post.read = true" @mouseover="post.isHovered = true" @mouseleave="post.isHovered = false">
                             <img v-if="!(post.read)" v-bind:src="post.isHovered ? unreadPostHoverImage : unreadPostImage" alt="Unread Post">
-                            <h3 v-bind:style="{'background-color': club_color}">{{post.clubName}}</h3>
+                            <h3 v-bind:style="{'background-color': post.clubColor}">{{post.clubName}}</h3>
                             <h4>{{post.creationDate}}</h4>
                             <h2>{{post.title}}</h2>
                             <h4 v-if="post.tag === 'event'" class="event-details"><span>When: </span>{{post.eventDate}}</h4>
