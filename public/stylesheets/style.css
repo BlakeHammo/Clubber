@@ -143,6 +143,16 @@ h3 {
 	font-weight: 400;
 	padding-left: 5px;
 	font-size: 1.25rem;
+	border-bottom: 1px solid var(--primary_accent_color);
+	text-shadow:
+        0.05em 0 black,
+        0 0.05em black,
+        -0.05em 0 black,
+        0 -0.05em black,
+        -0.05em -0.05em black,
+        -0.05em 0.05em black,
+        0.05em -0.05em black,
+        0.05em 0.05em black;
 }
 
 h4 {
