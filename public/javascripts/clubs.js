@@ -405,6 +405,7 @@ const vueinst = Vue.createApp({
             tag_filter_value: "",
             club_filter_value: -1,
             viewing_club: -1,
+            club_color: "",
             hamburgerVisible: true,
             numberOfPostsDisplaying: 1,
             posts: postArray,
@@ -420,6 +421,9 @@ const vueinst = Vue.createApp({
         },
         updateNumberOfPostsDisplaying() {
             vueinst.numberOfPostsDisplaying = vueinst.posts.length;
+        },
+        updateClubColor() {
+
         }
     },
     methods: {
@@ -443,6 +447,8 @@ const vueinst = Vue.createApp({
         },
         getPosts() {
             // This will be an Ajax call to get the correct posts corresponding to the club
+            let index = vueinst.clubs.findIndex((x) => x.id === vueinst.viewing_club);
+            vueinst.club_color = vueinst.clubs[index]["color"];
             document.getElementById("clubs-nav").classList.remove("current-page");
             vueinst.posts = postArray.filter((post) => post.id === (Number(vueinst.viewing_club)));
         }
