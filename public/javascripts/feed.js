@@ -4,6 +4,7 @@
 let postArray = [
     {
         id: 1,
+        clubColor: "black",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: null,
@@ -17,6 +18,7 @@ let postArray = [
     },
     {
         id: 2,
+        clubColor: "black",
         clubName: "Club B",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: null,
@@ -30,6 +32,7 @@ let postArray = [
     },
     {
         id: 3,
+        clubColor: "black",
         clubName: "Club C",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: null,
@@ -43,6 +46,7 @@ let postArray = [
     },
     {
         id: 4,
+        clubColor: "black",
         clubName: "Club D",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: null,
@@ -56,6 +60,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "black",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
@@ -69,6 +74,7 @@ let postArray = [
     },
     {
         id: 2,
+        clubColor: "black",
         clubName: "Club B",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
@@ -82,6 +88,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "black",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
@@ -95,6 +102,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "black",
         clubName: "Club A",
         creationDate: "13/04/2023 1:45pm",
         eventDate: null,
@@ -108,6 +116,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "black",
         clubName: "Club A",
         creationDate: "13/04/2023 1:45pm",
         eventDate: null,
@@ -121,6 +130,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "black",
         clubName: "Club A",
         creationDate: "13/04/2023 1:45pm",
         eventDate: null,
@@ -134,6 +144,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "black",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: null,
@@ -147,6 +158,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "black",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
@@ -160,6 +172,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "black",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
@@ -173,6 +186,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "grey",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
@@ -186,6 +200,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "grey",
         clubName: "Club A",
         creationDate: "13/04/2023 1:45pm",
         eventDate: null,
@@ -199,6 +214,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "13/04/2023 1:45pm",
         eventDate: null,
@@ -212,6 +228,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "13/04/2023 1:45pm",
         eventDate: null,
@@ -225,6 +242,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: null,
@@ -238,6 +256,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
@@ -251,6 +270,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
@@ -264,6 +284,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
@@ -277,6 +298,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "13/04/2023 1:45pm",
         eventDate: null,
@@ -290,6 +312,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "13/04/2023 1:45pm",
         eventDate: null,
@@ -303,6 +326,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "13/04/2023 1:45pm",
         eventDate: null,
@@ -316,6 +340,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: null,
@@ -329,6 +354,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
@@ -342,6 +368,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
@@ -355,6 +382,7 @@ let postArray = [
     },
     {
         id: 1,
+        clubColor: "green",
         clubName: "Club A",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",

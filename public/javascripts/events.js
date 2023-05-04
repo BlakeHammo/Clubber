@@ -1,10 +1,9 @@
-// The following are to be obtained from the server
-
 // Only events that have not been responded to or are going/maybe for
 let postArray = [
     {
         id: 1,
         clubName: "Club A",
+        clubColor: "red",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         location: "My House",
@@ -18,6 +17,7 @@ let postArray = [
     {
         id: 1,
         clubName: "Club A",
+        clubColor: "blue",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         location: "My House",
@@ -31,6 +31,7 @@ let postArray = [
     {
         id: 1,
         clubName: "Club A",
+        clubColor: "white",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         location: "My House",
@@ -44,6 +45,7 @@ let postArray = [
     {
         id: 1,
         clubName: "Club A",
+        clubColor: "red",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         location: "My House",
@@ -57,6 +59,7 @@ let postArray = [
     {
         id: 1,
         clubName: "Club A",
+        clubColor: "red",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         location: "My House",
@@ -70,6 +73,7 @@ let postArray = [
     {
         id: 1,
         clubName: "Club A",
+        clubColor: "red",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         location: "My House",
@@ -83,6 +87,7 @@ let postArray = [
     {
         id: 1,
         clubName: "Club A",
+        clubColor: "red",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         location: "My House",
@@ -96,6 +101,7 @@ let postArray = [
     {
         id: 1,
         clubName: "Club A",
+        clubColor: "red",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         location: "My House",
@@ -109,6 +115,7 @@ let postArray = [
     {
         id: 1,
         clubName: "Club A",
+        clubColor: "red",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         location: "My House",
@@ -122,6 +129,7 @@ let postArray = [
     {
         id: 1,
         clubName: "Club A",
+        clubColor: "red",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         location: "My House",
@@ -135,6 +143,7 @@ let postArray = [
     {
         id: 1,
         clubName: "Club A",
+        clubColor: "red",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         location: "My House",
@@ -148,6 +157,7 @@ let postArray = [
     {
         id: 1,
         clubName: "Club A",
+        clubColor: "red",
         creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
         location: "My House",

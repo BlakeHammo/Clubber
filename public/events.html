@@ -35,7 +35,7 @@
                     <section v-if="numberOfPostsDisplaying !== 0" id="posts">
                         <article v-for="post in posts" v-bind:id="post.postId" v-bind:class="[{'unread': !(post.read)}, 'post']" v-on:click="post.read = true" @mouseover="post.isHovered = true" @mouseleave="post.isHovered = false">
                             <img v-if="!(post.read)" v-bind:src="post.isHovered ? unreadPostHoverImage : unreadPostImage" alt="Unread Post">
-                            <h3>{{post.clubName}}</h3>
+                            <h3 v-bind:style="{'background-color': post.clubColor}">{{post.clubName}}</h3>
                             <h4>{{post.creationDate}}</h4>
                             <h2>{{post.title}}</h2>
                             <h4 class="event-details"><span>When: </span>{{post.eventDate}}</h4>
@@ -64,9 +64,6 @@
                         <a href="./clubs.html">BROWSE CLUBS</a>
                     </div>
                     <a href="#" title="Back to the top" id="back-to-top"><img src="./images/to-top.svg" alt="To top icon" /></a>
-                    <div class="general-button">
-                        <button type="button">Load more events...</button>
-                    </div>
                 </main>
             </div>
         </div>
