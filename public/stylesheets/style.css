@@ -805,3 +805,33 @@ table th {
 .club:hover {
 	cursor: pointer;
 }
+
+.move-below{
+	display: block;
+}
+
+.post-creation {
+	background-color: white;
+	margin: auto;
+	padding: 16px 32px;
+	border-radius: 4px;
+	width: 40%;
+	min-width: 400px;
+	max-width: 600px;
+	min-height: 50%;
+}
+
+.post-creation input[type=text], .post-creation textarea, .post-creation input[type=datetime-local] {
+	padding: 12px 20px;
+	margin: 8px 0;
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.post-creation input[type=radio], .post-creation .radio-label {
+	margin-right: 10px;
+	margin-bottom: 10px;
+}

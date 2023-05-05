@@ -60,6 +60,34 @@
                             </select>
                         </div>
                     </div>
+                    <div class="modal" v-if="show_post_creation">
+                        <div class="post-creation">
+                            <div class="right-aligned">
+                                <i class="fa fa-solid fa-xmark close close-icon" v-on:click="show_post_creation = false"></i>
+                            </div>
+                            <form action="">
+                                <input type="radio" name="post_creation_type" value="post" v-model="post_creation_type" required>
+                                <label for="post" class="radio-label">POST</label>
+                                <input type="radio" name="post_creation_type" value="event" v-model="post_creation_type" required>
+                                <label for="event" class="radio-label">EVENT</label>
+                                <label v-if="post_creation_type !== ''" for="title" class="move-below">TITLE</label>
+                                <input v-if="post_creation_type !== ''" type="text" name="title" maxlength="50" class="move-below" required>
+                                <label v-if="post_creation_type === 'event'" for="title" class="move-below">DATE/TIME OF EVENT</label>
+                                <input v-if="post_creation_type === 'event'" type="datetime-local" name="eventDate" class="move-below" required>
+                                <label v-if="post_creation_type === 'event'" for="title" class="move-below">LOCATION OF EVENT</label>
+                                <input v-if="post_creation_type === 'event'" type="text" name="location" maxlength="80" class="move-below" required>
+                                <input v-if="post_creation_type !== ''" type="radio" name="type" value="public" required>
+                                <label v-if="post_creation_type !== ''" for="public" class="radio-label">PUBLIC</label>
+                                <input v-if="post_creation_type !== ''" type="radio" name="type" value="private" required>
+                                <label v-if="post_creation_type !== ''" for="private" class="radio-label">PRIVATE</label>
+                                <label v-if="post_creation_type === 'event'" for="title" class="move-below">EVENT DESCRIPTION</label>
+                                <textarea v-if="post_creation_type === 'event'" name="post_content" style="resize: vertical" class="move-below" required></textarea>
+                                <label v-if="post_creation_type === 'post'" for="title" class="move-below">POST CONTENT</label>
+                                <textarea v-if="post_creation_type === 'post'" name="post_content" style="resize: vertical" class="move-below" required></textarea>
+                                <button v-if="post_creation_type !== ''" type="submit" class="move-below save-button">CREATE</button>
+                            </form>
+                        </div>
+                    </div>
                     <section v-if="numberOfPostsDisplaying !== 0" id="posts">
                         <article v-for="post in posts" v-bind:id="post.postId" v-bind:class="[{'unread': !(post.read)}, 'post']" v-on:click="post.read = true" @mouseover="post.isHovered = true" @mouseleave="post.isHovered = false">
                             <img v-if="!(post.read)" v-bind:src="post.isHovered ? unreadPostHoverImage : unreadPostImage" alt="Unread Post">

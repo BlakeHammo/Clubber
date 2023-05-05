@@ -45,7 +45,7 @@
                             </h4>
                             <p v-bind:class="['post-content', {'post-content-hidden': !(post.isExpanded)}]">{{post.content}}</p>
                             <button class="see-more" type="button" v-on:click="post.isExpanded = !post.isExpanded"><u v-if="post.isExpanded === false">View more</u><u v-else>View less</u></button>
-                            <div class="tag">{{post.eventType}}</div>
+                            <div class="tag">{{post.type}}</div>
                             <div class="space"></div>
                             <div class="rsvp">
                                 <select  name="rsvp" id="rsvp">
