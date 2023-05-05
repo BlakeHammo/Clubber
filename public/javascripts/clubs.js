@@ -48,7 +48,7 @@ const vueinst = Vue.createApp({
             unreadPostImage: "./images/unread.svg",
             unreadPostHoverImage: "./images/mark_as_read.svg",
             post_tag_filter_value: "",
-            show_post_creation: true,
+            show_post_creation: false,
             post_creation_type: ""
         };
     },

@@ -59,6 +59,11 @@
                                 <option value="post">Post</option>
                             </select>
                         </div>
+                        <div class="right-aligned create-post-button">
+                            <button type="button" id="add-club-button" style="float: right" v-on:click="show_post_creation = true">
+                                <i class="fa fa-plus fa-regular"></i><span class="hide-text">Create a post/event</span>
+                            </button>
+                        </div>
                     </div>
                     <div class="modal" v-if="show_post_creation">
                         <div class="post-creation">
@@ -66,20 +71,27 @@
                                 <i class="fa fa-solid fa-xmark close close-icon" v-on:click="show_post_creation = false"></i>
                             </div>
                             <form action="">
-                                <input type="radio" name="post_creation_type" value="post" v-model="post_creation_type" required>
-                                <label for="post" class="radio-label">POST</label>
-                                <input type="radio" name="post_creation_type" value="event" v-model="post_creation_type" required>
-                                <label for="event" class="radio-label">EVENT</label>
+                                <select name="post_creation_type" id="post_creation_type" v-model="post_creation_type" required>
+                                    <option value="" selected disabled>Is this a post or event?</option>
+                                    <option value="post">POST</option>
+                                    <option value="event">EVENT</option>
+                                </select>
+                                <select name="post_type" id="post_type" v-model="post_type" required>
+                                    <option value="" selected disabled>Is this public or private?</option>
+                                    <option value="public">PUBLIC</option>
+                                    <option value="private">PRIVATE</option>
+                                </select>
                                 <label v-if="post_creation_type !== ''" for="title" class="move-below">TITLE</label>
                                 <input v-if="post_creation_type !== ''" type="text" name="title" maxlength="50" class="move-below" required>
                                 <label v-if="post_creation_type === 'event'" for="title" class="move-below">DATE/TIME OF EVENT</label>
                                 <input v-if="post_creation_type === 'event'" type="datetime-local" name="eventDate" class="move-below" required>
                                 <label v-if="post_creation_type === 'event'" for="title" class="move-below">LOCATION OF EVENT</label>
                                 <input v-if="post_creation_type === 'event'" type="text" name="location" maxlength="80" class="move-below" required>
-                                <input v-if="post_creation_type !== ''" type="radio" name="type" value="public" required>
+                                <!-- <input v-if="post_creation_type !== ''" type="radio" name="type" value="public" required>
                                 <label v-if="post_creation_type !== ''" for="public" class="radio-label">PUBLIC</label>
                                 <input v-if="post_creation_type !== ''" type="radio" name="type" value="private" required>
-                                <label v-if="post_creation_type !== ''" for="private" class="radio-label">PRIVATE</label>
+                                <label v-if="post_creation_type !== ''" for="private" class="radio-label">PRIVATE</label> -->
+
                                 <label v-if="post_creation_type === 'event'" for="title" class="move-below">EVENT DESCRIPTION</label>
                                 <textarea v-if="post_creation_type === 'event'" name="post_content" style="resize: vertical" class="move-below" required></textarea>
                                 <label v-if="post_creation_type === 'post'" for="title" class="move-below">POST CONTENT</label>

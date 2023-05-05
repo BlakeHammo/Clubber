@@ -835,3 +835,19 @@ table th {
 	margin-right: 10px;
 	margin-bottom: 10px;
 }
+
+.create-post-button {
+	position: relative;
+	z-index: 0.9;
+	top: -40px;
+}
+
+.hide-text {
+	display: none;
+}
+
+@media (min-width: 850px) {
+	.hide-text {
+		display: inline;
+	}
+}
