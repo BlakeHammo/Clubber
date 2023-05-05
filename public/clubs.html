@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     <section v-if="numberOfClubsDisplaying !== 0" id="posts">
-                        <article v-for="club in clubs" v-bind:id="club.id" class="post club" v-on:click="viewing_club = club.id; getPosts();" title="Enter Club">
+                        <article v-for="club in clubs" v-bind:id="club.id" class="post club" v-on:click="viewing_club = club.id; getPostsInitial();" title="Enter Club">
                             <h3 v-bind:style="{'background-color': club.color}">{{club.followers}} followers</h3>
                             <h2>{{club.name}}</h2>
                             <p class="post-content">{{club.description}}</p>
@@ -61,7 +61,7 @@
                         </div>
                         <div class="right-aligned create-post-button">
                             <button type="button" id="add-club-button" style="float: right" v-on:click="show_post_creation = true">
-                                <i class="fa fa-plus fa-regular"></i><span class="hide-text">Create a post/event</span>
+                                <i class="fa fa-plus fa-regular"  style="padding-right: 0;"></i><span class="hide-text">Create a post/event</span>
                             </button>
                         </div>
                     </div>
@@ -70,7 +70,7 @@
                             <div class="right-aligned">
                                 <i class="fa fa-solid fa-xmark close close-icon" v-on:click="show_post_creation = false"></i>
                             </div>
-                            <form action="">
+                            <form @submit.prevent="createPost(); show_post_creation = false;">
                                 <select name="post_creation_type" id="post_creation_type" v-model="post_creation_type" required>
                                     <option value="" selected disabled>Is this a post or event?</option>
                                     <option value="post">POST</option>
@@ -82,26 +82,21 @@
                                     <option value="private">PRIVATE</option>
                                 </select>
                                 <label v-if="post_creation_type !== ''" for="title" class="move-below">TITLE</label>
-                                <input v-if="post_creation_type !== ''" type="text" name="title" maxlength="50" class="move-below" required>
+                                <input v-if="post_creation_type !== ''" type="text" name="title" maxlength="50" class="move-below" required v-model="title">
                                 <label v-if="post_creation_type === 'event'" for="title" class="move-below">DATE/TIME OF EVENT</label>
-                                <input v-if="post_creation_type === 'event'" type="datetime-local" name="eventDate" class="move-below" required>
+                                <input v-if="post_creation_type === 'event'" type="datetime-local" name="eventDate" class="move-below" required v-model="eventDate">
                                 <label v-if="post_creation_type === 'event'" for="title" class="move-below">LOCATION OF EVENT</label>
-                                <input v-if="post_creation_type === 'event'" type="text" name="location" maxlength="80" class="move-below" required>
-                                <!-- <input v-if="post_creation_type !== ''" type="radio" name="type" value="public" required>
-                                <label v-if="post_creation_type !== ''" for="public" class="radio-label">PUBLIC</label>
-                                <input v-if="post_creation_type !== ''" type="radio" name="type" value="private" required>
-                                <label v-if="post_creation_type !== ''" for="private" class="radio-label">PRIVATE</label> -->
-
+                                <input v-if="post_creation_type === 'event'" type="text" name="location" maxlength="80" class="move-below" required v-model="location">
                                 <label v-if="post_creation_type === 'event'" for="title" class="move-below">EVENT DESCRIPTION</label>
-                                <textarea v-if="post_creation_type === 'event'" name="post_content" style="resize: vertical" class="move-below" required></textarea>
+                                <textarea v-if="post_creation_type === 'event'" name="post_content" style="resize: vertical" class="move-below" required v-model="post_content"></textarea>
                                 <label v-if="post_creation_type === 'post'" for="title" class="move-below">POST CONTENT</label>
-                                <textarea v-if="post_creation_type === 'post'" name="post_content" style="resize: vertical" class="move-below" required></textarea>
+                                <textarea v-if="post_creation_type === 'post'" name="post_content" style="resize: vertical" class="move-below" required v-model="post_content"></textarea>
                                 <button v-if="post_creation_type !== ''" type="submit" class="move-below save-button">CREATE</button>
                             </form>
                         </div>
                     </div>
                     <section v-if="numberOfPostsDisplaying !== 0" id="posts">
-                        <article v-for="post in posts" v-bind:id="post.postId" v-bind:class="[{'unread': !(post.read)}, 'post']" v-on:click="post.read = true" @mouseover="post.isHovered = true" @mouseleave="post.isHovered = false">
+                        <article v-for="post in filteredPosts" v-bind:id="post.postId" v-bind:class="[{'unread': !(post.read)}, 'post']" v-on:click="post.read = true" @mouseover="post.isHovered = true" @mouseleave="post.isHovered = false">
                             <img v-if="!(post.read)" v-bind:src="post.isHovered ? unreadPostHoverImage : unreadPostImage" alt="Unread Post">
                             <h3 v-bind:style="{'background-color': post.clubColor}">{{post.clubName}}</h3>
                             <h4>{{post.creationDate}}</h4>
@@ -125,8 +120,11 @@
                         </article>
                     </section>
                     <div v-else class="no-content">
-                        <p>
+                        <p v-if="post_tag_filter_value === 'post'">
                             This Club has no posts!
+                        </p>
+                        <p v-else>
+                            This Club has no events!
                         </p>
                     </div>
                     <a href="#" title="Back to the top" id="back-to-top"><img src="./images/to-top.svg" alt="To top icon" /></a>

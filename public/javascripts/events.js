@@ -1,39 +1,9 @@
-// Only events that have not been responded to or are going/maybe for
-let postArray = posts.filter((post) => post.tag === "event");
-
-const map = new Map();
-
-let clubsOfPosts = postArray.filter((club) => {
-    if (map.get(club.clubId)) {
-       return false;
-    }
-    map.set(club.clubId, club);
-    return true;
- });
-
-clubsOfPosts = clubsOfPosts.map((item) => {
-    let club = item;
-    return { id: club.clubId, name: club.clubName };
-});
-
-// Formats the data correctly
-postArray = postArray.map((v) => ({ ...v, isExpanded: false, isHovered: false, userRead: false }));
-
-postArray = postArray.map((item) => {
-    let post = item;
-
-    post.creationDate = new Date(post.creationDate).toLocaleString();
-    post.eventDate = new Date(post.eventDate).toLocaleString();
-
-    return post;
-});
-
 const vueinst = Vue.createApp({
     data() {
         return {
-            userFollowedClubs: clubsOfPosts,
+            userFollowedClubs: [],
             hamburgerVisible: true,
-            posts: postArray,
+            posts: [],
             numberOfPostsDisplaying: 0,
             unreadPostMessage: "Mark as read",
             unreadPostImage: "./images/unread.svg",
@@ -42,30 +12,64 @@ const vueinst = Vue.createApp({
             club_filter_value: ""
         };
     },
-    computed: {
-        updateNumberOfPostsDisplaying() {
-            this.numberOfPostsDisplaying = vueinst.posts.length;
-        }
-    },
     methods: {
+        updateNumberOfPostsDisplaying() {
+            this.numberOfPostsDisplaying = this.posts.length;
+        },
+        getPosts() {
+            // Ajax call
+            this.posts = posts.filter((post) => post.tag === "event");
+            // Formats the data correctly
+            this.posts = this.posts.map((v) => ({ ...v, isExpanded: false, isHovered: false, userRead: false }));
+
+            this.posts = this.posts.map((item) => {
+                let post = item;
+
+                post.creationDate = new Date(post.creationDate).toLocaleString();
+                post.eventDate = new Date(post.eventDate).toLocaleString();
+
+                return post;
+            });
+            this.numberOfPostsDisplaying = this.posts.length;
+        },
         filter() {
-            if (vueinst.tag_filter_value === "" && vueinst.club_filter_value !== "") {
-                vueinst.posts = postArray.filter((post) => post.clubId === vueinst.club_filter_value);
+            if (this.tag_filter_value === "" && this.club_filter_value !== "") {
+                this.getPosts();
+                this.posts = this.posts.filter((post) => post.clubId === vueinst.club_filter_value);
                 this.updateNumberOfPostsDisplaying();
-            } else if (vueinst.club_filter_value === "" && vueinst.tag_filter_value !== "") {
-                vueinst.posts = postArray.filter((post) => post.eventType === vueinst.tag_filter_value);
+            } else if (this.club_filter_value === "" && this.tag_filter_value !== "") {
+                this.getPosts();
+                this.posts = this.posts.filter((post) => post.type === this.tag_filter_value);
                 this.updateNumberOfPostsDisplaying();
-            } else if (vueinst.tag_filter_value !== "" && vueinst.club_filter_value !== "") {
-                vueinst.posts = postArray.filter((post) => post.clubId === vueinst.club_filter_value && post.eventType === vueinst.tag_filter_value);
+            } else if (this.tag_filter_value !== "" && this.club_filter_value !== "") {
+                this.getPosts();
+                this.posts = this.posts.filter((post) => post.clubId === this.club_filter_value && post.type === this.tag_filter_value);
                 this.updateNumberOfPostsDisplaying();
             } else {
-                vueinst.posts = postArray;
+                this.getPosts();
+                this.getPosts();
                 this.updateNumberOfPostsDisplaying();
             }
         }
     },
     mounted() {
-        this.numberOfPostsDisplaying = postArray.length;
+        this.getPosts();
+        this.updateNumberOfPostsDisplaying();
+
+        const map = new Map();
+
+        let clubsOfPosts = this.posts.filter((club) => {
+            if (map.get(club.clubId)) {
+            return false;
+            }
+            map.set(club.clubId, club);
+            return true;
+        });
+
+        this.userFollowedClubs = clubsOfPosts.map((item) => {
+            let club = item;
+            return { id: club.clubId, name: club.clubName };
+        });
     }
 }).mount("#app");
 

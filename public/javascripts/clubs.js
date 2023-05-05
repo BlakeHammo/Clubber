@@ -1,99 +1,150 @@
-// The following are to be obtained from the server
-
-let clubsArray = clubs.map((v) => ({ ...v, isExpanded: false, userFollows: true }));
-
-function uniqueClubTags(tag, index, array) {
-    return array.indexOf(tag) === index;
-}
-
-let clubTagsArray = clubsArray.map((item) => {
-    let club = item;
-    return club.tag;
-});
-
-clubTagsArray = clubTagsArray.filter(uniqueClubTags);
-
-// Posts and events
-let postArray = posts;
-
 // Formats the data correctly
-postArray = postArray.map((v) => ({ ...v, isExpanded: false, isHovered: false, userRead: false }));
+// const formatter = function(array) {
+//     let newArray = array.map((v) => ({ ...v, isExpanded: false, isHovered: false, userRead: false }));
 
-postArray = postArray.map((item) => {
-    let post = item;
+//
+// };
 
-    post.creationDate = new Date(post.creationDate).toLocaleString();
-    if (post.tag === 'event') {
-        post.eventDate = new Date(post.eventDate).toLocaleString();
-    }
-
-    return post;
-});
 
 
 const vueinst = Vue.createApp({
     data() {
         return {
+            // Multiple clubs component
             numberOfClubsDisplaying: 0,
-            clubs: clubsArray,
-            clubTags: clubTagsArray,
+            clubs: [],
+            clubTags: [],
             tag_filter_value: "",
             club_filter_value: -1,
             viewing_club: -1,
-            club_color: "",
-            hamburgerVisible: true,
+            // Club posts component
+            posts: [],
+            filteredPosts: [],
+            post_tag_filter_value: "",
             numberOfPostsDisplaying: 0,
-            posts: postArray,
-            unreadPostMessage: "Mark as read",
             unreadPostImage: "./images/unread.svg",
             unreadPostHoverImage: "./images/mark_as_read.svg",
-            post_tag_filter_value: "",
+            // The following capture info for post creation
             show_post_creation: false,
-            post_creation_type: ""
+            post_creation_type: "",
+            post_type: "",
+            title: "",
+            eventDate: "",
+            location: "",
+            post_content: ""
         };
     },
-    computed: {
+    methods: {
         updateNumberOfClubsDisplaying() {
-            this.numberOfClubsDisplaying = vueinst.clubs.length;
+            this.numberOfClubsDisplaying = this.clubs.length;
         },
         updateNumberOfPostsDisplaying() {
-            this.numberOfPostsDisplaying = vueinst.posts.length;
-        }
-    },
-    methods: {
+            this.numberOfPostsDisplaying = this.filteredPosts.length;
+        },
         filterClubs() {
-            if (vueinst.tag_filter_value === "" && Number(vueinst.club_filter_value) !== -1) {
-                vueinst.clubs = clubsArray.filter((club) => club.userFollows == vueinst.club_filter_value);
+            if (this.tag_filter_value === "" && Number(this.club_filter_value) !== -1) {
+                this.getClubs();
+                this.clubs = this.clubs.filter((club) => club.userFollows == this.club_filter_value);
                 this.updateNumberOfClubsDisplaying();
-            } else if (Number(vueinst.club_filter_value) === -1 && vueinst.tag_filter_value !== "") {
-                vueinst.clubs = clubsArray.filter((club) => club.tag === vueinst.tag_filter_value);
+            } else if (Number(this.club_filter_value) === -1 && this.tag_filter_value !== "") {
+                this.getClubs();
+                this.clubs = this.clubs.filter((club) => club.tag === this.tag_filter_value);
                 this.updateNumberOfClubsDisplaying();
-            } else if (vueinst.tag_filter_value !== "" && Number(vueinst.club_filter_value) !== -1) {
-                vueinst.clubs = clubsArray.filter((club) => club.userFollows == vueinst.club_filter_value && club.tag === vueinst.tag_filter_value);
+            } else if (this.tag_filter_value !== "" && Number(this.club_filter_value) !== -1) {
+                this.getClubs();
+                this.clubs = this.clubs.filter((club) => club.userFollows == this.club_filter_value && club.tag === this.tag_filter_value);
                 this.updateNumberOfClubsDisplaying();
             } else {
-                vueinst.clubs = clubsArray;
+                this.getClubs();
                 this.updateNumberOfClubsDisplaying();
             }
         },
         filterPosts() {
-            if (vueinst.post_tag_filter_value === "") {
-                vueinst.posts = postArray.filter((post) => post.clubId === vueinst.viewing_club);
+            if (this.post_tag_filter_value === "") {
+                this.getPosts();
+                this.filteredPosts = this.posts.filter((post) => post.clubId === this.viewing_club);
                 this.updateNumberOfPostsDisplaying();
             } else {
-                vueinst.posts = postArray.filter((post) => post.tag === vueinst.post_tag_filter_value && post.clubId === vueinst.viewing_club);
+                this.getPosts();
+                this.filteredPosts = this.posts.filter((post) => post.tag === this.post_tag_filter_value && post.clubId === this.viewing_club);
                 this.updateNumberOfPostsDisplaying();
             }
         },
-        getPosts() {
-            // This will be an Ajax call to get the correct posts corresponding to the club
+        getPostsInitial() {
             document.getElementById("clubs-nav").classList.remove("current-page");
-            vueinst.posts = postArray.filter((post) => post.clubId === (Number(vueinst.viewing_club)));
-            this.numberOfPostsDisplaying = posts.length;
+            // This will be an Ajax call to get the correct posts corresponding to the club
+            this.posts = posts.filter((post) => post.clubId === (Number(this.viewing_club)));
+            this.getPosts();
+        },
+        getPosts() {
+            this.filteredPosts = posts.filter((post) => post.clubId === (Number(this.viewing_club)));
+            this.updateNumberOfPostsDisplaying();
+            this.filteredPosts.map((v) => ({ ...v, isExpanded: false, isHovered: false, userRead: false }));
+            this.filteredPosts = this.filteredPosts.map((item) => {
+                let post = item;
+
+                post.creationDate = new Date(post.creationDate).toLocaleString();
+                if (post.tag === 'event') {
+                    post.eventDate = new Date(post.eventDate).toLocaleString();
+                }
+
+                return post;
+            });
+        },
+        createPost() {
+            if (this.post_creation_type === "post") {
+                const post = {
+                        clubId: this.viewing_club,
+                        clubName: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].name,
+                        clubColor: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].color,
+                        postId: this.posts.length + 1,
+                        creationDate: String(new Date().toLocaleString()),
+                        eventDate: null,
+                        location: null,
+                        title: this.title,
+                        tag: this.post_creation_type,
+                        type: this.post_type,
+                        content: this.post_content
+                };
+                this.posts.unshift(post);
+
+            } else {
+                const event = {
+                        clubId: this.viewing_club,
+                        clubName: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].name,
+                        clubColor: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].color,
+                        postId: this.posts.length + 1,
+                        creationDate: String(new Date().toLocaleString()),
+                        eventDate: String(new Date(this.eventDate).toLocaleString()),
+                        location: this.location,
+                        title: this.title,
+                        tag: this.post_creation_type,
+                        type: this.post_type,
+                        content: this.post_content
+                };
+                this.posts.unshift(event);
+            }
+            // Need to make an Ajax POST
+            this.getPosts();
+        },
+        getClubs() {
+            this.clubs = clubs.map((v) => ({ ...v, isExpanded: false, userFollows: true }));
+
+            function uniqueClubTags(tag, index, array) {
+                return array.indexOf(tag) === index;
+            }
+
+            this.clubTags = this.clubs.map((item) => {
+                let club = item;
+                return club.tag;
+            });
+
+            this.clubTags = this.clubTags.filter(uniqueClubTags);
+            this.updateNumberOfClubsDisplaying();
         }
     },
     mounted() {
-        this.numberOfClubsDisplaying = clubsArray.length;
+        this.getClubs();
     }
 }).mount("#app");
 
