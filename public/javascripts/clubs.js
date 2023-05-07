@@ -1,75 +1,150 @@
-// The following are to be obtained from the server
+// Formats the data correctly
+// const formatter = function(array) {
+//     let newArray = array.map((v) => ({ ...v, isExpanded: false, isHovered: false, userRead: false }));
 
-let clubsArray = [
-    {
-        clubId: 1,
-        clubName: "Club A",
-        followers: 20,
-        tag: "Sport",
-        color: "blue",
-        description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-        followed: true
-    },
-    {
-        clubName: "Club B",
-        followers: 5,
-        clubId: 2,
-        tag: "Technology",
-        color: "red",
-        description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-        followed: true
-    },
-    {
-        clubName: "Club C",
-        followers: 0,
-        clubId: 3,
-        tag: "Faculty",
-        color: "green",
-        description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-        followed: false
-    },
-    {
-        clubName: "Really Long Club Name To See How It Looks Really Long Club Name To See How It Looks",
-        followers: 6,
-        clubId: 4,
-        tag: "Sport",
-        color: "grey",
-        description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-        followed: false
-    }
-];
+//
+// };
 
-clubsArray = clubsArray.map((v) => ({ ...v, isExpanded: false }));
-
-function uniqueClubTags(tag, index, array) {
-    return array.indexOf(tag) === index;
-}
-
-let clubTagsArray = clubsArray.map((item) => {
-    let club = item;
-    return club.tag;
-});
-
-clubTagsArray = clubTagsArray.filter(uniqueClubTags);
 
 
 const vueinst = Vue.createApp({
     data() {
         return {
-            hamburgerVisible: true,
-            numberOfClubsDisplaying: 1,
-            clubs: clubsArray,
-            clubTags: clubTagsArray
+            // Multiple clubs component
+            numberOfClubsDisplaying: 0,
+            clubs: [],
+            clubTags: [],
+            tag_filter_value: "",
+            club_filter_value: -1,
+            viewing_club: -1,
+            // Club posts component
+            posts: [],
+            filteredPosts: [],
+            post_tag_filter_value: "",
+            numberOfPostsDisplaying: 0,
+            unreadPostImage: "./images/unread.svg",
+            unreadPostHoverImage: "./images/mark_as_read.svg",
+            // The following capture info for post creation
+            show_post_creation: false,
+            post_creation_type: "",
+            post_type: "",
+            title: "",
+            eventDate: "",
+            location: "",
+            post_content: ""
         };
     },
-    computed: {
+    methods: {
         updateNumberOfClubsDisplaying() {
-            vueinst.numberOfClubsDisplaying = vueinst.clubs.length;
+            this.numberOfClubsDisplaying = this.clubs.length;
+        },
+        updateNumberOfPostsDisplaying() {
+            this.numberOfPostsDisplaying = this.filteredPosts.length;
+        },
+        filterClubs() {
+            if (this.tag_filter_value === "" && Number(this.club_filter_value) !== -1) {
+                this.getClubs();
+                this.clubs = this.clubs.filter((club) => club.userFollows == this.club_filter_value);
+                this.updateNumberOfClubsDisplaying();
+            } else if (Number(this.club_filter_value) === -1 && this.tag_filter_value !== "") {
+                this.getClubs();
+                this.clubs = this.clubs.filter((club) => club.tag === this.tag_filter_value);
+                this.updateNumberOfClubsDisplaying();
+            } else if (this.tag_filter_value !== "" && Number(this.club_filter_value) !== -1) {
+                this.getClubs();
+                this.clubs = this.clubs.filter((club) => club.userFollows == this.club_filter_value && club.tag === this.tag_filter_value);
+                this.updateNumberOfClubsDisplaying();
+            } else {
+                this.getClubs();
+                this.updateNumberOfClubsDisplaying();
+            }
+        },
+        filterPosts() {
+            if (this.post_tag_filter_value === "") {
+                this.getPosts();
+                this.filteredPosts = this.posts.filter((post) => post.clubId === this.viewing_club);
+                this.updateNumberOfPostsDisplaying();
+            } else {
+                this.getPosts();
+                this.filteredPosts = this.posts.filter((post) => post.tag === this.post_tag_filter_value && post.clubId === this.viewing_club);
+                this.updateNumberOfPostsDisplaying();
+            }
+        },
+        getPostsInitial() {
+            document.getElementById("clubs-nav").classList.remove("current-page");
+            // This will be an Ajax call to get the correct posts corresponding to the club
+            this.posts = posts.filter((post) => post.clubId === (Number(this.viewing_club)));
+            this.getPosts();
+        },
+        getPosts() {
+            this.filteredPosts = posts.filter((post) => post.clubId === (Number(this.viewing_club)));
+            this.updateNumberOfPostsDisplaying();
+            this.filteredPosts.map((v) => ({ ...v, isExpanded: false, isHovered: false, userRead: false }));
+            this.filteredPosts = this.filteredPosts.map((item) => {
+                let post = item;
+
+                post.creationDate = new Date(post.creationDate).toLocaleString();
+                if (post.tag === 'event') {
+                    post.eventDate = new Date(post.eventDate).toLocaleString();
+                }
+
+                return post;
+            });
+        },
+        createPost() {
+            if (this.post_creation_type === "post") {
+                const post = {
+                        clubId: this.viewing_club,
+                        clubName: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].name,
+                        clubColor: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].color,
+                        postId: this.posts.length + 1,
+                        creationDate: String(new Date().toLocaleString()),
+                        eventDate: null,
+                        location: null,
+                        title: this.title,
+                        tag: this.post_creation_type,
+                        type: this.post_type,
+                        content: this.post_content
+                };
+                this.posts.unshift(post);
+
+            } else {
+                const event = {
+                        clubId: this.viewing_club,
+                        clubName: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].name,
+                        clubColor: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].color,
+                        postId: this.posts.length + 1,
+                        creationDate: String(new Date().toLocaleString()),
+                        eventDate: String(new Date(this.eventDate).toLocaleString()),
+                        location: this.location,
+                        title: this.title,
+                        tag: this.post_creation_type,
+                        type: this.post_type,
+                        content: this.post_content
+                };
+                this.posts.unshift(event);
+            }
+            // Need to make an Ajax POST
+            this.getPosts();
+        },
+        getClubs() {
+            this.clubs = clubs.map((v) => ({ ...v, isExpanded: false, userFollows: true }));
+
+            function uniqueClubTags(tag, index, array) {
+                return array.indexOf(tag) === index;
+            }
+
+            this.clubTags = this.clubs.map((item) => {
+                let club = item;
+                return club.tag;
+            });
+
+            this.clubTags = this.clubTags.filter(uniqueClubTags);
+            this.updateNumberOfClubsDisplaying();
         }
+    },
+    mounted() {
+        this.getClubs();
     }
 }).mount("#app");
 

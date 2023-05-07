@@ -27,10 +27,10 @@ main {
 	margin: auto;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 850px) {
 	main {
-		margin-left: 20%;
-		width: 80%;
+		margin-left: 22%;
+		width: 78%;
 	}
 }
 
@@ -49,7 +49,7 @@ header svg {
 	top: 5px;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 850px) {
 	header svg {
 		display: none;
 	}
@@ -74,7 +74,7 @@ header svg:hover {
 	color: var(--primary_text_color);
 }
 
-@media (min-width: 800px) {
+@media (min-width: 850px) {
 	#title {
 		font-size: 4rem;
 		margin-top: 0;
@@ -143,6 +143,16 @@ h3 {
 	font-weight: 400;
 	padding-left: 5px;
 	font-size: 1.25rem;
+	border-bottom: 1px solid var(--primary_accent_color);
+	text-shadow:
+        0.05em 0 black,
+        0 0.05em black,
+        -0.05em 0 black,
+        0 -0.05em black,
+        -0.05em -0.05em black,
+        -0.05em 0.05em black,
+        0.05em -0.05em black,
+        0.05em 0.05em black;
 }
 
 h4 {
@@ -162,6 +172,7 @@ h2 {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
+	margin-bottom: 10px;
 }
 
 .post-content-hidden {
@@ -288,7 +299,7 @@ nav a:hover {
 	display: none;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 850px) {
 	#popout-menu {
 		display: unset;
 		all: initial;
@@ -320,7 +331,7 @@ nav a:hover {
 	width: 70%;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 850px) {
 	#popout-menu a {
 		width: 90%;
 	}
@@ -536,7 +547,7 @@ nav a:hover {
 	text-decoration: underline;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 850px) {
 	#continue-to-site {
 		right: 10%;
 		word-wrap: normal;
@@ -789,4 +800,54 @@ table th {
 	float: right;
 	vertical-align: middle;
 	margin: auto;
+}
+
+.club:hover {
+	cursor: pointer;
+}
+
+.move-below{
+	display: block;
+}
+
+.post-creation {
+	background-color: white;
+	margin: auto;
+	padding: 16px 32px;
+	border-radius: 4px;
+	width: 40%;
+	min-width: 400px;
+	max-width: 600px;
+	min-height: 50%;
+}
+
+.post-creation input[type=text], .post-creation textarea, .post-creation input[type=datetime-local] {
+	padding: 12px 20px;
+	margin: 8px 0;
+	display: inline-block;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.post-creation input[type=radio], .post-creation .radio-label {
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+.create-post-button {
+	position: relative;
+	z-index: 0.9;
+	top: -40px;
+}
+
+.hide-text {
+	display: none;
+}
+
+@media (min-width: 850px) {
+	.hide-text {
+		display: inline;
+	}
 }

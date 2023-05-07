@@ -1,200 +1,75 @@
-// The following are to be obtained from the server
-
-let userFollowedClubs = [
-    {
-        clubId: 1,
-        clubName: "Club 1"
-    },
-    {
-        clubId: 2,
-        clubName: "Club 2"
-    },
-    {
-        clubId: 3,
-        clubName: "Club 3"
-    },
-    {
-        clubId: 4,
-        clubName: "Club 4"
-    }
-];
-
-// Only events that have not been responded to or are going/maybe for
-let postArray = [
-    {
-        clubName: "Club A",
-        creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        location: "My House",
-        postId: 5,
-        title: "Welcome to Members!",
-        tag: "Event",
-        content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-            read: false
-    },
-    {
-        clubName: "Club A",
-        creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        location: "My House",
-        postId: 6,
-        title: "Welcome to Members!",
-        tag: "Event",
-        content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-            read: false
-    },
-    {
-        clubName: "Club A",
-        creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        location: "My House",
-        postId: 7,
-        title: "Welcome to Members!",
-        tag: "Event",
-        content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-            read: true
-    },
-    {
-        clubName: "Club A",
-        creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        location: "My House",
-        postId: 5,
-        title: "Welcome to Members!",
-        tag: "Event",
-        content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-            read: true
-    },
-    {
-        clubName: "Club A",
-        creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        location: "My House",
-        postId: 6,
-        title: "Welcome to Members!",
-        tag: "Event",
-        content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-            read: true
-    },
-    {
-        clubName: "Club A",
-        creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        location: "My House",
-        postId: 7,
-        title: "Welcome to Members!",
-        tag: "Event",
-        content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-            read: true
-    },
-    {
-        clubName: "Club A",
-        creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        location: "My House",
-        postId: 5,
-        title: "Welcome to Members!",
-        tag: "Event",
-        content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-            read: true
-    },
-    {
-        clubName: "Club A",
-        creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        location: "My House",
-        postId: 6,
-        title: "Welcome to Members!",
-        tag: "Event",
-        content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-            read: true
-    },
-    {
-        clubName: "Club A",
-        creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        location: "My House",
-        postId: 7,
-        title: "Welcome to Members!",
-        tag: "Event",
-        content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-            read: true
-    },
-    {
-        clubName: "Club A",
-        creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        location: "My House",
-        postId: 5,
-        title: "Welcome to Members!",
-        tag: "Event",
-        content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-            read: true
-    },
-    {
-        clubName: "Club A",
-        creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        location: "My House",
-        postId: 6,
-        title: "Welcome to Members!",
-        tag: "Event",
-        content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-            read: true
-    },
-    {
-        clubName: "Club A",
-        creationDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        eventDate: "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-        location: "My House",
-        postId: 7,
-        title: "Welcome to Members!",
-        tag: "Event",
-        content:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-            read: true
-    }
-];
-
-// Formats the data correctly
-postArray = postArray.map((v) => ({ ...v, isExpanded: false, isHovered: false }));
-
-postArray = postArray.map((item) => {
-    let post = item;
-
-    post.creationDate = new Date(post.creationDate).toLocaleString();
-    post.eventDate = new Date(post.eventDate).toLocaleString();
-
-    return post;
-});
-
 const vueinst = Vue.createApp({
     data() {
         return {
-            userFollowedClubs: userFollowedClubs,
+            userFollowedClubs: [],
             hamburgerVisible: true,
-            numberOfPostsDisplaying: 1,
-            posts: postArray,
+            posts: [],
+            numberOfPostsDisplaying: 0,
             unreadPostMessage: "Mark as read",
             unreadPostImage: "./images/unread.svg",
-            unreadPostHoverImage: "./images/mark_as_read.svg"
+            unreadPostHoverImage: "./images/mark_as_read.svg",
+            tag_filter_value: "",
+            club_filter_value: ""
         };
     },
-    computed: {
+    methods: {
         updateNumberOfPostsDisplaying() {
-            vueinst.numberOfPostsDisplaying = vueinst.posts.length;
+            this.numberOfPostsDisplaying = this.posts.length;
+        },
+        getPosts() {
+            // Ajax call
+            this.posts = posts.filter((post) => post.tag === "event");
+            // Formats the data correctly
+            this.posts = this.posts.map((v) => ({ ...v, isExpanded: false, isHovered: false, userRead: false }));
+
+            this.posts = this.posts.map((item) => {
+                let post = item;
+
+                post.creationDate = new Date(post.creationDate).toLocaleString();
+                post.eventDate = new Date(post.eventDate).toLocaleString();
+
+                return post;
+            });
+            this.numberOfPostsDisplaying = this.posts.length;
+        },
+        filter() {
+            if (this.tag_filter_value === "" && this.club_filter_value !== "") {
+                this.getPosts();
+                this.posts = this.posts.filter((post) => post.clubId === vueinst.club_filter_value);
+                this.updateNumberOfPostsDisplaying();
+            } else if (this.club_filter_value === "" && this.tag_filter_value !== "") {
+                this.getPosts();
+                this.posts = this.posts.filter((post) => post.type === this.tag_filter_value);
+                this.updateNumberOfPostsDisplaying();
+            } else if (this.tag_filter_value !== "" && this.club_filter_value !== "") {
+                this.getPosts();
+                this.posts = this.posts.filter((post) => post.clubId === this.club_filter_value && post.type === this.tag_filter_value);
+                this.updateNumberOfPostsDisplaying();
+            } else {
+                this.getPosts();
+                this.getPosts();
+                this.updateNumberOfPostsDisplaying();
+            }
         }
+    },
+    mounted() {
+        this.getPosts();
+        this.updateNumberOfPostsDisplaying();
+
+        const map = new Map();
+
+        let clubsOfPosts = this.posts.filter((club) => {
+            if (map.get(club.clubId)) {
+            return false;
+            }
+            map.set(club.clubId, club);
+            return true;
+        });
+
+        this.userFollowedClubs = clubsOfPosts.map((item) => {
+            let club = item;
+            return { id: club.clubId, name: club.clubName };
+        });
     }
 }).mount("#app");
 
