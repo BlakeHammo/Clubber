@@ -70,7 +70,7 @@
                             <div class="right-aligned">
                                 <i class="fa fa-solid fa-xmark close close-icon" v-on:click="show_post_creation = false"></i>
                             </div>
-                            <form @submit.prevent="createPost(); show_post_creation = false;">
+                            <form @submit.prevent="createPost()">
                                 <select name="post_creation_type" id="post_creation_type" v-model="post_creation_type" required>
                                     <option value="" selected disabled>Is this a post or event?</option>
                                     <option value="post">POST</option>

@@ -124,8 +124,17 @@ const vueinst = Vue.createApp({
                 };
                 this.posts.unshift(event);
             }
+            this.show_post_creation = false;
+
             // Need to make an Ajax POST
             this.getPosts();
+            this.filterPosts();
+            this.eventDate = "";
+            this.location = "";
+            this.title = "";
+            this.post_creation_type = "";
+            this.post_type = "";
+            this.post_content = "";
         },
         getClubs() {
             this.clubs = clubs.map((v) => ({ ...v, isExpanded: false, userFollows: true }));

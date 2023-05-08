@@ -26,20 +26,20 @@
                     <br />
                     <br />
                     <form id="login-details" v-if="signIn">
-                        <label for="username" >USERNAME</label><br />
-                        <input v-model="username" type="text" id="username" name="username" title="Enter your username"/><br />
-                        <label for="password" >PASSWORD</label><br />
-                        <input v-model="password" type="password" id="password" name="password" title="Enter your password"/><br />
+                        <label for="username" >USERNAME</label><br>
+                        <input v-model="username" type="text" id="username" name="username" title="Enter your username" required/><br>
+                        <label for="password" >PASSWORD</label><br>
+                        <input v-model="password" type="password" id="password" name="password" title="Enter your password" required/><br>
                         <input type="submit" value="LOG IN" title="Click to log in"/><br>
                         <button type="button" id="create-account" v-on:click="signIn = false; password = ''"><span>Don't have an account?</span> <u>Click here!</u></button>
                     </form>
                     <form id="creation-details" v-else>
-                        <label for="email">EMAIL</label><br />
-                        <input v-model="email" type="email" id="email" name="email" title="Enter your email"/><br />
-                        <label for="password-creation">PASSWORD</label><br />
-                        <input v-model="password" type="password" id="password-creation" name="password-creation" title="Enter a password"/><br />
-                        <label for="password-repeat">REPEAT PASSWORD</label><br />
-                        <input v-model="repeatPassword" type="password" id="password-repeat" name="password-repeat" title="Enter the password again"/><br />
+                        <label for="email">EMAIL</label><br>
+                        <input v-model="email" type="email" id="email" name="email" title="Enter your email" required/><br>
+                        <label for="password-creation">PASSWORD</label><br>
+                        <input v-model="password" type="password" id="password-creation" name="password-creation" title="Enter a password" required/><br>
+                        <label for="password-repeat">REPEAT PASSWORD</label><br>
+                        <input v-model="repeatPassword" type="password" id="password-repeat" name="password-repeat" title="Enter the password again" required/><br>
                         <input type="submit" value="SIGN UP" title="Click to sign up"/><br>
                         <button type="button" id="login-account" v-on:click="signIn = true; password = ''"><span>Already have an account?</span> <u>Click here!</u></button>
                     </form>
