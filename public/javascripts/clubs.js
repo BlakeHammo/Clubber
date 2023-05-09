@@ -31,8 +31,7 @@ const vueinst = Vue.createApp({
             title: "",
             eventDate: "",
             location: "",
-            post_content: "",
-            post_rsvp_reveal: -1
+            post_content: ""
         };
     },
     methods: {
