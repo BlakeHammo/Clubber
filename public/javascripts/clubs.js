@@ -80,7 +80,7 @@ const vueinst = Vue.createApp({
         getPosts() {
             this.filteredPosts = posts.filter((post) => post.clubId === (Number(this.viewing_club)));
             this.updateNumberOfPostsDisplaying();
-            this.filteredPosts.map((v) => ({ ...v, isExpanded: false, isHovered: false, userRead: false }));
+            this.filteredPosts = this.filteredPosts.map((v) => ({ ...v, isExpanded: false, isHovered: false, userRead: false }));
             this.filteredPosts = this.filteredPosts.map((item) => {
                 let post = item;
 

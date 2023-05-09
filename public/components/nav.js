@@ -73,6 +73,8 @@ class Nav extends HTMLElement {
                     <i id="manage-clubs-icon" class="fa-solid fa-building-columns fa-2xl"></i>
                     MANAGE CLUBS</a
                 >
+                <a href="./index.html" id="logout" title="Log out">Log out</a
+                >
             </nav>`;
     }
 }
