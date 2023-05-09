@@ -9,7 +9,8 @@ const vueinst = Vue.createApp({
             unreadPostImage: "./images/unread.svg",
             unreadPostHoverImage: "./images/mark_as_read.svg",
             tag_filter_value: "",
-            club_filter_value: ""
+            club_filter_value: "",
+            post_rsvp_reveal: -1
         };
     },
     methods: {
@@ -50,6 +51,9 @@ const vueinst = Vue.createApp({
                 this.getPosts();
                 this.updateNumberOfPostsDisplaying();
             }
+        },
+        rsvp(post_id, rsvp_number) {
+            console.log(rsvp_number, post_id);
         }
     },
     mounted() {

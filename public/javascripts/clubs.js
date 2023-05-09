@@ -31,7 +31,8 @@ const vueinst = Vue.createApp({
             title: "",
             eventDate: "",
             location: "",
-            post_content: ""
+            post_content: "",
+            post_rsvp_reveal: -1
         };
     },
     methods: {
@@ -104,7 +105,8 @@ const vueinst = Vue.createApp({
                         title: this.title,
                         tag: this.post_creation_type,
                         type: this.post_type,
-                        content: this.post_content
+                        content: this.post_content,
+                        eventResponse: null
                 };
                 this.posts.unshift(post);
 
@@ -120,7 +122,8 @@ const vueinst = Vue.createApp({
                         title: this.title,
                         tag: this.post_creation_type,
                         type: this.post_type,
-                        content: this.post_content
+                        content: this.post_content,
+                        eventResponse: -1
                 };
                 this.posts.unshift(event);
             }
@@ -150,6 +153,9 @@ const vueinst = Vue.createApp({
 
             this.clubTags = this.clubTags.filter(uniqueClubTags);
             this.updateNumberOfClubsDisplaying();
+        },
+        rsvp(post_id, rsvp_number) {
+            console.log(rsvp_number, post_id);
         }
     },
     mounted() {
