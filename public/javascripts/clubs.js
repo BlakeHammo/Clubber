@@ -154,7 +154,9 @@ const vueinst = Vue.createApp({
             this.updateNumberOfClubsDisplaying();
         },
         rsvp(post_id, rsvp_number) {
-            console.log(rsvp_number, post_id);
+            posts[posts.findIndex((x) => x.postId === post_id)].eventResponse = rsvp_number;
+            this.getPosts();
+            this.filter();
         }
     },
     mounted() {
