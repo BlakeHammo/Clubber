@@ -852,6 +852,7 @@ table th {
 	}
 }
 
+
 .profile-box {
 	margin: auto;
 	padding: 30px;
@@ -860,7 +861,9 @@ table th {
 	margin-top: 20px;
 	max-width: 90%;
 	min-width: 300px;
+	margin-left: 0px;
 }
+
 
 .profile-icon {
 	width: 200px;
