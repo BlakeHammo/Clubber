@@ -78,13 +78,13 @@
                                 <h2>Edit Club</h2>
                             </div>
                             <div class="dialog-text">
-                                <p>You are editting user <b>{{getSelectedClub().name}}</b>.</p>
+                                <p>You are editting club <b>{{getSelectedClub().name}}</b>.</p>
                             </div>
                             <div>
-                                <label for="color-input">Color</label>
-                                <input id="color-input" type="color" v-model="edit_color">
                                 <label for="name-input">Name</label>
                                 <input id="name-input" type="text" v-model="edit_name">
+                                <label for="color-input">Color</label>
+                                <input id="color-input" type="color" v-model="edit_color">
                                 <label for="description-input">Description</label>
                                 <textarea id="description-input" v-model="edit_description" rows="5"></textarea>
                                 <label>Managers</label>
@@ -121,10 +121,10 @@
                             <h2>Add Club</h2>
                         </div>
                         <div>
-                            <label for="new-color-input">Color</label>
-                            <input id="new-color-input" type="color" v-model="edit_color">
                             <label for="new-name-input">Name</label>
                             <input id="new-name-input" type="text" v-model="edit_name">
+                            <label for="new-color-input">Color</label>
+                            <input id="new-color-input" type="color" v-model="edit_color">
                             <label for="new-description-input">Description</label>
                                 <textarea id="new-description-input" v-model="edit_description" rows="5"></textarea>
                             <label>Managers</label>
