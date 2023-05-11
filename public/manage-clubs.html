@@ -32,18 +32,18 @@
                             <thead>
                                 <tr>
                                     <th>Club ID</th>
-                                    <th>Color</th>
+                                    <th class="hidden-column-550">Color</th>
                                     <th>Name</th>
-                                    <th>Club Managers</th>
+                                    <th class="hidden-column-550">Club Managers</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody v-for="club in clubs">
                                 <tr>
                                     <td>{{club.id}}</td>
-                                    <td v-bind:style="{'background-color': club.color}"></td>
+                                    <td class="hidden-column-550" v-bind:style="{'background-color': club.color}"></td>
                                     <td>{{club.name}}</td>
-                                    <td>{{getClubManagers(club.id)}}</td>
+                                    <td class="hidden-column-550">{{getClubManagers(club.id)}}</td>
                                     <td>
                                         <i class="fa fa-solid fa-pen edit" v-on:click="showEditModal(club.id)"></i>
                                         <i class="fa fa-solid fa-trash delete" v-on:click="delete_modal_visible = true; selected_club = club.id"></i>
@@ -78,13 +78,15 @@
                                 <h2>Edit Club</h2>
                             </div>
                             <div class="dialog-text">
-                                <p>You are editting user <b>{{getSelectedClub().name}}</b>.</p>
+                                <p>You are editting club <b>{{getSelectedClub().name}}</b>.</p>
                             </div>
                             <div>
-                                <label for="color-input">Color</label>
-                                <input id="color-input" type="color" v-model="edit_color">
                                 <label for="name-input">Name</label>
                                 <input id="name-input" type="text" v-model="edit_name">
+                                <label for="color-input">Color</label>
+                                <input id="color-input" type="color" v-model="edit_color">
+                                <label for="description-input">Description</label>
+                                <textarea id="description-input" v-model="edit_description" rows="5"></textarea>
                                 <label>Managers</label>
                                 <div v-for="(manager, index) in edit_managers">
                                     <div class="textfield-w-remove">
@@ -98,9 +100,11 @@
                                     </select>
                                     <i class="fa fa-solid fa-xmark close close-icon" title="Close" v-on:click="manager_dropdown_visible = false; new_manager = ''"></i>
                                 </div>
-                                <button type="button" class="add-manager-button" v-bind:class="{'green': new_manager !== ''}" v-on:click="showManagerDropdownOrAddManager()">
-                                    <i class="fa fa-plus fa-regular"></i> Add Manager
-                                </button>
+                                <div>
+                                    <button type="button" class="add-manager-button" v-bind:class="{'green': new_manager !== ''}" v-on:click="showManagerDropdownOrAddManager()">
+                                        <i class="fa fa-plus fa-regular"></i> Add Manager
+                                    </button>
+                                </div>
                         </div>
                         <div class="right-aligned">
                             <button type="button" class="cancel-button close" v-on:click="edit_modal_visible = false; selected_club = -1">Cancel</button>
@@ -117,10 +121,12 @@
                             <h2>Add Club</h2>
                         </div>
                         <div>
-                            <label for="new-color-input">Color</label>
-                            <input id="new-color-input" type="color" v-model="edit_color">
                             <label for="new-name-input">Name</label>
                             <input id="new-name-input" type="text" v-model="edit_name">
+                            <label for="new-color-input">Color</label>
+                            <input id="new-color-input" type="color" v-model="edit_color">
+                            <label for="new-description-input">Description</label>
+                                <textarea id="new-description-input" v-model="edit_description" rows="5"></textarea>
                             <label>Managers</label>
                             <div v-for="(manager, index) in edit_managers">
                                 <div class="textfield-w-remove">

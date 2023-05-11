@@ -646,6 +646,24 @@ table th {
 	color: white;
 }
 
+@media (max-width: 1200px) {
+	.hidden-column-1200 {
+		display: none;
+	}
+}
+
+@media (max-width: 1100px) {
+	.hidden-column-1100 {
+		display: none;
+	}
+}
+
+@media (max-width: 550px) {
+	.hidden-column-550 {
+		display: none;
+	}
+}
+
 /* Modal */
 .modal {
 	position: fixed;
@@ -665,8 +683,8 @@ table th {
 	margin: auto;
 	padding: 16px 32px;
 	border-radius: 4px;
-	width: 40%;
-	min-width: 400px;
+	width: 60%;
+	min-width: 300px;
 	max-width: 600px;
 }
 
@@ -770,7 +788,8 @@ table th {
 }
 
 .modal input[type=text],
-.modal select {
+.modal select,
+.modal textarea {
 	width: 100%;
 	padding: 12px 20px;
 	margin: 8px 0;

@@ -9,6 +9,7 @@ const vueinst = new Vue({
         edit_color: "",
         edit_name: "",
         edit_managers: [],
+        edit_description: "",
         manager_dropdown_visible: false,
         new_manager: "",
         available_managers: [],
@@ -46,6 +47,7 @@ const vueinst = new Vue({
             clubs[this.getSelectedClubIndex()].managers = JSON.parse(
                 JSON.stringify(this.edit_managers)
             );
+            clubs[this.getSelectedClubIndex()].description = this.edit_description;
 
             this.clubs = clubs;
             this.edit_modal_visible = false;
@@ -62,6 +64,7 @@ const vueinst = new Vue({
                 this.new_manager = "";
                 this.manager_dropdown_visible = false;
                 this.available_managers = [];
+                this.edit_description = this.getSelectedClub().description;
             }
         },
         getSelectedClubIndex: function() {
@@ -105,6 +108,7 @@ const vueinst = new Vue({
             this.new_manager = "";
             this.manager_dropdown_visible = false;
             this.available_managers = [];
+            this.edit_description = "";
         },
         showAddModal: function() {
             this.add_modal_visible = true;
@@ -115,7 +119,8 @@ const vueinst = new Vue({
                 id: clubs.length + 1,
                 color: this.edit_color,
                 name: this.edit_name,
-                managers: JSON.parse(JSON.stringify(this.edit_managers))
+                managers: JSON.parse(JSON.stringify(this.edit_managers)),
+                description: this.edit_description
             };
 
             clubs.push(new_club);
