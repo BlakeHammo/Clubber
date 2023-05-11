@@ -903,3 +903,82 @@ table th {
 		display: inline;
 	}
 }
+
+
+.profile-box {
+	margin: auto;
+	padding: 30px;
+	border-radius: 5px;
+	border: 5px var(--primary_accent_color) solid;
+	margin-top: 20px;
+	max-width: 90%;
+	min-width: 300px;
+	margin-left: 0px;
+	display: flex;
+}
+
+
+.profile-icon {
+	width: 275px;
+	height: 275px;
+	left: calc(50% - 200px/2 - 178px);
+	top: calc(50% - 200px/2 - 152px);
+
+	background: #455DB3;
+	border-radius: 5px;
+}
+
+.profile-text {
+	background: #D9D9D9;
+	margin-top: 15px;
+	margin-bottom: 15px;
+	margin-left: auto;
+	padding: 5px;
+	width: 60%;
+	display:inline-block;
+	text-align: left;
+	color: var(--secondary_text_color);
+	height: 30px;
+
+}
+
+.edit-profile-button {
+	margin-right: 10%;
+}
+
+.button-div {
+	text-align: right;
+}
+
+.profile-label {
+	display: inline-block;
+	width: 100px;
+	text-align: right;
+}
+
+.profile-label-text {
+	text-align: right;
+}
+
+.profile-picture {
+    flex: 0 0 auto;
+    margin-right: 20px;
+}
+
+.profile-details {
+    flex: 1 1 auto;
+}
+
+.profile-upload {
+	margin-top: 20px;
+	margin-left: 10%;
+}
+
+.profile-input {
+	box-sizing: border-box;
+	font-size: inherit;
+}
+
+.profile-text-padding {
+	padding-left: 7px;
+}
