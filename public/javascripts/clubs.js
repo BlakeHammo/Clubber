@@ -39,7 +39,7 @@ const vueinst = Vue.createApp({
             this.numberOfClubsDisplaying = this.clubs.length;
         },
         updateNumberOfPostsDisplaying() {
-            this.numberOfPostsDisplaying = this.filteredPosts.length;
+            this.numberOfPostsDisplaying = this.posts.length;
         },
         filterClubs() {
             if (this.tag_filter_value === "" && Number(this.club_filter_value) !== -1) {
@@ -62,25 +62,23 @@ const vueinst = Vue.createApp({
         filterPosts() {
             if (this.post_tag_filter_value === "") {
                 this.getPosts();
-                this.filteredPosts = this.posts.filter((post) => post.clubId === this.viewing_club);
+                this.posts = this.posts.filter((post) => post.clubId === Number(this.viewing_club));
                 this.updateNumberOfPostsDisplaying();
             } else {
                 this.getPosts();
-                this.filteredPosts = this.posts.filter((post) => post.tag === this.post_tag_filter_value && post.clubId === this.viewing_club);
+                this.posts = this.posts.filter((post) => post.tag === this.post_tag_filter_value && post.clubId === Number(this.viewing_club));
                 this.updateNumberOfPostsDisplaying();
             }
         },
         getPostsInitial() {
             document.getElementById("clubs-nav").classList.remove("current-page");
             // This will be an Ajax call to get the correct posts corresponding to the club
-            this.posts = posts.filter((post) => post.clubId === (Number(this.viewing_club)));
-            this.getPosts();
+            this.filterPosts();
         },
         getPosts() {
-            this.filteredPosts = posts.filter((post) => post.clubId === (Number(this.viewing_club)));
-            this.updateNumberOfPostsDisplaying();
-            this.filteredPosts.map((v) => ({ ...v, isExpanded: false, isHovered: false, userRead: false }));
-            this.filteredPosts = this.filteredPosts.map((item) => {
+            this.posts = posts.filter((post) => post.clubId === (Number(this.viewing_club)));
+            this.posts = this.posts.map((v) => ({ ...v, isExpanded: false, isHovered: false }));
+            this.posts = this.posts.map((item) => {
                 let post = item;
 
                 post.creationDate = new Date(post.creationDate).toLocaleString();
@@ -97,35 +95,47 @@ const vueinst = Vue.createApp({
                         clubId: this.viewing_club,
                         clubName: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].name,
                         clubColor: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].color,
-                        postId: this.posts.length + 1,
+                        postId: posts.length + 1,
                         creationDate: String(new Date().toLocaleString()),
                         eventDate: null,
                         location: null,
                         title: this.title,
                         tag: this.post_creation_type,
                         type: this.post_type,
-                        content: this.post_content
+                        content: this.post_content,
+                        eventResponse: null,
+                        userRead: false
                 };
-                this.posts.unshift(post);
+                posts.unshift(post);
 
             } else {
                 const event = {
                         clubId: this.viewing_club,
                         clubName: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].name,
                         clubColor: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].color,
-                        postId: this.posts.length + 1,
+                        postId: posts.length + 1,
                         creationDate: String(new Date().toLocaleString()),
                         eventDate: String(new Date(this.eventDate).toLocaleString()),
                         location: this.location,
                         title: this.title,
                         tag: this.post_creation_type,
                         type: this.post_type,
-                        content: this.post_content
+                        content: this.post_content,
+                        eventResponse: -1,
+                        userRead: false
                 };
-                this.posts.unshift(event);
+                posts.unshift(event);
             }
+            this.show_post_creation = false;
+
             // Need to make an Ajax POST
-            this.getPosts();
+            this.filterPosts();
+            this.eventDate = "";
+            this.location = "";
+            this.title = "";
+            this.post_creation_type = "";
+            this.post_type = "";
+            this.post_content = "";
         },
         getClubs() {
             this.clubs = clubs.map((v) => ({ ...v, isExpanded: false, userFollows: true }));
@@ -141,6 +151,17 @@ const vueinst = Vue.createApp({
 
             this.clubTags = this.clubTags.filter(uniqueClubTags);
             this.updateNumberOfClubsDisplaying();
+        },
+        rsvp(post_id, rsvp_number) {
+            posts[posts.findIndex((x) => x.postId === post_id)].eventResponse = rsvp_number;
+            this.posts[this.posts.findIndex((x) => x.postId === post_id)].eventResponse = rsvp_number;
+        },
+        markPostAsRead(post_id) {
+            if (posts[posts.findIndex((x) => x.postId === post_id)].userRead === true) {
+                return;
+            }
+            posts[posts.findIndex((x) => x.postId === post_id)].userRead = true;
+            this.posts[this.posts.findIndex((x) => x.postId === post_id)].userRead = true;
         }
     },
     mounted() {
