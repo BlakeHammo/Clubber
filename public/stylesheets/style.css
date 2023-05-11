@@ -867,8 +867,8 @@ table th {
 
 
 .profile-icon {
-	width: 300px;
-	height: 300px;
+	width: 275px;
+	height: 275px;
 	left: calc(50% - 200px/2 - 178px);
 	top: calc(50% - 200px/2 - 152px);
 
@@ -882,10 +882,11 @@ table th {
 	margin-bottom: 15px;
 	margin-left: auto;
 	padding: 5px;
-	width: 400px;
+	width: 60%;
 	display:inline-block;
 	text-align: left;
 	color: var(--secondary_text_color);
+	height: 28px;
 
 }
 
@@ -899,7 +900,7 @@ table th {
 
 .profile-label {
 	display: inline-block;
-	width: 150px;
+	width: 100px;
 	text-align: right;
 }
 
@@ -914,4 +915,13 @@ table th {
 
 .profile-details {
     flex: 1 1 auto;
+}
+
+.profile-upload {
+	margin-top: 20px;
+	margin-left: 10%;
+}
+
+.profile-input {
+	box-sizing: border-box;
 }

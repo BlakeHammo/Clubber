@@ -36,34 +36,44 @@
                             <div class="profile-label-text">
                                 <div class="profile-label"> Username</div>
                                 <div v-if="!edit_profile" class="profile-text"> {{ username }} </div>
-                                <input v-else type="text" class="profile-text" v-model="username">
+                                <input v-else type="text" class="profile-text profile-input" v-model="username">
                             </div>
 
                             <div class="profile-label-text">
                                 <div class="profile-label"> First Name</div>
                                 <div v-if="!edit_profile" class="profile-text"> {{ first_name }} </div>
-                                <input v-else type="text" class="profile-text" v-model="first_name">
+                                <input v-else type="text" class="profile-text profile-input" v-model="first_name">
                             </div>
 
                             <div class="profile-label-text">
                                 <div class="profile-label"> Last Name</div>
                                 <div v-if="!edit_profile" class="profile-text"> {{ last_name }} </div>
-                                <input v-else type="text" class="profile-text" v-model="last_name">
+                                <input v-else type="text" class="profile-text profile-input" v-model="last_name">
                             </div>
 
                             <div class="profile-label-text">
                                 <div class="profile-label"> Email</div>
                                 <div v-if="!edit_profile" class="profile-text"> {{ email }} </div>
-                                <input v-else type="text" class="profile-text" v-model="email">
+                                <input v-else type="text" class="profile-text profile-input" v-model="email">
                             </div>
 
                             <div class="profile-label-text">
                                 <div class="profile-label"> Phone</div>
                                 <div v-if="!edit_profile" class="profile-text"> {{ phone }} </div>
-                                <input v-else type="text" class="profile-text" v-model="phone">
+                                <input v-else type="text" class="profile-text profile-input" v-model="phone">
                             </div>
                         </div>
+
+
                     </div>
+
+                    <div v-if="edit_profile" class="profile-upload">
+                        <button  type="button" class="edit-profile-button">
+                            Upload Image
+                        </button>
+                    </div>
+
+
                 </main>
             </div>
         </div>
