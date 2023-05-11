@@ -85,6 +85,8 @@
                                 <input id="color-input" type="color" v-model="edit_color">
                                 <label for="name-input">Name</label>
                                 <input id="name-input" type="text" v-model="edit_name">
+                                <label for="description-input">Description</label>
+                                <textarea id="description-input" v-model="edit_description" rows="5"></textarea>
                                 <label>Managers</label>
                                 <div v-for="(manager, index) in edit_managers">
                                     <div class="textfield-w-remove">
@@ -98,9 +100,11 @@
                                     </select>
                                     <i class="fa fa-solid fa-xmark close close-icon" title="Close" v-on:click="manager_dropdown_visible = false; new_manager = ''"></i>
                                 </div>
-                                <button type="button" class="add-manager-button" v-bind:class="{'green': new_manager !== ''}" v-on:click="showManagerDropdownOrAddManager()">
-                                    <i class="fa fa-plus fa-regular"></i> Add Manager
-                                </button>
+                                <div>
+                                    <button type="button" class="add-manager-button" v-bind:class="{'green': new_manager !== ''}" v-on:click="showManagerDropdownOrAddManager()">
+                                        <i class="fa fa-plus fa-regular"></i> Add Manager
+                                    </button>
+                                </div>
                         </div>
                         <div class="right-aligned">
                             <button type="button" class="cancel-button close" v-on:click="edit_modal_visible = false; selected_club = -1">Cancel</button>
@@ -121,6 +125,8 @@
                             <input id="new-color-input" type="color" v-model="edit_color">
                             <label for="new-name-input">Name</label>
                             <input id="new-name-input" type="text" v-model="edit_name">
+                            <label for="new-description-input">Description</label>
+                                <textarea id="new-description-input" v-model="edit_description" rows="5"></textarea>
                             <label>Managers</label>
                             <div v-for="(manager, index) in edit_managers">
                                 <div class="textfield-w-remove">
