@@ -34,8 +34,8 @@
                         </div>
                     </div>
                     <section v-if="numberOfPostsDisplaying !== 0" id="posts">
-                        <article v-for="post in posts" v-bind:id="post.postId" v-bind:class="[{'unread': !(post.read)}, 'post']" v-on:click="post.read = true" @mouseover="post.isHovered = true" @mouseleave="post.isHovered = false">
-                            <img v-if="!(post.read)" v-bind:src="post.isHovered ? unreadPostHoverImage : unreadPostImage" alt="Unread Post">
+                        <article v-for="post in posts" v-bind:id="post.postId" v-bind:class="[{'unread': !(post.userRead)}, 'post']" v-on:click="markPostAsRead(post.postId)" @mouseover="post.isHovered = true" @mouseleave="post.isHovered = false">
+                            <img v-if="!(post.userRead)" v-bind:src="post.isHovered ? unreadPostHoverImage : unreadPostImage" alt="Unread Post">
                             <h3 v-bind:style="{'background-color': post.clubColor}">{{post.clubName}}</h3>
                             <h4>{{post.creationDate}}</h4>
                             <h2>{{post.title}}</h2>
@@ -60,7 +60,7 @@
                                 </button>
                             </div>
                             <p v-bind:class="['post-content', {'post-content-hidden': !(post.isExpanded)}]">{{post.content}}</p>
-                            <button class="see-more" type="button" v-on:click="post.isExpanded = !post.isExpanded"><u v-if="post.isExpanded === false">View more</u><u v-else>View less</u></button>
+                            <button class="see-more" type="button" v-on:click="post.isExpanded = !post.isExpanded; wasViewMoreClicked = true;"><u v-if="post.isExpanded === false">View more</u><u v-else>View less</u></button>
                             <div class="tag">{{post.tag}}</div>
                             <div class="space"></div>
                         </article>

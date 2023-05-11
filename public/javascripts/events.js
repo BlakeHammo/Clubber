@@ -20,7 +20,7 @@ const vueinst = Vue.createApp({
             // Ajax call
             this.posts = posts.filter((post) => post.tag === "event");
             // Formats the data correctly
-            this.posts = this.posts.map((v) => ({ ...v, isExpanded: false, isHovered: false, userRead: false }));
+            this.posts = this.posts.map((v) => ({ ...v, isExpanded: false, isHovered: false }));
 
             this.posts = this.posts.map((item) => {
                 let post = item;
@@ -52,8 +52,14 @@ const vueinst = Vue.createApp({
         },
         rsvp(post_id, rsvp_number) {
             posts[posts.findIndex((x) => x.postId === post_id)].eventResponse = rsvp_number;
-            this.getPosts();
-            this.filter();
+            this.posts[this.posts.findIndex((x) => x.postId === post_id)].eventResponse = rsvp_number;
+        },
+        markPostAsRead(post_id) {
+            if (posts[posts.findIndex((x) => x.postId === post_id)].userRead === true) {
+                return;
+            }
+            posts[posts.findIndex((x) => x.postId === post_id)].userRead = true;
+            this.posts[this.posts.findIndex((x) => x.postId === post_id)].userRead = true;
         }
     },
     mounted() {
