@@ -886,7 +886,7 @@ table th {
 	display:inline-block;
 	text-align: left;
 	color: var(--secondary_text_color);
-	height: 28px;
+	height: 30px;
 
 }
 
@@ -924,4 +924,9 @@ table th {
 
 .profile-input {
 	box-sizing: border-box;
+	font-size: inherit;
+}
+
+.profile-text-padding {
+	padding-left: 7px;
 }
