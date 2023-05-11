@@ -6,8 +6,8 @@ const vueinst = new Vue({
         last_name: 'Last Name',
         email: 'Email',
         phone: 'Phone',
-        image: '',
-        edit_detail: false,
-        profile_page: true,
+        image: '/images/icon.png',
+        edit_profile: false,
+        profile_page: true
     }
 });

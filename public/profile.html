@@ -21,34 +21,47 @@
                 <main>
                     <h1 class="page-title">My Profile</h1>
                     <div class="button-div">
-                        <button type="button" class="edit-profile-button">Edit Profile</button>
+                        <button v-on:click="edit_profile = !edit_profile" type="button" class="edit-profile-button">
+                            {{ edit_profile ? 'Save Profile' : 'Edit Profile'}}
+                        </button>
                     </div>
+
                     <div class="profile-box">
-                        <img class="profile-icon" src="" alt="Profile Image">
-                        
-                        <div class="profile-label-text">
-                            <div class="profile-label"> Username</div>
-                            <div class="profile-text" v-bind:model="username"> {{ username }} </div>
+
+                        <div class="profile-picture">
+                            <img class="profile-icon" v-bind:src="image" alt="Profile Image">
                         </div>
 
-                        <div class="profile-label-text">
-                            <div class="profile-label"> First Name</div>
-                            <div class="profile-text" v-bind:model="first_name"> {{ first_name }} </div>
-                        </div>
+                        <div class="profile-details">
+                            <div class="profile-label-text">
+                                <div class="profile-label"> Username</div>
+                                <div v-if="!edit_profile" class="profile-text"> {{ username }} </div>
+                                <input v-else type="text" class="profile-text" v-model="username">
+                            </div>
 
-                        <div class="profile-label-text">
-                            <div class="profile-label"> Last Name</div>
-                            <div class="profile-text" v-bind:model="last_name"> {{ last_name }} </div>
-                        </div>
+                            <div class="profile-label-text">
+                                <div class="profile-label"> First Name</div>
+                                <div v-if="!edit_profile" class="profile-text"> {{ first_name }} </div>
+                                <input v-else type="text" class="profile-text" v-model="first_name">
+                            </div>
 
-                        <div class="profile-label-text">
-                            <div class="profile-label"> Email</div>
-                            <div class="profile-text" v-bind:model="email"> {{ email }} </div>
-                        </div>
+                            <div class="profile-label-text">
+                                <div class="profile-label"> Last Name</div>
+                                <div v-if="!edit_profile" class="profile-text"> {{ last_name }} </div>
+                                <input v-else type="text" class="profile-text" v-model="last_name">
+                            </div>
 
-                        <div class="profile-label-text">
-                            <div class="profile-label"> Phone</div>
-                            <div class="profile-text" v-bind:model="phone"> {{ phone }} </div>
+                            <div class="profile-label-text">
+                                <div class="profile-label"> Email</div>
+                                <div v-if="!edit_profile" class="profile-text"> {{ email }} </div>
+                                <input v-else type="text" class="profile-text" v-model="email">
+                            </div>
+
+                            <div class="profile-label-text">
+                                <div class="profile-label"> Phone</div>
+                                <div v-if="!edit_profile" class="profile-text"> {{ phone }} </div>
+                                <input v-else type="text" class="profile-text" v-model="phone">
+                            </div>
                         </div>
                     </div>
                 </main>

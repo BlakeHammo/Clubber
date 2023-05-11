@@ -862,12 +862,13 @@ table th {
 	max-width: 90%;
 	min-width: 300px;
 	margin-left: 0px;
+	display: flex;
 }
 
 
 .profile-icon {
-	width: 200px;
-	height: 200px;
+	width: 300px;
+	height: 300px;
 	left: calc(50% - 200px/2 - 178px);
 	top: calc(50% - 200px/2 - 152px);
 
@@ -904,4 +905,13 @@ table th {
 
 .profile-label-text {
 	text-align: right;
+}
+
+.profile-picture {
+    flex: 0 0 auto;
+    margin-right: 20px;
+}
+
+.profile-details {
+    flex: 1 1 auto;
 }
