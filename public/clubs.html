@@ -43,6 +43,7 @@
                             <button type="button" class="view-club-button" >
                                 <span>Enter Club</span>
                             </button>
+                            <div class="space"></div>
                             <div class="tag">{{club.tag}}</div>
                             <div class="space"></div>
                         </article>
@@ -196,6 +197,7 @@
                                 </svg>
                                 <span> Who has RSVP'D?</span>
                             </button>
+                            <div class="space"></div>
                             <button class="see-more" type="button" v-on:click="post.isExpanded = !post.isExpanded; wasViewMoreClicked = true"><u v-if="post.isExpanded === false">View more</u><u v-else>View less</u></button>
                             <div class="tag">{{post.tag}}</div>
                             <div class="space"></div>
