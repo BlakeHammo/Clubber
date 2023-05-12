@@ -35,7 +35,9 @@ const vueinst = Vue.createApp({
             post_content: "",
             // The following will reveal club members
             show_club_members: false,
-            users: []
+            users: [],
+            // The following will show rsvps for certain events
+            show_rsvps: false
         };
     },
     methods: {
@@ -79,6 +81,7 @@ const vueinst = Vue.createApp({
             // This will be an Ajax call to get the correct posts corresponding to the club
             this.filterPosts();
             this.getUsers();
+            window.scroll(0,0);
         },
         getPosts() {
             this.posts = posts.filter((post) => post.clubId === (Number(this.viewing_club)));
