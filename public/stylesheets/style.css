@@ -880,10 +880,15 @@ table th {
 	margin: auto;
 	padding: 16px 32px;
 	border-radius: 4px;
-	width: 40%;
-	min-width: 400px;
-	max-width: 600px;
+	width: 90%;
 	min-height: 50%;
+}
+
+@media (min-width: 850px) {
+	.post-creation {
+		min-width: 400px;
+		max-width: 600px;
+	}
 }
 
 .post-creation input[type=text], .post-creation textarea, .post-creation input[type=datetime-local] {

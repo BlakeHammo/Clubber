@@ -32,7 +32,10 @@ const vueinst = Vue.createApp({
             title: "",
             eventDate: "",
             location: "",
-            post_content: ""
+            post_content: "",
+            // The following will reveal club members
+            show_club_members: false,
+            users: users
         };
     },
     methods: {

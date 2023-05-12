@@ -9,6 +9,7 @@
         <script src="https://kit.fontawesome.com/9ee0ab41a9.js" crossorigin="anonymous"></script>
         <script src="./data/clubs.js" defer></script>
         <script src="./data/posts.js" defer></script>
+        <script src="./data/users.js" defer></script>
         <script src="./javascripts/clubs.js" defer></script>
         <script src="./components/header.js"></script>
         <script src="./components/nav.js"></script>
@@ -68,7 +69,7 @@
                             <button type="button" id="add-club-button" v-on:click="show_post_creation = true" title="Create a post/event">
                                 <i class="fa fa-plus fa-regular"  style="padding-right: 0;"></i><span class="hide-text">Create a post/event</span>
                             </button>
-                            <button type="button" id="view-members-button" v-on:click="show_post_creation = true" title="Create a post/event">
+                            <button type="button" id="view-members-button" v-on:click="show_club_members = true" title="View club members">
                                 <svg width="1rem" height="1rem" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                     <g id="Page-1" stroke="none" stroke-width="1" fill="#ffffff" fill-rule="evenodd">
                                         <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -2159.000000)" fill="#ffffff">
@@ -111,6 +112,26 @@
                                 <textarea v-if="post_creation_type === 'post'" name="post_content" style="resize: vertical" class="move-below" required v-model="post_content"></textarea>
                                 <button v-if="post_creation_type !== ''" type="submit" class="move-below save-button">CREATE</button>
                             </form>
+                        </div>
+                    </div>
+                    <div class="modal" v-if="show_club_members">
+                        <div class="post-creation" style="max-height: 80%; overflow-y: auto;">
+                            <div class="right-aligned">
+                                <i class="fa fa-solid fa-xmark close close-icon" v-on:click="show_club_members = false"></i>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody v-for="user in users">
+                                    <tr>
+                                        <td>{{user.username}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     <section v-if="numberOfPostsDisplaying !== 0" id="posts">
