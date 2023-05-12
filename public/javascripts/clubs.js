@@ -17,6 +17,7 @@ const vueinst = Vue.createApp({
             tag_filter_value: "",
             club_filter_value: -1,
             viewing_club: -1,
+            viewing_club_name: "",
             // Club posts component
             posts: [],
             filteredPosts: [],
@@ -31,7 +32,12 @@ const vueinst = Vue.createApp({
             title: "",
             eventDate: "",
             location: "",
-            post_content: ""
+            post_content: "",
+            // The following will reveal club members
+            show_club_members: false,
+            users: [],
+            // The following will show rsvps for certain events
+            show_rsvps: false
         };
     },
     methods: {
@@ -74,6 +80,8 @@ const vueinst = Vue.createApp({
             document.getElementById("clubs-nav").classList.remove("current-page");
             // This will be an Ajax call to get the correct posts corresponding to the club
             this.filterPosts();
+            this.getUsers();
+            window.scroll(0,0);
         },
         getPosts() {
             this.posts = posts.filter((post) => post.clubId === (Number(this.viewing_club)));
@@ -162,6 +170,16 @@ const vueinst = Vue.createApp({
             }
             posts[posts.findIndex((x) => x.postId === post_id)].userRead = true;
             this.posts[this.posts.findIndex((x) => x.postId === post_id)].userRead = true;
+        },
+        getUsers() {
+            // When fully implemented will only get this specific club's users
+            this.users = users;
+            this.users = this.users.map((item) => {
+                let user = item;
+
+                user.dateJoined = new Date(user.dateJoined).toLocaleString();
+                return user;
+            });
         }
     },
     mounted() {

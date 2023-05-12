@@ -113,10 +113,16 @@ header svg:hover {
 	color: var(--secondary_text_color);
 }
 
-#posts {
+#posts  {
 	margin: auto;
 	margin-bottom: 20px;
 	width: 95%;
+}
+
+#club-description {
+	min-width: 300px;
+	max-width: 90%;
+	margin: auto;
 }
 
 .post {
@@ -165,6 +171,7 @@ h2 {
 	padding-left: 5px;
 	text-align: center;
 	font-size: 2rem;
+	word-wrap: break-word;
 }
 
 .post-content {
@@ -173,6 +180,7 @@ h2 {
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	margin-bottom: 10px;
+	word-wrap: break-word;
 }
 
 .post-content-hidden {
@@ -196,7 +204,7 @@ h2 {
 }
 
 .tag {
-	margin: 0px 5px 5px 0px;
+	margin: 5px 5px 5px 0px;
 	border: 1px solid var(--primary_header_color);
 	color: var(--primary_header_color);
 	border-radius: 3px;
@@ -327,6 +335,20 @@ nav a:hover {
 	border: 2px solid var(--primary_text_color);
 	border-radius: 5px;
 	width: 70%;
+}
+
+@media (max-width: 600px) {
+	#popout-menu svg, #popout-menu i {
+		height: 1.5rem;
+		width: 1.5rem;
+		font-size: 1.5rem;
+		margin-bottom: 0px;
+	}
+
+	#popout-menu a {
+		font-size: 0.75rem;
+		margin-bottom: 0px;
+	}
 }
 
 @media (min-width: 850px) {
@@ -590,7 +612,7 @@ nav a:hover {
 }
 
 /* Add User Button */
-#add-club-button {
+#add-club-button, #view-members-button, .view-rsvps-button, .view-club-button {
 	background-color: #4CAF50;
 	color: white;
 	font-size: medium;
@@ -601,14 +623,25 @@ nav a:hover {
 	height: 56px;
 }
 
-#add-club-button i {
+.view-rsvps-button, .view-club-button {
+	margin: auto;
+	display: block;
+}
+
+#add-club-button i, #view-members-button i, .view-rsvps-button i, .view-club-button i {
 	padding: 0px 8px 0px 0px;
 	width: 24px;
 	height: 24px;
 }
 
 #add-club-button:hover,
-#add-club-button:focus {
+#add-club-button:focus,
+#view-members-button:hover,
+#view-members-button:focus,
+.view-rsvps-button:hover,
+.view-rsvps-button:focus,
+.view-club-button:hover,
+.view-club-button:focus {
 	background-color: #3e8e41;
 	cursor: pointer;
 }
@@ -860,10 +893,15 @@ table th {
 	margin: auto;
 	padding: 16px 32px;
 	border-radius: 4px;
-	width: 40%;
-	min-width: 400px;
-	max-width: 600px;
+	width: 90%;
 	min-height: 50%;
+}
+
+@media (min-width: 850px) {
+	.post-creation {
+		min-width: 400px;
+		max-width: 600px;
+	}
 }
 
 .post-creation input[type=text], .post-creation textarea, .post-creation input[type=datetime-local] {
@@ -881,11 +919,22 @@ table th {
 	margin-bottom: 10px;
 }
 
-.create-post-button {
-	position: absolute;
-	z-index: 1.5;
-	top: 3.4rem;
-	right: 5px;
+.club-manager-options {
+	display: flex;
+	flex-direction: row;
+	margin-top: 5px;
+	justify-content: center;
+}
+
+.club-manager-options button {
+	margin: 2%;
+	width: 60px;
+}
+
+@media (min-width: 600px) {
+	.club-manager-options button {
+		width: fit-content;
+	}
 }
 
 @media (min-width: 850px) {
@@ -898,7 +947,7 @@ table th {
 	display: none;
 }
 
-@media (min-width: 850px) {
+@media (min-width: 600px) {
 	.hide-text {
 		display: inline;
 	}
