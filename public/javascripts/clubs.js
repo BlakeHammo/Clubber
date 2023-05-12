@@ -17,6 +17,7 @@ const vueinst = Vue.createApp({
             tag_filter_value: "",
             club_filter_value: -1,
             viewing_club: -1,
+            viewing_club_name: "",
             // Club posts component
             posts: [],
             filteredPosts: [],
