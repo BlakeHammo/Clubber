@@ -996,3 +996,11 @@ table th {
 .profile-text-padding {
 	padding-left: 7px;
 }
+
+.enter-club-svg {
+	width: 10%;
+}
+
+.enter-club-svg:hover path {
+	stroke: var(--secondary_text_color);
+}
