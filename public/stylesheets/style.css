@@ -612,7 +612,7 @@ nav a:hover {
 }
 
 /* Add User Button */
-#add-club-button, #view-members-button, #view-rsvps-button {
+#add-club-button, #view-members-button, .view-rsvps-button, .view-club-button {
 	background-color: #4CAF50;
 	color: white;
 	font-size: medium;
@@ -623,12 +623,12 @@ nav a:hover {
 	height: 56px;
 }
 
-#view-rsvps-button {
+.view-rsvps-button, .view-club-button {
 	margin: auto;
 	display: block;
 }
 
-#add-club-button i, #view-members-button i, #view-rsvps-button i {
+#add-club-button i, #view-members-button i, .view-rsvps-button i, .view-club-button i {
 	padding: 0px 8px 0px 0px;
 	width: 24px;
 	height: 24px;
@@ -638,8 +638,10 @@ nav a:hover {
 #add-club-button:focus,
 #view-members-button:hover,
 #view-members-button:focus,
-#view-rsvps-button:hover,
-#view-rsvps-button:focus {
+.view-rsvps-button:hover,
+.view-rsvps-button:focus,
+.view-club-button:hover,
+.view-club-button:focus {
 	background-color: #3e8e41;
 	cursor: pointer;
 }
@@ -1028,12 +1030,4 @@ table th {
 
 .profile-text-padding {
 	padding-left: 7px;
-}
-
-.enter-club-svg {
-	width: 10%;
-}
-
-.enter-club-svg:hover path {
-	stroke: var(--secondary_text_color);
 }

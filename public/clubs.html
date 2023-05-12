@@ -40,10 +40,10 @@
                             <h3 v-bind:style="{'background-color': club.color}">{{club.followers}} members</h3>
                             <h2>{{club.name}}</h2>
                             <p class="post-content">{{club.description}}</p>
+                            <button type="button" class="view-club-button" >
+                                <span>Enter Club</span>
+                            </button>
                             <div class="tag">{{club.tag}}</div>
-                            <svg class="enter-club-svg" width="2rem" height="2rem" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5 12V6C5 5.44772 5.44772 5 6 5H18C18.5523 5 19 5.44772 19 6V18C19 18.5523 18.5523 19 18 19H12M8.11111 12H12M12 12V15.8889M12 12L5 19" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
                             <div class="space"></div>
                         </article>
                     </section>
@@ -67,7 +67,7 @@
                         </div>
                         <div class="club-manager-options">
                             <button type="button" id="add-club-button" v-on:click="show_post_creation = true" title="Create a post/event">
-                                <i class="fa fa-plus fa-regular"  style="padding-right: 0;"></i><span class="hide-text">Create a post/event</span>
+                                <i class="fa fa-plus fa-regular" style="padding-right: 0;"></i><span class="hide-text">Create a post/event</span>
                             </button>
                             <button type="button" id="view-members-button" v-on:click="show_club_members = true" title="View club members">
                                 <svg width="1rem" height="1rem" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -183,7 +183,7 @@
                                 </button>
                             </div>
                             <p v-bind:class="['post-content', {'post-content-hidden': !(post.isExpanded)}]">{{post.content}}</p>
-                            <button v-if="post.tag === 'event'" type="button" id="view-rsvps-button" v-on:click="show_rsvps = true" title="View who has rsvp'd to this event">
+                            <button v-if="post.tag === 'event'" type="button" class="view-rsvps-button" v-on:click="show_rsvps = true" title="View who has rsvp'd to this event">
                                 <svg width="1rem" height="1rem" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                     <g id="Page-1" stroke="none" stroke-width="1" fill="#ffffff" fill-rule="evenodd">
                                         <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -2159.000000)" fill="#ffffff">
