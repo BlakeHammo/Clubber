@@ -21,7 +21,7 @@ CREATE TABLE Clubs (
     club_description VARCHAR(255),
     club_color VARCHAR(255),
     PRIMARY KEY(club_id),
-    FOREIGN KEY (club_id) REFERENCES Club_members(club_id) ON DELETE
+    FOREIGN KEY (club_id) REFERENCES Club_members(club_id) ON DELETE SET NULL
 );
 
 CREATE TABLE Club_members (
