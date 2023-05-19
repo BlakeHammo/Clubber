@@ -6,6 +6,10 @@ var logger = require('morgan');
 
 var session = require('express-session'); //setting up sessions
 
+var mysql = require('mysql'); // For database
+
+var dbConnectionPool = mysql.createPool({ host: 'localhost', database: 'cluber' });
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
@@ -19,6 +23,12 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// Makes database connection
+app.use(function(req, res, next) {
+  req.pool = dbConnectionPool;
+  next();
+});
 
 //setting up session options
 app.use(session(
