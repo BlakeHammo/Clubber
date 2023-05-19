@@ -20,7 +20,7 @@ CREATE TABLE Users (
 CREATE TABLE Clubs (
     id INT AUTO_INCREMENT,
     club_name VARCHAR(255),
-    club_description VARCHAR(255),
+    club_description TEXT,
     club_color VARCHAR(255),
     PRIMARY KEY(id)
 );
@@ -38,10 +38,11 @@ CREATE TABLE Club_members (
 CREATE TABLE Posts (
     id INT AUTO_INCREMENT,
     title VARCHAR(255),
-    content VARCHAR(255),
+    content TEXT,
     creation_date_time VARCHAR(255),
     event_date_time VARCHAR(255),
     event_location VARCHAR(255),
+    tag VARCHAR(255),
     event_type VARCHAR(255),
     club_id INT,
     PRIMARY KEY(id),
