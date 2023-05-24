@@ -109,7 +109,7 @@ INSERT INTO Posts (
 ) Values (
     "Update 1",
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-    "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
+    "2023-05-24T09:31:15.168Z",
     "post",
     1
 );
@@ -242,4 +242,50 @@ INSERT INTO Posts (
     "event",
     "public",
     3
+);
+
+INSERT INTO Posts_viewed (
+    post_id,
+    user_id
+) Values (
+    1,
+    1
+);
+
+INSERT INTO Posts_viewed (
+    post_id,
+    user_id
+) Values (
+    2,
+    1
+);
+
+INSERT INTO Posts_viewed (
+    post_id,
+    user_id
+) Values (
+    5,
+    1
+);
+
+INSERT INTO Rsvps (
+    post_id,
+    user_id,
+    rsvp,
+    date_responded
+) Values (
+    9,
+    1,
+    2,
+    "2023-05-24T09:31:15.168Z"
+);
+
+INSERT INTO Club_members (
+    club_id,
+    user_id,
+    date_joined
+) Values (
+    1,
+    1,
+    "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)"
 );

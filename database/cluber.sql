@@ -29,7 +29,7 @@ CREATE TABLE Club_members (
     club_id INT,
     user_id INT,
     club_manager INT,
-    data_joined DATETIME,
+    date_joined VARCHAR(255),
     PRIMARY KEY(club_id, user_id),
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
     FOREIGN KEY (club_id) REFERENCES Clubs(id) ON DELETE CASCADE
@@ -70,7 +70,7 @@ CREATE TABLE Rsvps (
     post_id INT,
     user_id INT,
     rsvp INT,
-    date_responded DATETIME,
+    date_responded VARCHAR(255),
     PRIMARY KEY (post_id, user_id),
     FOREIGN KEY (post_id) REFERENCES Posts(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
