@@ -9,10 +9,10 @@ router.get('/', function(req, res, next) {
 
 //temporary test "database" for user accounts - eventually store on db and use query
 let users = {
-  guy: {password: 'abcd', user_id: 1},
-  lad: {password: 'xyz' , user_id: 2},
-  peter: {password: 'hello', user_id: 3}
-}
+  guy: { password: 'abcd', user_id: 1 },
+  lad: { password: 'xyz' , user_id: 2 },
+  peter: { password: 'hello', user_id: 3 }
+};
 
 router.post('/login', function(req,res,next)
 {
@@ -41,14 +41,50 @@ router.post("/posts", function(req, res, next) {
       return;
     }
 
-    let query = `SELECT Posts.*, Clubs.id AS Post_id, Clubs.club_name, Clubs.club_color, Rsvps.rsvp, Posts_viewed.user_id AS Post_viewed FROM Posts
-    INNER JOIN Clubs ON Posts.club_id = Clubs.id
-    INNER JOIN Club_members ON Club_members.club_id = Clubs.id AND Club_members.user_id = ?
-    LEFT JOIN Rsvps ON Posts.id = Rsvps.post_id AND Rsvps.user_id = ?
-    LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ?;`;
-    const user_id = 1;
-    connection.query(query, [user_id, user_id, user_id], function(qerr, rows, fields) {
+    let filter = "";
 
+    if (req.body.tag !== "" || req.body.club_id !== "" || req.body.event_type !== "") {
+      filter += `WHERE`;
+      let tag_added = false;
+      let club_id_added = false;
+
+      if (req.body.tag !== "") {
+        filter += ` Posts.tag = '${req.body.tag}'`;
+        tag_added = true;
+      }
+      if (req.body.club_id !== "") {
+        if (tag_added) {
+          filter += " AND";
+        }
+        filter += ` Clubs.id = ${req.body.club_id}`;
+        club_id_added = true;
+      }
+      if (req.body.event_type !== "" && ('user_id' in req.session)) {
+        if (club_id_added || tag_added) {
+          filter += " AND";
+        }
+        filter += ` Posts.event_type = '${req.body.event_type}'`;
+      }
+    }
+
+    let query = "";
+    let user_id = -1;
+
+    if ('user_id' in req.session) {
+      query = `SELECT Posts.*, Clubs.id AS club_id, Clubs.club_name, Clubs.club_color, Rsvps.rsvp, Posts_viewed.user_id AS Post_viewed FROM Posts
+      INNER JOIN Clubs ON Posts.club_id = Clubs.id
+      INNER JOIN Club_members ON Club_members.club_id = Clubs.id AND Club_members.user_id = ?
+      LEFT JOIN Rsvps ON Posts.id = Rsvps.post_id AND Rsvps.user_id = ?
+      LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}`;
+      user_id = req.session.user_id;
+    } else {
+      query = `SELECT Posts.*, Clubs.id AS club_id, Clubs.club_name, Clubs.club_color, Rsvps.rsvp, Posts_viewed.user_id AS Post_viewed FROM Posts
+      INNER JOIN Clubs ON Posts.club_id = Clubs.id
+      LEFT JOIN Rsvps ON Posts.id = Rsvps.post_id AND Rsvps.user_id = ?
+      LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}`;
+    }
+
+    connection.query(query, [user_id, user_id, user_id], function(qerr, rows, fields) {
       connection.release();
 
       if (qerr) {
@@ -60,23 +96,19 @@ router.post("/posts", function(req, res, next) {
 
       posts = posts.map((v) => ({ ...v, isExpanded: false, isHovered: false }));
       posts = posts.map((item) => {
-          let post = item;
+        let post = item;
 
-          post.creation_date_time = new Date(post.creation_date_time).toLocaleString();
-          if (post.tag === 'event') {
-              post.event_date_time = new Date(post.event_date_time).toLocaleString();
-          }
+        post.creation_date_time = new Date(post.creation_date_time).toLocaleString();
+        if (post.tag === 'event') {
+            post.event_date_time = new Date(post.event_date_time).toLocaleString();
+        }
 
-          return post;
+        return post;
       });
 
       res.json(posts);
     });
   });
-});
-
-router.post("/posts/rsvp", function(req, res, next) {
-
 });
 
 router.get("/clubs", function(req, res, next) {
