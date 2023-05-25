@@ -52,7 +52,7 @@ const vueinst = Vue.createApp({
             req.send(JSON.stringify(requestData));
         },
         filter() {
-            this.getPosts(this.tag_filter_value, this.club_filter_value, -1);
+            this.getPosts();
         },
         rsvp(id, rsvp_number) {
             if (vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].rsvp === rsvp_number) {
@@ -101,7 +101,7 @@ const vueinst = Vue.createApp({
         }
     },
     mounted() {
-        this.getPosts("", "", "");
+        this.getPosts();
     }
 }).mount("#app");
 

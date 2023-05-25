@@ -17,69 +17,93 @@ const vueinst = Vue.createApp({
             this.numberOfPostsDisplaying = this.posts.length;
         },
         getPosts() {
-            // Ajax call
-            this.posts = posts.filter((post) => post.tag === "event");
-            // Formats the data correctly
-            this.posts = this.posts.map((v) => ({ ...v, isExpanded: false, isHovered: false }));
+            const requestData = {
+                club_id: this.club_filter_value,
+                tag: "event",
+                event_type: this.tag_filter_value
+            };
 
-            this.posts = this.posts.map((item) => {
-                let post = item;
+            let req = new XMLHttpRequest();
 
-                post.creationDate = new Date(post.creationDate).toLocaleString();
-                post.eventDate = new Date(post.eventDate).toLocaleString();
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    vueinst.posts = JSON.parse(req.responseText);
+                    vueinst.numberOfPostsDisplaying = JSON.parse(req.responseText).length;
 
-                return post;
-            });
-            this.numberOfPostsDisplaying = this.posts.length;
+                    if (!vueinst.clubs_obtained) {
+                        const map = new Map();
+
+                        let clubsOfPosts = JSON.parse(req.responseText).filter((club) => {
+                            if (map.get(club.club_id)) {
+                            return false;
+                            }
+                            map.set(club.club_id, club);
+                            return true;
+                        });
+
+                        vueinst.userFollowedClubs = clubsOfPosts.map((item) => {
+                            let club = item;
+                            return { id: club.club_id, name: club.club_name };
+                        });
+                        vueinst.clubs_obtained = true;
+                    }
+                }
+            };
+            req.open('POST','/posts');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(requestData));
         },
         filter() {
-            if (this.tag_filter_value === "" && this.club_filter_value !== "") {
-                this.getPosts();
-                this.posts = this.posts.filter((post) => post.clubId === vueinst.club_filter_value);
-                this.updateNumberOfPostsDisplaying();
-            } else if (this.club_filter_value === "" && this.tag_filter_value !== "") {
-                this.getPosts();
-                this.posts = this.posts.filter((post) => post.type === this.tag_filter_value);
-                this.updateNumberOfPostsDisplaying();
-            } else if (this.tag_filter_value !== "" && this.club_filter_value !== "") {
-                this.getPosts();
-                this.posts = this.posts.filter((post) => post.clubId === this.club_filter_value && post.type === this.tag_filter_value);
-                this.updateNumberOfPostsDisplaying();
-            } else {
-                this.getPosts();
-                this.updateNumberOfPostsDisplaying();
-            }
+            this.getPosts();
         },
-        rsvp(post_id, rsvp_number) {
-            posts[posts.findIndex((x) => x.postId === post_id)].eventResponse = rsvp_number;
-            this.posts[this.posts.findIndex((x) => x.postId === post_id)].eventResponse = rsvp_number;
-        },
-        markPostAsRead(post_id) {
-            if (posts[posts.findIndex((x) => x.postId === post_id)].userRead === true) {
+        rsvp(id, rsvp_number) {
+            if (vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].rsvp === rsvp_number) {
                 return;
             }
-            posts[posts.findIndex((x) => x.postId === post_id)].userRead = true;
-            this.posts[this.posts.findIndex((x) => x.postId === post_id)].userRead = true;
+
+            vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].rsvp = rsvp_number;
+
+            const requestData = {
+                post_id: id,
+                rsvp: rsvp_number,
+                date_responded: new Date()
+            };
+
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    /* */
+                }
+            };
+            req.open('POST','/users/posts/rsvp');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(requestData));
+        },
+        markPostAsRead(id) {
+            if (vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].Post_viewed === 1) {
+                return;
+            }
+            vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].Post_viewed = 1;
+
+            const requestData = {
+                post_id: id
+            };
+
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    /* */
+                }
+            };
+            req.open('POST','/users/posts/mark-as-read');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(requestData));
         }
     },
     mounted() {
         this.getPosts();
-        this.updateNumberOfPostsDisplaying();
-
-        const map = new Map();
-
-        let clubsOfPosts = this.posts.filter((club) => {
-            if (map.get(club.clubId)) {
-            return false;
-            }
-            map.set(club.clubId, club);
-            return true;
-        });
-
-        this.userFollowedClubs = clubsOfPosts.map((item) => {
-            let club = item;
-            return { id: club.clubId, name: club.clubName };
-        });
     }
 }).mount("#app");
 
