@@ -8,6 +8,14 @@ router.get('/', function(req, res, next) {
 
 module.exports = router;
 
+router.get("/info", function(req, res, next) {
+  let response = "";
+  if ('user_id' in req.session) {
+    response = req.session.user_id;
+  }
+  res.send(`${response}`);
+});
+
 /* The below are for users that have an account, thus we will block access if they are not a user with an account */
 router.use('/', function(req, res, next) {
   if (!('user_id' in req.session)){

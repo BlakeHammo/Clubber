@@ -98,10 +98,38 @@ const vueinst = Vue.createApp({
             req.open('POST','/users/posts/mark-as-read');
             req.setRequestHeader('Content-Type','application/json');
             req.send(JSON.stringify(requestData));
+        },
+        getUserInfo() {
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    vueinst.user_id = req.responseText;
+                    if (req.responseText === "") {
+                        const profile = document.querySelector("#profile-nav");
+                        profile.remove();
+
+                        const notifications = document.querySelector("#notifications-nav");
+                        notifications.remove();
+
+                        const manage_users = document.querySelector("#manage-users-nav");
+                        manage_users.remove();
+
+                        const manage_clubs = document.querySelector("#manage-clubs-nav");
+                        manage_clubs.remove();
+
+                        const logout = document.querySelector("#logout");
+                        logout.remove();
+                    }
+                }
+            };
+            req.open('GET','/users/info');
+            req.send();
         }
     },
     mounted() {
         this.getPosts();
+        this.getUserInfo();
     }
 }).mount("#app");
 

@@ -65,6 +65,12 @@ router.post("/posts", function(req, res, next) {
         }
         filter += ` Posts.event_type = '${req.body.event_type}'`;
       }
+      if (!('user_id' in req.session)) {
+        if (club_id_added || tag_added) {
+          filter += " AND";
+        }
+        filter += ` Posts.event_type = 'public'`;
+      }
     }
 
     let query = "";
@@ -94,7 +100,12 @@ router.post("/posts", function(req, res, next) {
 
       let posts = rows;
 
-      posts = posts.map((v) => ({ ...v, isExpanded: false, isHovered: false }));
+
+      if (!('user_id' in req.session)) {
+        posts = posts.map((v) => ({ ...v, notUser: true, isExpanded: false, isHovered: false, Post_viewed: 1}));
+      } else {
+        posts = posts.map((v) => ({ ...v, isExpanded: false, isHovered: false, notUser: false }));
+      }
       posts = posts.map((item) => {
         let post = item;
 
