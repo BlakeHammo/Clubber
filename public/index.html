@@ -25,12 +25,13 @@
                     <div class="divider"></div>
                     <br />
                     <br />
-                    <form id="login-details" v-if="signIn">
+                    <!--pass in event object from the onsubmit event handler. Also using POST method for form so that login info sent in body and not append to the URL (in a GET request)-->
+                    <form id="login-details" v-if="signIn" method="post" onsubmit="return login(event)">
                         <label for="username" >USERNAME</label><br>
                         <input v-model="username" type="text" id="username" name="username" title="Enter your username" required/><br>
                         <label for="password" >PASSWORD</label><br>
                         <input v-model="password" type="password" id="password" name="password" title="Enter your password" required/><br>
-                        <input type="submit" value="LOG IN" title="Click to log in"/><br>
+                        <input type="submit" value="LOG IN" title="Click to log in" /><br>
                         <button type="button" id="create-account" v-on:click="signIn = false; password = ''"><span>Don't have an account?</span> <u>Click here!</u></button>
                     </form>
                     <form id="creation-details" v-else>
