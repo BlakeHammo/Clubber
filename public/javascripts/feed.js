@@ -119,7 +119,8 @@ const vueinst = Vue.createApp({
                         manage_clubs.remove();
 
                         const logout = document.querySelector("#logout");
-                        logout.remove();
+                        logout.innerText = "Log In/Sign Up";
+                        logout.title = "Log In or Sign Up";
                     }
                 }
             };

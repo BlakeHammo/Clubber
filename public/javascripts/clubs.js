@@ -20,11 +20,11 @@ const vueinst = Vue.createApp({
             viewing_club_name: "",
             // Club posts component
             posts: [],
-            filteredPosts: [],
             post_tag_filter_value: "",
             numberOfPostsDisplaying: 0,
             unreadPostImage: "./images/unread.svg",
             unreadPostHoverImage: "./images/mark_as_read.svg",
+            clubs_obtained: false,
             // The following capture info for post creation
             show_post_creation: false,
             post_creation_type: "",
@@ -43,9 +43,6 @@ const vueinst = Vue.createApp({
     methods: {
         updateNumberOfClubsDisplaying() {
             this.numberOfClubsDisplaying = this.clubs.length;
-        },
-        updateNumberOfPostsDisplaying() {
-            this.numberOfPostsDisplaying = this.posts.length;
         },
         filterClubs() {
             if (this.tag_filter_value === "" && Number(this.club_filter_value) !== -1) {
@@ -66,15 +63,7 @@ const vueinst = Vue.createApp({
             }
         },
         filterPosts() {
-            if (this.post_tag_filter_value === "") {
-                this.getPosts();
-                this.posts = this.posts.filter((post) => post.clubId === Number(this.viewing_club));
-                this.updateNumberOfPostsDisplaying();
-            } else {
-                this.getPosts();
-                this.posts = this.posts.filter((post) => post.tag === this.post_tag_filter_value && post.clubId === Number(this.viewing_club));
-                this.updateNumberOfPostsDisplaying();
-            }
+            this.getPosts();
         },
         getPostsInitial() {
             document.getElementById("clubs-nav").classList.remove("current-page");
@@ -84,18 +73,42 @@ const vueinst = Vue.createApp({
             window.scroll(0,0);
         },
         getPosts() {
-            this.posts = posts.filter((post) => post.clubId === (Number(this.viewing_club)));
-            this.posts = this.posts.map((v) => ({ ...v, isExpanded: false, isHovered: false }));
-            this.posts = this.posts.map((item) => {
-                let post = item;
+            const requestData = {
+                club_id: this.viewing_club,
+                tag: this.post_tag_filter_value,
+                event_type: "",
+                club_page: true
+            };
 
-                post.creationDate = new Date(post.creationDate).toLocaleString();
-                if (post.tag === 'event') {
-                    post.eventDate = new Date(post.eventDate).toLocaleString();
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    vueinst.posts = JSON.parse(req.responseText);
+                    vueinst.numberOfPostsDisplaying = JSON.parse(req.responseText).length;
+
+                    if (!vueinst.clubs_obtained) {
+                        const map = new Map();
+
+                        let clubsOfPosts = JSON.parse(req.responseText).filter((club) => {
+                            if (map.get(club.club_id)) {
+                            return false;
+                            }
+                            map.set(club.club_id, club);
+                            return true;
+                        });
+
+                        vueinst.userFollowedClubs = clubsOfPosts.map((item) => {
+                            let club = item;
+                            return { id: club.club_id, name: club.club_name };
+                        });
+                        vueinst.clubs_obtained = true;
+                    }
                 }
-
-                return post;
-            });
+            };
+            req.open('POST','/posts');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(requestData));
         },
         createPost() {
             if (this.post_creation_type === "post") {
@@ -160,16 +173,50 @@ const vueinst = Vue.createApp({
             this.clubTags = this.clubTags.filter(uniqueClubTags);
             this.updateNumberOfClubsDisplaying();
         },
-        rsvp(post_id, rsvp_number) {
-            posts[posts.findIndex((x) => x.postId === post_id)].eventResponse = rsvp_number;
-            this.posts[this.posts.findIndex((x) => x.postId === post_id)].eventResponse = rsvp_number;
-        },
-        markPostAsRead(post_id) {
-            if (posts[posts.findIndex((x) => x.postId === post_id)].userRead === true) {
+        rsvp(id, rsvp_number) {
+            if (vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].rsvp === rsvp_number) {
                 return;
             }
-            posts[posts.findIndex((x) => x.postId === post_id)].userRead = true;
-            this.posts[this.posts.findIndex((x) => x.postId === post_id)].userRead = true;
+
+            vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].rsvp = rsvp_number;
+
+            const requestData = {
+                post_id: id,
+                rsvp: rsvp_number,
+                date_responded: new Date()
+            };
+
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    /* */
+                }
+            };
+            req.open('POST','/users/posts/rsvp');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(requestData));
+        },
+        markPostAsRead(id) {
+            if (vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].Post_viewed === 1) {
+                return;
+            }
+            vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].Post_viewed = 1;
+
+            const requestData = {
+                post_id: id
+            };
+
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    /* */
+                }
+            };
+            req.open('POST','/users/posts/mark-as-read');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(requestData));
         },
         getUsers() {
             // When fully implemented will only get this specific club's users
