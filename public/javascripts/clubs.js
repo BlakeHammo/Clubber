@@ -37,7 +37,9 @@ const vueinst = Vue.createApp({
             show_club_members: false,
             users: [],
             // The following will show rsvps for certain events
-            show_rsvps: false
+            show_rsvps: false,
+            // Misc
+            user_id: ""
         };
     },
     methods: {
@@ -227,10 +229,42 @@ const vueinst = Vue.createApp({
                 user.dateJoined = new Date(user.dateJoined).toLocaleString();
                 return user;
             });
+        },
+        getUserInfo() {
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    vueinst.user_id = req.responseText;
+                    if (req.responseText === "") {
+                        const filter = document.querySelector("#tags");
+                        filter.remove();
+
+                        const profile = document.querySelector("#profile-nav");
+                        profile.remove();
+
+                        const notifications = document.querySelector("#notifications-nav");
+                        notifications.remove();
+
+                        const manage_users = document.querySelector("#manage-users-nav");
+                        manage_users.remove();
+
+                        const manage_clubs = document.querySelector("#manage-clubs-nav");
+                        manage_clubs.remove();
+
+                        const logout = document.querySelector("#logout");
+                        logout.innerText = "Log In/Sign Up";
+                        logout.title = "Log In or Sign Up";
+                    }
+                }
+            };
+            req.open('GET','/users/info');
+            req.send();
         }
     },
     mounted() {
         this.getClubs();
+        this.getUserInfo();
     }
 }).mount("#app");
 
