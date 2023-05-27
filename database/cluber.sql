@@ -22,6 +22,7 @@ CREATE TABLE Clubs (
     club_name VARCHAR(255),
     club_description TEXT,
     club_color VARCHAR(255),
+    club_tag VARCHAR(20),
     PRIMARY KEY(id)
 );
 

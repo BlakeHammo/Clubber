@@ -109,8 +109,6 @@ router.post("/posts", function(req, res, next) {
       }
     }
 
-    console.log(query);
-
     connection.query(query, [user_id, user_id, user_id], function(qerr, rows, fields) {
       connection.release();
 
@@ -120,7 +118,6 @@ router.post("/posts", function(req, res, next) {
       }
 
       let posts = rows;
-
 
       if (!('user_id' in req.session)) {
         posts = posts.map((v) => ({ ...v, notUser: true, isExpanded: false, isHovered: false, Post_viewed: 1}));
@@ -144,19 +141,56 @@ router.post("/posts", function(req, res, next) {
 });
 
 router.get("/clubs", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
 
-});
+    let filter = "";
 
-router.post("/posts/create", function(req, res, next) {
+    if (req.query.tag !== "" || req.query.club !== "") {
+      let tag_added = false;
+      if (req.query.tag !== "") {
+        filter += ` WHERE Clubs.club_tag = '${req.query.tag}'`;
+      }
 
-});
+      if (req.query.club !== "") {
+        if (tag_added) {
+          filter += " AND";
+        } else {
+          filter += " WHERE";
+        }
+        if (Number(req.query.club) === 1) {
+          filter += ` Club_members.user_id = ${req.session.user_id}`;
+        } else if (Number(req.query.club) === 0) {
+          filter += ` Club_members.user_id != ${req.session.user_id} OR Club_members.user_id IS NULL`;
+        }
+      }
+    }
 
-router.get("/posts/rsvp-users", function(req, res, next) {
+    let query = `SELECT Clubs.*, COUNT(Club_members.club_id) AS followers FROM Clubs
+    LEFT JOIN Club_members
+    ON Clubs.id = Club_members.club_id${filter}
+    GROUP BY Clubs.id;`;
 
-});
+    console.log(query);
 
-router.get("/clubs/members", function(req, res, next) {
+    connection.query(query, function(qerr, rows, fields) {
+      connection.release();
 
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      let clubs = rows;
+
+      clubs = clubs.map((v) => ({ ...v, isExpanded: false }));
+
+      res.json(clubs);
+    });
+  });
 });
 
 module.exports = router;

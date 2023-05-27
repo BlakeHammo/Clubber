@@ -69,3 +69,17 @@ router.post("/posts/mark-as-read", function(req, res, next) {
     });
   });
 });
+
+/* Will have a block if requestor is not a club admin */
+
+router.post("/posts/create", function(req, res, next) {
+
+});
+
+router.get("/posts/rsvp-users", function(req, res, next) {
+
+});
+
+router.get("/clubs/members", function(req, res, next) {
+
+});

@@ -15,7 +15,7 @@ const vueinst = Vue.createApp({
             clubs: [],
             clubTags: [],
             tag_filter_value: "",
-            club_filter_value: -1,
+            club_filter_value: "",
             viewing_club: -1,
             viewing_club_name: "",
             // Club posts component
@@ -43,26 +43,8 @@ const vueinst = Vue.createApp({
         };
     },
     methods: {
-        updateNumberOfClubsDisplaying() {
-            this.numberOfClubsDisplaying = this.clubs.length;
-        },
         filterClubs() {
-            if (this.tag_filter_value === "" && Number(this.club_filter_value) !== -1) {
-                this.getClubs();
-                this.clubs = this.clubs.filter((club) => club.userFollows == this.club_filter_value);
-                this.updateNumberOfClubsDisplaying();
-            } else if (Number(this.club_filter_value) === -1 && this.tag_filter_value !== "") {
-                this.getClubs();
-                this.clubs = this.clubs.filter((club) => club.tag === this.tag_filter_value);
-                this.updateNumberOfClubsDisplaying();
-            } else if (this.tag_filter_value !== "" && Number(this.club_filter_value) !== -1) {
-                this.getClubs();
-                this.clubs = this.clubs.filter((club) => club.userFollows == this.club_filter_value && club.tag === this.tag_filter_value);
-                this.updateNumberOfClubsDisplaying();
-            } else {
-                this.getClubs();
-                this.updateNumberOfClubsDisplaying();
-            }
+            this.getClubs();
         },
         filterPosts() {
             this.getPosts();
@@ -72,6 +54,10 @@ const vueinst = Vue.createApp({
             // This will be an Ajax call to get the correct posts corresponding to the club
             this.filterPosts();
             this.getUsers();
+            if (this.user_id === "") {
+                const filter = document.querySelector("#tags");
+                filter.remove();
+            }
             window.scroll(0,0);
         },
         getPosts() {
@@ -161,19 +147,20 @@ const vueinst = Vue.createApp({
             this.post_content = "";
         },
         getClubs() {
-            this.clubs = clubs.map((v) => ({ ...v, isExpanded: false, userFollows: true }));
-
             function uniqueClubTags(tag, index, array) {
                 return array.indexOf(tag) === index;
             }
 
-            this.clubTags = this.clubs.map((item) => {
-                let club = item;
-                return club.tag;
-            });
+            let req = new XMLHttpRequest();
 
-            this.clubTags = this.clubTags.filter(uniqueClubTags);
-            this.updateNumberOfClubsDisplaying();
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    vueinst.clubs = JSON.parse(req.responseText);
+                    vueinst.numberOfClubsDisplaying = JSON.parse(req.responseText).length;
+                }
+            };
+            req.open('GET',`/clubs?tag=${vueinst.tag_filter_value}&club=${vueinst.club_filter_value}`);
+            req.send();
         },
         rsvp(id, rsvp_number) {
             if (vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].rsvp === rsvp_number) {
@@ -237,8 +224,8 @@ const vueinst = Vue.createApp({
                 if(req.readyState === 4 && req.status === 200){
                     vueinst.user_id = req.responseText;
                     if (req.responseText === "") {
-                        const filter = document.querySelector("#tags");
-                        filter.remove();
+                        const club_filter = document.querySelector("#club-filter");
+                        club_filter.remove();
 
                         const profile = document.querySelector("#profile-nav");
                         profile.remove();
@@ -263,7 +250,27 @@ const vueinst = Vue.createApp({
         }
     },
     mounted() {
-        this.getClubs();
+        function uniqueClubTags(tag, index, array) {
+            return array.indexOf(tag) === index;
+        }
+
+        let req = new XMLHttpRequest();
+
+        req.onreadystatechange = function(){
+            if(req.readyState === 4 && req.status === 200){
+                vueinst.clubs = JSON.parse(req.responseText);
+                vueinst.numberOfClubsDisplaying = JSON.parse(req.responseText).length;
+
+                vueinst.clubTags = JSON.parse(req.responseText).map((item) => {
+                    let club = item;
+                    return club.club_tag;
+                });
+
+                vueinst.clubTags = vueinst.clubTags.filter(uniqueClubTags);
+            }
+        };
+        req.open('GET',`/clubs?tag=&club=`);
+        req.send();
         this.getUserInfo();
     }
 }).mount("#app");
