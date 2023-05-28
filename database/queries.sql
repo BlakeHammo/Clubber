@@ -223,7 +223,7 @@ INSERT INTO Posts (
     "Movie Night",
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
     "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-    "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
+    "Thu May 28 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
     "Cinema",
     "event",
     "private",
@@ -243,7 +243,7 @@ INSERT INTO Posts (
     "Pub Night",
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
     "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-    "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
+    "2024-05-24T09:31:15.168Z",
     "Inside",
     "event",
     "public",
@@ -289,9 +289,31 @@ INSERT INTO Rsvps (
 INSERT INTO Club_members (
     club_id,
     user_id,
-    date_joined
+    date_joined,
+    club_manager
 ) Values (
     1,
     1,
+    "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
+    1
+);
+
+INSERT INTO Club_members (
+    club_id,
+    user_id,
+    date_joined
+) Values (
+    2,
+    1,
+    "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)"
+);
+
+INSERT INTO Club_members (
+    club_id,
+    user_id,
+    date_joined
+) Values (
+    1,
+    2,
     "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)"
 );

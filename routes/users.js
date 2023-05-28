@@ -18,7 +18,6 @@ router.get("/info", function(req, res, next) {
 });
 
 router.get("/info/club-manager", function(req, res, next) {
-  let response = false;
   if ('user_id' in req.session) {
     if (req.query.club_id !== "" && req.query.club_id !== -1) {
       req.pool.getConnection(function(cerr, connection) {
@@ -27,7 +26,7 @@ router.get("/info/club-manager", function(req, res, next) {
           return;
         }
 
-        const query = `SELECT Club_members.club_manager FROM Club_members
+        const query = `SELECT Club_members.* FROM Club_members
         WHERE Club_members.user_id = ? AND Club_members.club_id = ?;`;
 
         connection.query(query, [req.session.user_id, req.query.club_id], function(qerr, rows, fields) {
@@ -38,21 +37,18 @@ router.get("/info/club-manager", function(req, res, next) {
             res.sendStatus(500);
             return;
           }
-
-          if (rows !== null) {
-            response = true;
+          if (rows.length === 1) {
+            res.send(true);
+          } else {
+            res.send(false);
           }
         });
       });
-     }
-
+    }
+  } else {
+    res.send(false);
   }
-  res.send(response);
 });
-
-
-
-
 
 /* The below are for users that have an account, thus we will block access if they are not a user with an account */
 router.use('/', function(req, res, next) {

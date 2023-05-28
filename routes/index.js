@@ -78,7 +78,7 @@ router.post("/posts", function(req, res, next) {
 
     let query = "";
     let user_id = -1;
-    if (!('club_page' in req.body)) {
+    if (!('club_page' in req.body) && !('event_page' in req.body)) {
       if ('user_id' in req.session) {
         query = `SELECT Posts.*, Clubs.id AS club_id, Clubs.club_name, Clubs.club_color, Rsvps.rsvp, Posts_viewed.user_id AS Post_viewed FROM Posts
         INNER JOIN Clubs ON Posts.club_id = Clubs.id
@@ -94,6 +94,25 @@ router.post("/posts", function(req, res, next) {
         LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}
         ORDER BY Posts.id DESC`;
       }
+    }
+
+
+
+    if ('user_id' in req.session && 'event_page' in req.body) {
+      query = `SELECT Posts.*, Clubs.id AS club_id, Clubs.club_name, Clubs.club_color, Rsvps.rsvp, Posts_viewed.user_id AS Post_viewed FROM Posts
+      INNER JOIN Clubs ON Posts.club_id = Clubs.id
+      INNER JOIN Rsvps ON Posts.id = Rsvps.post_id AND Rsvps.user_id = ?
+      LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}
+      AND Posts.event_date_time > NOW()
+      ORDER BY Posts.event_date_time`;
+      user_id = req.session.user_id;
+    } else if (!('user_id' in req.session) && 'event_page' in req.body) {
+      query = `SELECT Posts.*, Clubs.id AS club_id, Clubs.club_name, Clubs.club_color, Rsvps.rsvp, Posts_viewed.user_id AS Post_viewed FROM Posts
+      INNER JOIN Clubs ON Posts.club_id = Clubs.id
+      LEFT JOIN Rsvps ON Posts.id = Rsvps.post_id AND Rsvps.user_id = ?
+      LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}
+      AND Posts.event_date_time > NOW()
+      ORDER BY Posts.event_date_time`;
     }
 
     if ('club_page' in req.body) {
@@ -115,6 +134,7 @@ router.post("/posts", function(req, res, next) {
 
     connection.query(query, [user_id, user_id, user_id], function(qerr, rows, fields) {
       connection.release();
+
 
       if (qerr) {
         res.sendStatus(500);

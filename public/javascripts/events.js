@@ -19,7 +19,8 @@ const vueinst = Vue.createApp({
             const requestData = {
                 club_id: this.club_filter_value,
                 tag: "event",
-                event_type: this.tag_filter_value
+                event_type: this.tag_filter_value,
+                event_page: true
             };
 
             let req = new XMLHttpRequest();

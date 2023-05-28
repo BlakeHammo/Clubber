@@ -297,8 +297,9 @@ const vueinst = Vue.createApp({
             req.onreadystatechange = function(){
                 if(req.readyState === 4 && req.status === 200){
                     const result = req.responseText;
-
+                    console.log(result);
                     if (result === "false") {
+                        console.log("Here");
                         const club_manager_options = document.querySelector(".club-manager-options");
                         club_manager_options.remove();
 
@@ -307,6 +308,8 @@ const vueinst = Vue.createApp({
                             button.remove();
                         }
                         vueinst.club_manager = false;
+                    } else {
+                        vueinst.club_manager = true;
                     }
                 }
             };
