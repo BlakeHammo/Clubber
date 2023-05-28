@@ -184,7 +184,7 @@
                                 </button>
                             </div>
                             <p v-bind:class="['post-content', {'post-content-hidden': !(post.isExpanded)}]">{{post.content}}</p>
-                            <button v-if="post.tag === 'event'" type="button" class="view-rsvps-button" v-on:click="getRsvps(post.id); show_rsvps = true" title="View who has rsvp'd to this event">
+                            <button v-if="post.tag === 'event' && club_manager" type="button" class="view-rsvps-button" v-on:click="getRsvps(post.id); show_rsvps = true" title="View who has rsvp'd to this event">
                                 <svg width="1rem" height="1rem" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                     <g id="Page-1" stroke="none" stroke-width="1" fill="#ffffff" fill-rule="evenodd">
                                         <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -2159.000000)" fill="#ffffff">

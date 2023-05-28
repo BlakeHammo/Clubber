@@ -25,6 +25,7 @@ const vueinst = Vue.createApp({
             unreadPostImage: "./images/unread.svg",
             unreadPostHoverImage: "./images/mark_as_read.svg",
             clubs_obtained: false,
+            club_manager: false,
             // The following capture info for post creation
             show_post_creation: false,
             post_creation_type: "",
@@ -58,6 +59,7 @@ const vueinst = Vue.createApp({
                 filter.remove();
             }
             window.scroll(0,0);
+            this.checkClubManager();
         },
         getPosts() {
             const requestData = {
@@ -286,7 +288,29 @@ const vueinst = Vue.createApp({
                     }
                 }
             };
-            req.open('GET','/users/info');
+            req.open('GET',`/users/info`);
+            req.send();
+        },
+        checkClubManager() {
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    const result = req.responseText;
+
+                    if (result === "false") {
+                        const club_manager_options = document.querySelector(".club-manager-options");
+                        club_manager_options.remove();
+
+                        const rsvp_buttons = document.querySelectorAll(".view-rsvps-button");
+                        for (const button of rsvp_buttons) {
+                            button.remove();
+                        }
+                        vueinst.club_manager = false;
+                    }
+                }
+            };
+            req.open('GET',`/users/info/club-manager?club_id=${this.viewing_club}`);
             req.send();
         }
     },
