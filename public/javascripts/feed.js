@@ -25,7 +25,21 @@ const vueinst = Vue.createApp({
 
             req.onreadystatechange = function(){
                 if(req.readyState === 4 && req.status === 200){
-                    vueinst.posts = JSON.parse(req.responseText);
+                    vueinst.posts = JSON.parse(req.responseText).map((item) => {
+                        let post = item;
+
+                        const formatter = new Intl.DateTimeFormat(navigator.language, {
+                            dateStyle: "short",
+                            timeStyle: "short"
+                        });
+
+                        post.creation_date_time = formatter.format(new Date(post.creation_date_time));
+                        if (post.tag === 'event') {
+                            post.event_date_time = formatter.format(new Date(post.event_date_time));
+                        }
+
+                        return post;
+                    });
                     vueinst.numberOfPostsDisplaying = JSON.parse(req.responseText).length;
 
                     if (!vueinst.clubs_obtained) {

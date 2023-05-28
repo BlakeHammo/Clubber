@@ -53,7 +53,6 @@ const vueinst = Vue.createApp({
             document.getElementById("clubs-nav").classList.remove("current-page");
             // This will be an Ajax call to get the correct posts corresponding to the club
             this.filterPosts();
-            this.getUsers();
             if (this.user_id === "") {
                 const filter = document.querySelector("#tags");
                 filter.remove();
@@ -72,7 +71,21 @@ const vueinst = Vue.createApp({
 
             req.onreadystatechange = function(){
                 if(req.readyState === 4 && req.status === 200){
-                    vueinst.posts = JSON.parse(req.responseText);
+                    vueinst.posts = JSON.parse(req.responseText).map((item) => {
+                        let post = item;
+
+                        const formatter = new Intl.DateTimeFormat(navigator.language, {
+                            dateStyle: "short",
+                            timeStyle: "short"
+                        });
+
+                        post.creation_date_time = formatter.format(new Date(post.creation_date_time));
+                        if (post.tag === 'event') {
+                            post.event_date_time = formatter.format(new Date(post.event_date_time));
+                        }
+
+                        return post;
+                    });
                     vueinst.numberOfPostsDisplaying = JSON.parse(req.responseText).length;
 
                     if (!vueinst.clubs_obtained) {
@@ -147,10 +160,6 @@ const vueinst = Vue.createApp({
             this.post_content = "";
         },
         getClubs() {
-            function uniqueClubTags(tag, index, array) {
-                return array.indexOf(tag) === index;
-            }
-
             let req = new XMLHttpRequest();
 
             req.onreadystatechange = function(){
@@ -207,15 +216,47 @@ const vueinst = Vue.createApp({
             req.setRequestHeader('Content-Type','application/json');
             req.send(JSON.stringify(requestData));
         },
-        getUsers() {
-            // When fully implemented will only get this specific club's users
-            this.users = users;
-            this.users = this.users.map((item) => {
-                let user = item;
+        getClubMembers() {
+            let req = new XMLHttpRequest();
 
-                user.dateJoined = new Date(user.dateJoined).toLocaleString();
-                return user;
-            });
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    vueinst.users = JSON.parse(req.responseText).map((item) => {
+                        let user = item;
+                        const formatter = new Intl.DateTimeFormat(navigator.language, {
+                            dateStyle: "short",
+                            timeStyle: "short"
+                        });
+
+                        user.date_joined = formatter.format(new Date(user.date_joined));
+
+                        return user;
+                    });
+                }
+            };
+            req.open('GET',`/users/clubs/members?id=${vueinst.viewing_club}`);
+            req.send();
+        },
+        getRsvps(id) {
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    vueinst.users = JSON.parse(req.responseText).map((item) => {
+                        let user = item;
+                        const formatter = new Intl.DateTimeFormat(navigator.language, {
+                            dateStyle: "short",
+                            timeStyle: "short"
+                        });
+
+                        user.date_responded = formatter.format(new Date(user.date_responded));
+
+                        return user;
+                    });
+                }
+            };
+            req.open('GET',`/users/posts/rsvp-users?id=${id}`);
+            req.send();
         },
         getUserInfo() {
             let req = new XMLHttpRequest();

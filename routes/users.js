@@ -77,9 +77,53 @@ router.post("/posts/create", function(req, res, next) {
 });
 
 router.get("/posts/rsvp-users", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
 
+    const query = `SELECT Users.username, Rsvps.date_responded FROM Rsvps
+    INNER JOIN Users ON
+    Users.id = Rsvps.user_id
+    WHERE post_id = ? AND rsvp = 2;`;
+
+    connection.query(query, [req.query.id], function(qerr, rows, fields) {
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      let users = rows;
+      res.json(users);
+    });
+  });
 });
 
 router.get("/clubs/members", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
 
+    const query = `SELECT Users.username, Club_members.date_joined FROM Club_members
+    INNER JOIN Users ON
+    Users.id = Club_members.user_id
+    WHERE club_id = ?;`;
+
+    connection.query(query, [req.query.id], function(qerr, rows, fields) {
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      let users = rows;
+      res.json(users);
+    });
+  });
 });

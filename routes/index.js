@@ -84,13 +84,15 @@ router.post("/posts", function(req, res, next) {
         INNER JOIN Clubs ON Posts.club_id = Clubs.id
         INNER JOIN Club_members ON Club_members.club_id = Clubs.id AND Club_members.user_id = ?
         LEFT JOIN Rsvps ON Posts.id = Rsvps.post_id AND Rsvps.user_id = ?
-        LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}`;
+        LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}
+        ORDER BY Posts.id DESC`;
         user_id = req.session.user_id;
       } else {
         query = `SELECT Posts.*, Clubs.id AS club_id, Clubs.club_name, Clubs.club_color, Rsvps.rsvp, Posts_viewed.user_id AS Post_viewed FROM Posts
         INNER JOIN Clubs ON Posts.club_id = Clubs.id
         LEFT JOIN Rsvps ON Posts.id = Rsvps.post_id AND Rsvps.user_id = ?
-        LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}`;
+        LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}
+        ORDER BY Posts.id DESC`;
       }
     }
 
@@ -99,13 +101,15 @@ router.post("/posts", function(req, res, next) {
         query = `SELECT Posts.*, Clubs.id AS club_id, Clubs.club_name, Clubs.club_color, Rsvps.rsvp, Posts_viewed.user_id AS Post_viewed FROM Posts
         INNER JOIN Clubs ON Posts.club_id = Clubs.id
         LEFT JOIN Rsvps ON Posts.id = Rsvps.post_id AND Rsvps.user_id = ?
-        LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}`;
+        LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}
+        ORDER BY Posts.id DESC`;
         user_id = req.session.user_id;
       } else {
         query = `SELECT Posts.*, Clubs.id AS club_id, Clubs.club_name, Clubs.club_color, Rsvps.rsvp, Posts_viewed.user_id AS Post_viewed FROM Posts
         INNER JOIN Clubs ON Posts.club_id = Clubs.id
         LEFT JOIN Rsvps ON Posts.id = Rsvps.post_id AND Rsvps.user_id = ?
-        LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}`;
+        LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id AND Posts_viewed.user_id = ? ${filter}
+        ORDER BY Posts.id DESC`;
       }
     }
 
@@ -124,16 +128,6 @@ router.post("/posts", function(req, res, next) {
       } else {
         posts = posts.map((v) => ({ ...v, isExpanded: false, isHovered: false, notUser: false }));
       }
-      posts = posts.map((item) => {
-        let post = item;
-
-        post.creation_date_time = new Date(post.creation_date_time).toLocaleString();
-        if (post.tag === 'event') {
-            post.event_date_time = new Date(post.event_date_time).toLocaleString();
-        }
-
-        return post;
-      });
 
       res.json(posts);
     });
@@ -173,8 +167,6 @@ router.get("/clubs", function(req, res, next) {
     LEFT JOIN Club_members
     ON Clubs.id = Club_members.club_id${filter}
     GROUP BY Clubs.id;`;
-
-    console.log(query);
 
     connection.query(query, function(qerr, rows, fields) {
       connection.release();

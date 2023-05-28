@@ -70,7 +70,7 @@
                             <button type="button" id="add-club-button" v-on:click="show_post_creation = true" title="Create a post/event">
                                 <i class="fa fa-plus fa-regular" style="padding-right: 0;"></i><span class="hide-text">Create a post/event</span>
                             </button>
-                            <button type="button" id="view-members-button" v-on:click="show_club_members = true" title="View club members">
+                            <button type="button" id="view-members-button" v-on:click="getClubMembers(); show_club_members = true" title="View club members">
                                 <svg width="1rem" height="1rem" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                     <g id="Page-1" stroke="none" stroke-width="1" fill="#ffffff" fill-rule="evenodd">
                                         <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -2159.000000)" fill="#ffffff">
@@ -130,7 +130,7 @@
                                 <tbody v-for="user in users">
                                     <tr>
                                         <td>{{user.username}}</td>
-                                        <td>{{user.dateJoined}}</td>
+                                        <td>{{user.date_joined}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -151,7 +151,7 @@
                                 <tbody v-for="user in users">
                                     <tr>
                                         <td>{{user.username}}</td>
-                                        <td>{{user.dateJoined}}</td>
+                                        <td>{{user.date_responded}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -184,7 +184,7 @@
                                 </button>
                             </div>
                             <p v-bind:class="['post-content', {'post-content-hidden': !(post.isExpanded)}]">{{post.content}}</p>
-                            <button v-if="post.tag === 'event'" type="button" class="view-rsvps-button" v-on:click="show_rsvps = true" title="View who has rsvp'd to this event">
+                            <button v-if="post.tag === 'event'" type="button" class="view-rsvps-button" v-on:click="getRsvps(post.id); show_rsvps = true" title="View who has rsvp'd to this event">
                                 <svg width="1rem" height="1rem" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                     <g id="Page-1" stroke="none" stroke-width="1" fill="#ffffff" fill-rule="evenodd">
                                         <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -2159.000000)" fill="#ffffff">
