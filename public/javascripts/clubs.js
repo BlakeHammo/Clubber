@@ -114,45 +114,42 @@ const vueinst = Vue.createApp({
             req.send(JSON.stringify(requestData));
         },
         createPost() {
+            let post = "";
             if (this.post_creation_type === "post") {
-                const post = {
+                post = {
                         clubId: this.viewing_club,
-                        clubName: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].name,
-                        clubColor: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].color,
-                        postId: posts.length + 1,
-                        creationDate: String(new Date().toLocaleString()),
                         eventDate: null,
                         location: null,
                         title: this.title,
                         tag: this.post_creation_type,
                         type: this.post_type,
-                        content: this.post_content,
-                        eventResponse: null,
-                        userRead: false
+                        content: this.post_content
                 };
-                posts.unshift(post);
-
             } else {
-                const event = {
+                post = {
                         clubId: this.viewing_club,
-                        clubName: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].name,
-                        clubColor: this.clubs[this.clubs.findIndex((x) => x.id === this.viewing_club)].color,
-                        postId: posts.length + 1,
-                        creationDate: String(new Date().toLocaleString()),
                         eventDate: String(new Date(this.eventDate).toLocaleString()),
                         location: this.location,
                         title: this.title,
                         tag: this.post_creation_type,
                         type: this.post_type,
-                        content: this.post_content,
-                        eventResponse: -1,
-                        userRead: false
+                        content: this.post_content
                 };
-                posts.unshift(event);
             }
+
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    /* */
+                }
+            };
+            req.open('POST','/users/posts/create');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(post));
+
             this.show_post_creation = false;
 
-            // Need to make an Ajax POST
             this.filterPosts();
             this.eventDate = "";
             this.location = "";

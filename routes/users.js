@@ -107,7 +107,25 @@ router.post("/posts/mark-as-read", function(req, res, next) {
 /* Will have a block if requestor is not a club admin */
 
 router.post("/posts/create", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
 
+    let query = `INSERT INTO Posts (title, content, event_date_time, event_location, tag, event_type, club_id) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+    connection.query(query, [req.body.title, req.body.content, req.body.eventDate, req.body.location, req.body.tag, req.body.type, req.body.clubId], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+      res.send();
+    });
+  });
 });
 
 router.get("/posts/rsvp-users", function(req, res, next) {
