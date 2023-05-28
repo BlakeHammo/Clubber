@@ -33,7 +33,6 @@ router.post('/login', function(req,res,next)
 
 });
 
-
 router.post("/posts", function(req, res, next) {
   req.pool.getConnection(function(cerr, connection) {
     if (cerr) {
@@ -176,19 +175,19 @@ router.get("/clubs", function(req, res, next) {
           filter += " WHERE";
         }
         if (Number(req.query.club) === 1) {
-          filter += ` Club_members.user_id = ${req.session.user_id}`;
+          filter += ` Clubs.club_name IN (SELECT Clubs.club_name FROM Clubs LEFT JOIN Club_members ON Clubs.id = Club_members.club_id WHERE Club_members.user_id = ?)`;
         } else if (Number(req.query.club) === 0) {
-          filter += ` Club_members.user_id != ${req.session.user_id} OR Club_members.user_id IS NULL`;
+          filter += ` Clubs.club_name NOT IN (SELECT Clubs.club_name FROM Clubs LEFT JOIN Club_members ON Clubs.id = Club_members.club_id WHERE Club_members.user_id = ?)`;
         }
       }
     }
 
     let query = `SELECT Clubs.*, COUNT(Club_members.club_id) AS followers FROM Clubs
     LEFT JOIN Club_members
-    ON Clubs.id = Club_members.club_id${filter}
+    ON Clubs.id = Club_members.club_id ${filter}
     GROUP BY Clubs.id;`;
 
-    connection.query(query, function(qerr, rows, fields) {
+    connection.query(query, [req.session.user_id], function(qerr, rows, fields) {
       connection.release();
 
       if (qerr) {

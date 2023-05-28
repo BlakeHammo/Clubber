@@ -27,7 +27,7 @@ router.get("/info/club-manager", function(req, res, next) {
         }
 
         const query = `SELECT Club_members.* FROM Club_members
-        WHERE Club_members.user_id = ? AND Club_members.club_id = ?;`;
+        WHERE Club_members.user_id = ? AND Club_members.club_id = ? AND Club_members.club_manager = 1;`;
 
         connection.query(query, [req.session.user_id, req.query.club_id], function(qerr, rows, fields) {
 
