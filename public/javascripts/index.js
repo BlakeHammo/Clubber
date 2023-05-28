@@ -39,3 +39,40 @@ function login(event)
     xhttp.setRequestHeader('Content-Type','application/json');
     xhttp.send(JSON.stringify(userData));
 }
+
+function signup()
+{
+
+    var xhttp = new XMLHttpRequest();
+    let password = document.getElementById('password-creation');
+    let repeatPassword = document.getElementById('password-repeat');
+
+
+    if(password.value !== repeatPassword.value)
+    {
+        alert("Passwords don't match, please try again");
+        return;
+    }
+
+    //create JSON payload
+    let userData ={
+        email: document.getElementById('email').value,
+        username: document.getElementById('username-creation').value,
+        password: password.value
+    };
+
+    xhttp.onreadystatechange = function()
+    {
+        if(xhttp.readyState === 4 && xhttp.status === 200)
+        {
+            alert('Account Created');
+        } else if(xhttp.readyState === 4 && xhttp.status === 401)
+        {
+           alert('Account Creation Failed');
+        }
+    };
+
+    xhttp.open('POST', '/signup');
+    xhttp.setRequestHeader('Content-Type','application/json');
+    xhttp.send(JSON.stringify(userData));
+}

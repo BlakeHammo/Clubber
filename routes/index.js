@@ -6,14 +6,21 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+// redirect user to homepage if they make a request to this path after they have created an account
+router.post('/accountCreationComplete',function(req, res, next)
+{
+  res.redirect("/index.html"); // bring user back to sign-in page
+});
+
 router.post('/login', function(req,res,next)
 {
-  if('username' in req.body && 'password' in req.body) //check if username and password variable exist in req.body
+  if('username' in req.body && 'password' in req.body) // check if username and password variable exist in req.body
   {
-    let pool = req.pool; //easy variable to query directly from req.pool connection pool
+    let pool = req.pool; // easy variable to query directly from req.pool connection pool
     let query = "SELECT id,username,email,passwords,profile_pic_path FROM Users WHERE username = ? AND passwords = ?";
 
-    pool.query(query, [req.body.username, req.body.password], function(err, result, fields) //query with prepared statements using username and password sent from client
+    // query with prepared statements using username and password sent from client
+    pool.query(query, [req.body.username, req.body.password], function(err, result, fields)
     {
       if(err)
       {
@@ -24,11 +31,11 @@ router.post('/login', function(req,res,next)
 
       console.log(JSON.stringify(result));
 
-      //if result from query (returned as an array) is > 0 (it exists)
+      // if result from query (returned as an array) is > 0 (it exists)
       if(result.length > 0)
       {
-        req.session.username = result[0].username; //attach username to the session.username variable
-        req.session.user_id = result[0].id; //attachk id to user_id session variable
+        req.session.username = result[0].username; // attach username to the session.username variable
+        req.session.user_id = result[0].id; // attachk id to user_id session variable
 
         console.log('login successful for: ' + req.body.username + " " + req.session.user_id);
 
@@ -40,7 +47,15 @@ router.post('/login', function(req,res,next)
       }
     });
   }
+});
 
+router.post("/signup", function(req, res, next)
+{
+  if('username' in req.body && 'password' in req.body && 'email' in req.body)
+  {
+    console.log('signup payload object recieved from ' + req.body.username + " " + req.body.email);
+    res.end();
+  }
 });
 
 router.post("/posts", function(req, res, next) {
