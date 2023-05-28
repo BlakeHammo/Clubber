@@ -59,7 +59,7 @@ const vueinst = Vue.createApp({
                 filter.remove();
             }
             window.scroll(0,0);
-            this.checkClubManager();
+            this.checkClubManagerAndMember();
         },
         getPosts() {
             const requestData = {
@@ -113,7 +113,7 @@ const vueinst = Vue.createApp({
             req.setRequestHeader('Content-Type','application/json');
             req.send(JSON.stringify(requestData));
         },
-        createPost() {
+        async createPost() {
             let post = "";
             if (this.post_creation_type === "post") {
                 post = {
@@ -128,7 +128,7 @@ const vueinst = Vue.createApp({
             } else {
                 post = {
                         clubId: this.viewing_club,
-                        eventDate: String(new Date(this.eventDate).toLocaleString()),
+                        eventDate: new Date(this.eventDate).toISOString(),
                         location: this.location,
                         title: this.title,
                         tag: this.post_creation_type,
@@ -139,7 +139,7 @@ const vueinst = Vue.createApp({
 
             let req = new XMLHttpRequest();
 
-            req.onreadystatechange = function(){
+            req.onreadystatechange = await function(){
                 if(req.readyState === 4 && req.status === 200){
                     /* */
                 }
@@ -149,14 +149,13 @@ const vueinst = Vue.createApp({
             req.send(JSON.stringify(post));
 
             this.show_post_creation = false;
-
-            this.filterPosts();
             this.eventDate = "";
             this.location = "";
             this.title = "";
             this.post_creation_type = "";
             this.post_type = "";
             this.post_content = "";
+            this.filterPosts();
         },
         getClubs() {
             let req = new XMLHttpRequest();
@@ -288,30 +287,67 @@ const vueinst = Vue.createApp({
             req.open('GET',`/users/info`);
             req.send();
         },
-        checkClubManager() {
+        checkClubManagerAndMember() {
             let req = new XMLHttpRequest();
 
             req.onreadystatechange = function(){
                 if(req.readyState === 4 && req.status === 200){
                     const result = req.responseText;
-                    console.log(result);
-                    if (result === "false") {
-                        console.log("Here");
-                        const club_manager_options = document.querySelector(".club-manager-options");
-                        club_manager_options.remove();
+                    if (result === "Neither") {
+                        const club_manager_add = document.querySelector("#add-club-button");
+                        club_manager_add.remove();
+
+                        const club_manager_view = document.querySelector("#view-members-button");
+                        club_manager_view.remove();
 
                         const rsvp_buttons = document.querySelectorAll(".view-rsvps-button");
                         for (const button of rsvp_buttons) {
                             button.remove();
                         }
                         vueinst.club_manager = false;
-                    } else {
+                    } else if(result === "Member" || result === "Public") {
+                        const club_manager_add = document.querySelector("#add-club-button");
+                        club_manager_add.remove();
+
+                        const club_manager_view = document.querySelector("#view-members-button");
+                        club_manager_view.remove();
+
+                        const rsvp_buttons = document.querySelectorAll(".view-rsvps-button");
+                        for (const button of rsvp_buttons) {
+                            button.remove();
+                        }
+
+                        const join_club = document.querySelector("#join-club-button");
+                        join_club.remove();
+                        vueinst.club_manager = false;
+                    } else if (result === "Both") {
+                        const join_club = document.querySelector("#join-club-button");
+                        join_club.remove();
                         vueinst.club_manager = true;
                     }
                 }
             };
             req.open('GET',`/users/info/club-manager?club_id=${this.viewing_club}`);
             req.send();
+        },
+        joinClub() {
+            let request = {
+                club_id: this.viewing_club
+            };
+
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    /* */
+                }
+            };
+            req.open('POST','/users/clubs/join');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(request));
+
+            const join_club = document.querySelector("#join-club-button");
+            join_club.remove();
         }
     },
     mounted() {

@@ -83,6 +83,9 @@
                                 </svg>
                                 <span class="hide-text"> View members</span>
                             </button>
+                            <button type="button" id="join-club-button" v-on:click="joinClub()" title="Join this club">
+                                <i class="fa fa-plus fa-regular" style="padding-right: 0;"></i><span class="hide-text"> Join Club</span>
+                            </button>
                         </div>
                     </div>
                     <div class="modal" v-if="show_post_creation">

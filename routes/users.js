@@ -27,7 +27,7 @@ router.get("/info/club-manager", function(req, res, next) {
         }
 
         const query = `SELECT Club_members.* FROM Club_members
-        WHERE Club_members.user_id = ? AND Club_members.club_id = ? AND Club_members.club_manager = 1;`;
+        WHERE Club_members.user_id = ? AND Club_members.club_id = ?;`;
 
         connection.query(query, [req.session.user_id, req.query.club_id], function(qerr, rows, fields) {
 
@@ -37,16 +37,18 @@ router.get("/info/club-manager", function(req, res, next) {
             res.sendStatus(500);
             return;
           }
-          if (rows.length === 1) {
-            res.send(true);
+          if (rows.length === 1 && rows[0].club_manager === 1) {
+            res.send("Both");
+          } else if(rows.length === 1) {
+            res.send("Member");
           } else {
-            res.send(false);
+            res.send("Neither");
           }
         });
       });
     }
   } else {
-    res.send(false);
+    res.send("Public");
   }
 });
 
@@ -57,6 +59,28 @@ router.use('/', function(req, res, next) {
   } else {
     next();
   }
+});
+
+router.post("/clubs/join", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    let query = `INSERT INTO Club_members (club_id, user_id, date_joined) VALUES (?, ?, NOW())`;
+
+    connection.query(query, [req.body.club_id, req.session.user_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+      res.send();
+    });
+  });
 });
 
 router.post("/posts/rsvp", function(req, res, next) {

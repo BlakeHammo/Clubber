@@ -95,8 +95,6 @@ router.post("/posts", function(req, res, next) {
       }
     }
 
-
-
     if ('user_id' in req.session && 'event_page' in req.body) {
       query = `SELECT Posts.*, Clubs.id AS club_id, Clubs.club_name, Clubs.club_color, Rsvps.rsvp, Posts_viewed.user_id AS Post_viewed FROM Posts
       INNER JOIN Clubs ON Posts.club_id = Clubs.id
