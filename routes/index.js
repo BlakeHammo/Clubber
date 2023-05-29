@@ -51,10 +51,40 @@ router.post('/login', function(req,res,next)
 
 router.post("/signup", function(req, res, next)
 {
-  if('username' in req.body && 'password' in req.body && 'email' in req.body)
+  if('username' in req.body && 'password' in req.body && 'email' in req.body) // check if these three fields exist in req body
   {
     console.log('signup payload object recieved from ' + req.body.username + " " + req.body.email);
-    res.end();
+
+    let pool = req.pool;
+    // query used to insert username, email and password into database
+    let query = `INSERT INTO Users (
+                    first_name,
+                    last_name,
+                    username,
+                    email,
+                    passwords
+                ) VALUES (
+                    NULL,
+                    NULL,
+                    ?,
+                    ?,
+                    ?
+                );`;
+
+    pool.query(query, [req.body.username, req.body.email, req.body.password], function(err, result, fields)
+    {
+      if(err)
+      {
+        console.error('Error executing query:', err);
+        res.sendStatus(500);
+        return;
+      }
+      res.end();
+    });
+  }
+  else
+  {
+    res.sendStatus(401);
   }
 });
 
