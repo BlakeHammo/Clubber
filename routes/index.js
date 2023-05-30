@@ -6,31 +6,86 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-
-//temporary test "database" for user accounts - eventually store on db and use query
-let users = {
-  guy: { password: 'abcd', user_id: 1 },
-  lad: { password: 'xyz' , user_id: 2 },
-  peter: { password: 'hello', user_id: 3 }
-};
+// redirect user to homepage if they make a request to this path after they have created an account
+router.post('/accountCreationComplete',function(req, res, next)
+{
+  res.redirect("/index.html"); // bring user back to sign-in page
+});
 
 router.post('/login', function(req,res,next)
 {
-
-  if (req.body.username in users && req.body.password === users[req.body.username].password)
+  if('username' in req.body && 'password' in req.body) // check if username and password variable exist in req.body
   {
-    req.session.username = req.body.username; //link the clients session.username to the username sent from the login() post request
+    let pool = req.pool; // easy variable to query directly from req.pool connection pool
+    let query = "SELECT id,username,email,passwords,profile_pic_path FROM Users WHERE username = ? AND passwords = ?";
 
-    req.session.user_id = users[req.body.username].user_id; //link the req.session.user_id property to the user's id (above in the users array)
+    // query with prepared statements using username and password sent from client
+    pool.query(query, [req.body.username, req.body.password], function(err, result, fields)
+    {
+      if(err)
+      {
+        console.error('Error executing query:', err);
+        res.sendStatus(500);
+        return;
+      }
 
-    console.log('login successful for: ' + req.body.username + " " + req.session.user_id);
-    res.sendStatus(200);
+      console.log(JSON.stringify(result));
+
+      // if result from query (returned as an array) is > 0 (it exists)
+      if(result.length > 0)
+      {
+        req.session.username = result[0].username; // attach username to the session.username variable
+        req.session.user_id = result[0].id; // attachk id to user_id session variable
+
+        console.log('login successful for: ' + req.body.username + " " + req.session.user_id);
+
+        res.sendStatus(200);
+      }
+      else
+      {
+        res.sendStatus(401);
+      }
+    });
+  }
+});
+
+router.post("/signup", function(req, res, next)
+{
+  if('username' in req.body && 'password' in req.body && 'email' in req.body) // check if these three fields exist in req body
+  {
+    console.log('signup payload object recieved from ' + req.body.username + " " + req.body.email);
+
+    let pool = req.pool;
+    // query used to insert username, email and password into database
+    let query = `INSERT INTO Users (
+                    first_name,
+                    last_name,
+                    username,
+                    email,
+                    passwords
+                ) VALUES (
+                    NULL,
+                    NULL,
+                    ?,
+                    ?,
+                    ?
+                );`;
+
+    pool.query(query, [req.body.username, req.body.email, req.body.password], function(err, result, fields)
+    {
+      if(err)
+      {
+        console.error('Error executing query:', err);
+        res.sendStatus(500);
+        return;
+      }
+      res.end();
+    });
   }
   else
   {
     res.sendStatus(401);
   }
-
 });
 
 router.post("/posts", function(req, res, next) {
