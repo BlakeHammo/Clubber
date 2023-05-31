@@ -88,6 +88,21 @@ router.post("/signup", function(req, res, next)
   }
 });
 
+//delete a user's user_id from the session token to log them out
+router.post('/logout', function (req, res, next)
+{
+  if ('user_id' in req.session)
+  {
+      console.log("deleting user_id: " + req.session.user_id);
+      delete req.session.user_id;
+      console.log("logout successful for " + req.session.username);
+      res.end();
+  } else
+  {
+      res.sendStatus(403);
+  }
+});
+
 router.post("/posts", function(req, res, next) {
   req.pool.getConnection(function(cerr, connection) {
     if (cerr) {
