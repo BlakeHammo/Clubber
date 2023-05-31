@@ -77,6 +77,9 @@ router.post('/login', async function(req,res,next)
           /*
             !!!!!!!! NOTE, currently using sub as their password so someone else can't just use the
             traditional login with a gmail and no password to access someone elses account
+
+            Also using nested callback functions here (the getInfoQuery is nested inside the insertQuery)
+            this is so the getInfoQuery will only execute AFTER the insertQuery is done inserting the user info into the database
           */
             pool.query(insertQuery, [payload['email'], payload['sub']], function(err, result, fields)
             {
@@ -86,11 +89,32 @@ router.post('/login', async function(req,res,next)
                 res.sendStatus(500);
                 return;
               }
-              res.end();
+              let getInfoQuery = "SELECT id,username,email,passwords,profile_pic_path FROM Users WHERE email = ?";
+
+              //now after creating entry for first time google sign in user, must attach info to their session token
+              pool.query(getInfoQuery, [payload['email']], function(qerr, row, fields)
+              {
+                if(qerr)
+                {
+                    console.error('Error executing query:', qerr);
+                    res.sendStatus(500);
+                    return;
+                }
+                console.log('Email:', payload['email']);
+                console.log('ADDING NEWLY ADDED GOOGLE USERS INFO TO SESSION');
+                console.log('Row Length:', row.length);
+                console.log('Row:', row);
+                [req.session.user] = row; // using array destructuring to save all the user info to this "user variable"
+                req.session.username = row[0].username; // attach username to the session.username variable
+                req.session.user_id = row[0].id; // attachk id to user_id session variable
+                console.log(req.session.user_id);
+                res.sendStatus(200);
+              });
             });
         }
       });
-  /*----------------------------------------------------------- */
+  // traditional login
+  /*-----------------------------------------------------------*/
   }
   else if('username' in req.body && 'password' in req.body) // check if username and password variable exist in req.body
   {
