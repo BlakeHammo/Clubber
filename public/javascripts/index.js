@@ -76,3 +76,25 @@ function signup()
     xhttp.setRequestHeader('Content-Type','application/json');
     xhttp.send(JSON.stringify(userData));
 }
+
+function google_login(response)
+{
+    var xhttp = new XMLHttpRequest();
+
+    console.log(response);
+
+    xhttp.onreadystatechange = function() {
+        if(xhttp.readyState === 4 && xhttp.status === 200)
+        {
+            alert('successful google login');
+            window.location.href = '/feed.html'; // Redirect to feed.html
+        } else if(xhttp.readyState === 4 && xhttp.status === 401)
+        {
+           alert('unsucessful login');
+        }
+    };
+
+    xhttp.open('POST', '/login');
+    xhttp.setRequestHeader('Content-Type','application/json');
+    xhttp.send(JSON.stringify(response));
+}

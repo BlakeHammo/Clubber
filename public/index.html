@@ -6,6 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="./stylesheets/style.css" />
         <link rel="icon" href="./images/icon.png" />
+
+        <script src="https://accounts.google.com/gsi/client" async defer></script> <!--GOOGLE SIGN IN-->
+
         <script src="./javascripts/index.js" defer></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <title>CLUBER</title>
@@ -18,7 +21,25 @@
             </header>
             <div id="main-body">
                 <main id="login">
-                    <h2>GOOGLE</h2>
+                    <!--GOOGLE SIGN IN BUTTON-->
+                    <div id="g_id_onload"
+                        data-client_id="526111756235-7mr4l5b07tn1snd0ahl1l768c4kf51cm.apps.googleusercontent.com"
+                        data-context="signin"
+                        data-ux_mode="popup"
+                        data-callback="google_login"
+                        data-auto_prompt="false">
+                    </div>
+                    <div class="g_id_signin-container">
+                        <div class="g_id_signin"
+                        data-type="standard"
+                        data-shape="rectangular"
+                        data-theme="outline"
+                        data-text="signin_with"
+                        data-size="large"
+                        data-logo_alignment="left">
+                        </div>
+                    </div>
+                    <!--GOOGLE SIGN IN BUTTON-->
                     <br />
                     <div class="divider"></div>
                     <h4>OR</h4>
