@@ -310,13 +310,19 @@ const vueinst = Vue.createApp({
                         for (const button of rsvp_buttons) {
                             button.remove();
                         }
-
-                        const join_club = document.querySelector("#join-club-button");
-                        join_club.remove();
                         vueinst.club_manager = false;
+                        const join_club = document.querySelector("#join-club-button");
+
+                        if (result === "Member") {
+                            join_club.style.display = "none";
+                            document.querySelector("#leave-club-button").style.display = "block";
+                        } else {
+                            join_club.remove();
+                        }
                     } else if (result === "Both") {
                         const join_club = document.querySelector("#join-club-button");
-                        join_club.remove();
+                        join_club.style.display = "none";
+                        document.querySelector("#leave-club-button").style.display = "block";
                         vueinst.club_manager = true;
                     }
                 }
@@ -325,9 +331,26 @@ const vueinst = Vue.createApp({
             req.send();
         },
         joinClub() {
+
             let request = {
                 club_id: this.viewing_club
             };
+
+            const join_club = document.querySelector("#join-club-button");
+
+            if (join_club.style.display !== "none") {
+                request.join = true;
+                join_club.style.display = "none";
+                document.querySelector("#leave-club-button").style.display = "block";
+            } else {
+                request.join = false;
+                document.querySelector("#leave-club-button").style.display = "none";
+                join_club.style.display = "block";
+                if (vueinst.club_manager) {
+                    join_club.querySelector("#add-club-button").remove();
+                    join_club.querySelector("#view-members-button").remove();
+                }
+            }
 
             let req = new XMLHttpRequest();
 
@@ -339,9 +362,6 @@ const vueinst = Vue.createApp({
             req.open('POST','/users/clubs/join');
             req.setRequestHeader('Content-Type','application/json');
             req.send(JSON.stringify(request));
-
-            const join_club = document.querySelector("#join-club-button");
-            join_club.remove();
         }
     },
     mounted() {

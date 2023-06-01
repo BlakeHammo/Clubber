@@ -624,6 +624,17 @@ nav a:hover {
 	height: 56px;
 }
 
+#leave-club-button {
+	background-color: red;
+	color: white;
+	font-size: medium;
+	padding: 16px 16px;
+	margin-bottom: 16px;
+	border-radius: 16px;
+	border: 0px;
+	height: 56px;
+}
+
 .view-rsvps-button, .view-club-button {
 	margin: auto;
 	display: block;
@@ -646,6 +657,12 @@ nav a:hover {
 .view-club-button:hover,
 .view-club-button:focus {
 	background-color: #3e8e41;
+	cursor: pointer;
+}
+
+#leave-club-button:hover,
+#leave-club-button:focus {
+	background-color: rgb(177, 34, 34);
 	cursor: pointer;
 }
 
@@ -931,7 +948,8 @@ table th {
 
 .club-manager-options button {
 	margin: 2%;
-	width: 60px;
+	min-width: 60px;
+	width: fit-content;
 }
 
 @media (min-width: 600px) {
