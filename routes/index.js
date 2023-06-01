@@ -68,20 +68,23 @@ router.post('/login', async function(req,res,next)
                               email,
                               passwords
                             ) VALUES (
-                              NULL,
-                              NULL,
-                              NULL,
+                              ?,
+                              ?,
+                              ?,
                               ?,
                               ?
                           );`;
           /*
-            !!!!!!!! NOTE, currently using sub as their password so someone else can't just use the
+            !!!!!!!! NOTE, currently using 'sub' from payload as their password so someone else can't just use the
             traditional login with a gmail and no password to access someone elses account
+
+            ALSO Inserting user's first name, last name, username (their first name be default), and email from credential response
+           from google's payload
 
             Also using nested callback functions here (the getInfoQuery is nested inside the insertQuery)
             this is so the getInfoQuery will only execute AFTER the insertQuery is done inserting the user info into the database
           */
-            pool.query(insertQuery, [payload['email'], payload['sub']], function(err, result, fields)
+            pool.query(insertQuery, [payload['given_name'], payload['family_name'],payload['given_name'],payload['email'], payload['sub']], function(err, result, fields)
             {
               if(err)
               {
