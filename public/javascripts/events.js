@@ -114,6 +114,9 @@ const vueinst = Vue.createApp({
             req.open('POST','/users/posts/mark-as-read');
             req.setRequestHeader('Content-Type','application/json');
             req.send(JSON.stringify(requestData));
+
+            const notificationBadge = document.querySelector("#notifications");
+            notificationBadge.innerText = Number(notificationBadge.innerText) - 1;
         },
         getUserInfo() {
             let req = new XMLHttpRequest();

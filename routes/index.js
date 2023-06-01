@@ -203,6 +203,9 @@ router.post("/posts", function(req, res, next) {
       }
 
       function oldPosts(post) {
+        if (post.Post_viewed === 1) {
+          return;
+        }
         if (((new Date()) - (new Date(post.creation_date_time))) / (24 * 60 * 60 * 1000) >= 7) {
           post.Post_viewed = 1;
         }
@@ -278,10 +281,11 @@ router.get("/posts/unread", function(req, res, next) {
         return;
       }
 
-      let query = `SELECT COUNT(Posts_viewed.user_id) AS count FROM Posts_viewed
-      INNER JOIN Posts ON Posts.id = Posts_viewed.post_id
-      WHERE Posts.creation_date_time BETWEEN date_sub(NOW(),INTERVAL 1 WEEK) AND NOW()
-      AND Posts_viewed.user_id = ?;`;
+      let query = `SELECT COUNT(Posts.id) AS count FROM Posts
+      INNER JOIN Clubs ON Posts.club_id = Clubs.id
+      INNER JOIN Club_members ON Club_members.club_id = Clubs.id AND Club_members.user_id = ?
+      LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id
+      WHERE Posts_viewed.user_id IS NULL AND Posts.creation_date_time BETWEEN date_sub(NOW(),INTERVAL 1 WEEK) AND NOW();`;
 
       connection.query(query, [req.session.user_id], function(qerr, rows, fields) {
 
