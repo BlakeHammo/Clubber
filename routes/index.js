@@ -233,6 +233,7 @@ router.get("/clubs", function(req, res, next) {
       let tag_added = false;
       if (req.query.tag !== "") {
         filter += ` WHERE Clubs.club_tag = '${req.query.tag}'`;
+        tag_added = true;
       }
 
       if (req.query.club !== "") {
