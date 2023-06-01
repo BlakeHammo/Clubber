@@ -1,4 +1,5 @@
 var express = require('express');
+const PoolCluster = require('mysql/lib/PoolCluster');
 var router = express.Router();
 
 /* GET home page. */
@@ -199,6 +200,16 @@ router.post("/posts", function(req, res, next) {
         posts = posts.map((v) => ({ ...v, notUser: true, isExpanded: false, isHovered: false, Post_viewed: 1}));
       } else {
         posts = posts.map((v) => ({ ...v, isExpanded: false, isHovered: false, notUser: false }));
+      }
+
+      function oldPosts(post) {
+        if (((new Date()) - (new Date(post.creation_date_time))) / (24 * 60 * 60 * 1000) >= 7) {
+          post.Post_viewed = 1;
+        }
+      }
+
+      if ('user_id' in req.session) {
+        posts.forEach(oldPosts);
       }
 
       res.json(posts);
