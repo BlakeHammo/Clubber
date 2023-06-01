@@ -13,32 +13,23 @@ const vueinst = new Vue({
 });
 
 // In menu shows number of unread posts
-let unreadPosts = 100;
-
 function updateNotificationBadge() {
-    const notificationBadge = document.querySelector("#notifications");
-    notificationBadge.innerText = unreadPosts < 100 ? unreadPosts : "99+";
+    let req = new XMLHttpRequest();
+
+    req.onreadystatechange = function(){
+        if(req.readyState === 4 && req.status === 200){
+            const notificationBadge = document.querySelector("#notifications");
+            notificationBadge.innerText = req.responseText;
+        }
+    };
+    req.open('GET',`/posts/unread`);
+    req.send();
 }
-if (window.location.pathname !== "/index.html" && window.location.pathname !== "/") {
-    updateNotificationBadge();
-}
+
+updateNotificationBadge();
 
 // Marks the current link page as active
-if (window.location.pathname === "/clubs.html") {
-    document.getElementById("clubs-nav").className = "current-page";
-} else if (window.location.pathname === "/feed.html") {
-    document.getElementById("feed-nav").className = "current-page";
-} else if (window.location.pathname === "/events.html") {
-    document.getElementById("events-nav").className = "current-page";
-} else if (window.location.pathname === "/profile.html") {
-    document.getElementById("profile-nav").className = "current-page";
-} else if (window.location.pathname === "/notifications.html") {
-    document.getElementById("notifications-nav").className = "current-page";
-} else if (window.location.pathname === "/manage-users.html") {
-    document.getElementById("manage-users-nav").className = "current-page";
-} else if (window.location.pathname === "/manage-clubs.html") {
-    document.getElementById("manage-clubs-nav").className = "current-page";
-}
+document.getElementById("profile-nav").className = "current-page";
 
 // Hamburger Menu Behaviour
 
@@ -60,7 +51,5 @@ function toggleMenuOff() {
     document.body.classList.remove("stop-scrolling");
 }
 
-if (window.location.pathname !== "/index.html" && window.location.pathname !== "/") {
-    hamburger.addEventListener("click", toggleMenuOn, false);
-    exit.addEventListener("click", toggleMenuOff, false);
-}
+hamburger.addEventListener("click", toggleMenuOn, false);
+exit.addEventListener("click", toggleMenuOff, false);

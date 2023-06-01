@@ -367,6 +367,7 @@ nav a:hover {
 	background-color: var(--primary_text_color) !important;
 	color: var(--primary_header_color) !important;
 	cursor: default;
+	pointer-events: none;
 }
 
 .current-page #clubs-icon g,

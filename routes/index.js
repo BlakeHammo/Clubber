@@ -268,4 +268,40 @@ router.get("/clubs", function(req, res, next) {
   });
 });
 
+router.get("/posts/unread", function(req, res, next) {
+  if (!('user_id' in req.session)) {
+    res.send("?");
+  } else {
+    req.pool.getConnection(function(cerr, connection) {
+      if (cerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      let query = `SELECT COUNT(Posts_viewed.user_id) AS count FROM Posts_viewed
+      INNER JOIN Posts ON Posts.id = Posts_viewed.post_id
+      WHERE Posts.creation_date_time BETWEEN date_sub(NOW(),INTERVAL 1 WEEK) AND NOW()
+      AND Posts_viewed.user_id = ?;`;
+
+      connection.query(query, [req.session.user_id], function(qerr, rows, fields) {
+
+        connection.release();
+
+        if (qerr) {
+          res.sendStatus(500);
+          return;
+        }
+
+        let number = `${rows[0].count}`;
+
+        if (rows[0].count > 99) {
+          number = "99+";
+        }
+
+        res.send(number);
+      });
+    });
+  }
+});
+
 module.exports = router;
