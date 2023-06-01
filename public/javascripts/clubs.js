@@ -347,8 +347,8 @@ const vueinst = Vue.createApp({
                 document.querySelector("#leave-club-button").style.display = "none";
                 join_club.style.display = "block";
                 if (vueinst.club_manager) {
-                    join_club.querySelector("#add-club-button").remove();
-                    join_club.querySelector("#view-members-button").remove();
+                    document.querySelector("#add-club-button").remove();
+                    document.querySelector("#view-members-button").remove();
                 }
             }
 
