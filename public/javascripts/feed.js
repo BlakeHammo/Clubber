@@ -144,7 +144,7 @@ const vueinst = Vue.createApp({
     },
     mounted() {
         this.getPosts();
-        this.getUserInfo();
+        this.getUserInfo(); //NOTE to self this mounted hook is used to call this ajax function from this vue instance start up
     }
 }).mount("#app");
 
@@ -213,4 +213,25 @@ function updateNotificationBadge() {
 }
 if (window.location.pathname !== "/index.html" && window.location.pathname !== "/") {
     updateNotificationBadge();
+}
+
+//logout AJAX function called when user clicks logout button (implemented in the nav.js folder for feed.html)
+function logout()
+{
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function()
+    {
+        if(xhttp.readyState === 4 && xhttp.status === 200)
+        {
+            alert('Logged Out');
+            console.log("logged out");
+        } else if(xhttp.readyState === 4 && xhttp.status === 403)
+        {
+            alert('Not logged in');
+        }
+    };
+    xhttp.open('POST','/logout');
+    xhttp.send();
 }

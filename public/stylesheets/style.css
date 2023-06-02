@@ -1033,3 +1033,15 @@ table th {
 .profile-text-padding {
 	padding-left: 7px;
 }
+
+/*Styles for google sign in button*/
+.g_id_signin-container
+{
+	display: flex;
+	justify-content: center;
+}
+
+.g_id_signin
+{
+	padding-top: 12px;
+}
