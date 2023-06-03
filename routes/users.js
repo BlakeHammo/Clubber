@@ -61,6 +61,29 @@ router.use('/', function(req, res, next) {
   }
 });
 
+router.get("/profile", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    let query = `SELECT first_name, last_name, username, email, phone_number FROM Users WHERE id = ?`;
+
+    connection.query(query, [req.session.user_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      res.json(rows);
+    });
+  });
+});
+
 
 router.post("/profile/edit", function(req, res, next) {
   req.pool.getConnection(function(cerr, connection) {

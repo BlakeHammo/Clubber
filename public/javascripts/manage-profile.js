@@ -30,7 +30,28 @@ const vueinst = new Vue({
             req.open('POST','/users/profile/edit');
             req.setRequestHeader('Content-Type','application/json');
             req.send(JSON.stringify(request));
+        },
+        fetchProfileData() {
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function() {
+                if(req.readyState === 4 && req.status === 200){
+                    const response = JSON.parse(req.responseText);
+                    this.username = response.username;
+                    this.first_name = response.first_name;
+                    this.last_name = response.last_name;
+                    this.email = response.email;
+                    this.phone = response.phone;
+                }
+            };
+
+            req.open('GET', '/users/profile', true);
+            req.send();
+
         }
+    },
+    created() {
+        this.fetchProfileData();
     }
 });
 
