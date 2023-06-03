@@ -9,6 +9,28 @@ const vueinst = new Vue({
         image: '/images/icon.png',
         edit_profile: false,
         profile_page: true
+    },
+    methods: {
+        editProfile() {
+            let request = {
+                username: this.username,
+                first_name: this.first_name,
+                last_name: this.last_name,
+                email: this.email,
+                phone_number: this.phone
+            };
+
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    /* */
+                }
+            };
+            req.open('POST','/users/profile/edit');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(request));
+        }
     }
 });
 

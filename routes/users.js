@@ -61,6 +61,30 @@ router.use('/', function(req, res, next) {
   }
 });
 
+
+router.post("/profile/edit", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    let query = `UPDATE Users SET first_name = ?, last_name = ?, username = ?, email = ?, phone_number = ? WHERE id = ?`
+
+    connection.query(query, [req.body.first_name, req.body.last_name, req.body.username, req.body.email, req.body.phone_number, req.session.user_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+      res.send();
+    });
+  });
+});
+
+
 router.post("/clubs/join", function(req, res, next) {
   req.pool.getConnection(function(cerr, connection) {
     if (cerr) {

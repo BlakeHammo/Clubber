@@ -21,7 +21,7 @@
                 <main>
                     <h1 class="page-title">My Profile</h1>
                     <div class="button-div">
-                        <button v-on:click="edit_profile = !edit_profile" type="button" class="edit-profile-button">
+                        <button v-on:click="edit_profile ? editProfile() : edit_profile = !edit_profile" type="button" class="edit-profile-button">
                             {{ edit_profile ? 'Save Profile' : 'Edit Profile'}}
                         </button>
                     </div>
