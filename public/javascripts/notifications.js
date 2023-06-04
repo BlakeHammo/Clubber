@@ -11,7 +11,30 @@ const vueinst = Vue.createApp({
         };
     },
     methods: {
+        updateNotification(club_id) {
+            const post_setting = document.querySelector(`#a${club_id} .post-setting input`);
+            const event_setting = document.querySelector(`#a${club_id} .event-setting input`);
 
+            let notification_setting = 0;
+
+            if (post_setting.checked) {
+                notification_setting += 1;
+            }
+
+            if (event_setting.checked) {
+                notification_setting += 1;
+            }
+
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    /* */
+                }
+            };
+            req.open('POST',`/users/notifications/update?club_id=${club_id}&notification_setting=${notification_setting}`);
+            req.send();
+        }
     },
     mounted() {
         let req = new XMLHttpRequest();
@@ -22,7 +45,7 @@ const vueinst = Vue.createApp({
                 vueinst.numberOfClubsDisplaying = JSON.parse(req.responseText).length;
             }
         };
-        req.open('GET',`/clubs?tag=&club=`);
+        req.open('GET',`/users/notifications`);
         req.send();
     }
 }).mount("#app");

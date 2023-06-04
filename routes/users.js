@@ -134,6 +134,59 @@ router.post("/posts/mark-as-read", function(req, res, next) {
   });
 });
 
+router.get("/notifications", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    const query = `SELECT Clubs.id, Clubs.club_name, Notification.notification_setting FROM Clubs
+    INNER JOIN Notification ON Notification.club_id = Clubs.id AND Notification.user_id = ?;`;
+
+    connection.query(query, [req.session.user_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      res.send(rows);
+    });
+  });
+});
+
+router.post("/notifications/update", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    let query = "";
+
+    if (req.query.notification_setting === 0) {
+      query = `DELETE FROM Notification WHERE user_id = ${req.session.user_id} AND club_id = ${req.query.club_id};`;
+    } else {
+      query = `INSERT INTO Notification (user_id, club_id, notification_setting) VALUES(${req.session.user_id}, ${req.query.club_id}, ${req.query.notification_setting}) ON DUPLICATE KEY UPDATE notification_setting = ${req.query.notification_setting}`
+    }
+
+    connection.query(query, function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      res.send();
+    });
+  });
+});
+
 /* Will have a block if requestor is not a club admin */
 
 router.post("/posts/create", function(req, res, next) {
