@@ -188,7 +188,10 @@ router.get('/users', function(req, res, next) {
             return;
         }
 
-        let query = "SELECT * FROM Users;";
+        let query = "SELECT id, username, first_name AS firstName, last_name AS lastName, email, phone_number AS phoneNumber, "
+        + "system_administrator AS isAdmin, MAX(club_manager) as isClubManager "
+        + "FROM Users u LEFT JOIN Club_members cm ON (u.id = cm.user_id) "
+        + "GROUP BY u.id;";
 
         connection.query(query, [], function(qerr, rows, fields) {
             connection.release();
@@ -200,6 +203,57 @@ router.get('/users', function(req, res, next) {
 
             res.send(JSON.stringify(rows));
         });
+    });
+});
+
+router.delete('/users/:user_id', function(req, res, next) {
+    req.pool.getConnection(function(cerr, connection) {
+        if (cerr) {
+            res.sendStatus(500);
+            return;
+        }
+
+        let query = "DELETE FROM Users WHERE id = ?;";
+
+        connection.query(query, [req.params.user_id], function(qerr, rows, fields) {
+            connection.release();
+
+            if (qerr) {
+                res.sendStatus(500);
+                return;
+            }
+
+            res.sendStatus(200);
+        });
+    });
+});
+
+router.post('/users/:user_id', function(req, res, next) {
+    req.pool.getConnection(function(cerr, connection) {
+        if (cerr) {
+            res.sendStatus(500);
+            return;
+        }
+
+        let query = "UPDATE Users SET username = ?, first_name = ?, last_name = ?, email = ?, phone_number = ?, system_administrator = ? "
+        + "WHERE id = ?;";
+
+        connection.query(
+            query,
+            [req.body.username, req.body.first_name, req.body.last_name,
+                req.body.email, req.body.phone_number, req.body.is_admin, req.params.user_id],
+            function(qerr, rows, fields) {
+
+                connection.release();
+
+                if (qerr) {
+                    res.sendStatus(500);
+                    return;
+                }
+
+                res.sendStatus(200);
+            }
+        );
     });
 });
 
