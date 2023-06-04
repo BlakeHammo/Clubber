@@ -9,12 +9,18 @@ router.get('/', function(req, res, next) {
 module.exports = router;
 
 router.get("/info", function(req, res, next) {
-  let response = "";
+  let response = {
+    user_id: "",
+    is_admin: false
+  };
   if ('user_id' in req.session) {
-    response = req.session.user_id;
+    response = {
+      user_id: req.session.user_id,
+      is_admin: req.session.user.system_administrator
+    };
   }
 
-  res.send(`${response}`);
+  res.json(response);
 });
 
 router.get("/info/club-manager", function(req, res, next) {

@@ -41,7 +41,7 @@ router.post('/login', async function(req,res,next)
       // const domain = payload['hd'];
 
       //check if this user has logged into cluber with google sign in API before
-      let query = "SELECT id,username,email,passwords,profile_pic_path FROM Users WHERE email = ?";
+      let query = "SELECT id,username,email,passwords,profile_pic_path,system_administrator FROM Users WHERE email = ?";
 
       pool.query(query, [payload['email']], function(cerr, result, fields)
       {
@@ -92,7 +92,7 @@ router.post('/login', async function(req,res,next)
                 res.sendStatus(500);
                 return;
               }
-              let getInfoQuery = "SELECT id,username,email,passwords,profile_pic_path FROM Users WHERE email = ?";
+              let getInfoQuery = "SELECT id,username,email,passwords,profile_pic_path,system_administrator FROM Users WHERE email = ?";
 
               //now after creating entry for first time google sign in user, must attach info to their session token
               pool.query(getInfoQuery, [payload['email']], function(qerr, row, fields)
@@ -121,7 +121,7 @@ router.post('/login', async function(req,res,next)
   }
   else if('username' in req.body && 'password' in req.body) // check if username and password variable exist in req.body
   {
-    let query = "SELECT id,username,email,profile_pic_path FROM Users WHERE username = ? AND passwords = ?";
+    let query = "SELECT id,username,email,profile_pic_path,system_administrator FROM Users WHERE username = ? AND passwords = ?";
 
     // query with prepared statements using username and password sent from client
     pool.query(query, [req.body.username, req.body.password], function(err, result, fields)

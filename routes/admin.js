@@ -1,9 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
-/* TODO: check if user is admin */
 router.use('/', function(req, res, next) {
-    next();
+    if (!(req.session.user.system_administrator)){
+        res.sendStatus(403);
+    } else {
+        next();
+    }
 });
 
 router.get('/clubs/:club_id/club-managers', function(req, res, next) {
