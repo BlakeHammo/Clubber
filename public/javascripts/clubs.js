@@ -28,6 +28,7 @@ const vueinst = Vue.createApp({
             // The following will reveal club members
             show_club_members: false,
             users: [],
+            numberOfUsersDisplaying: 0,
             // The following will show rsvps for certain events
             show_rsvps: false,
             // Misc
@@ -224,6 +225,7 @@ const vueinst = Vue.createApp({
 
                         return user;
                     });
+                    vueinst.numberOfUsersDisplaying = JSON.parse(req.responseText).length;
                 }
             };
             req.open('GET',`/users/clubs/members?id=${vueinst.viewing_club}`);
@@ -245,6 +247,7 @@ const vueinst = Vue.createApp({
 
                         return user;
                     });
+                    vueinst.numberOfUsersDisplaying = JSON.parse(req.responseText).length;
                 }
             };
             req.open('GET',`/users/posts/rsvp-users?id=${id}`);
@@ -362,6 +365,18 @@ const vueinst = Vue.createApp({
             req.open('POST','/users/clubs/join');
             req.setRequestHeader('Content-Type','application/json');
             req.send(JSON.stringify(request));
+
+            if (!request.join) {
+                let req2 = new XMLHttpRequest();
+
+                req2.onreadystatechange = function(){
+                    if(req2.readyState === 4 && req2.status === 200){
+                        /* */
+                    }
+                };
+                req2.open('POST',`/users/notifications/update?club_id=${this.viewing_club}&notification_setting=0`);
+                req2.send();
+            }
         }
     },
     mounted() {

@@ -19,7 +19,12 @@
             <div id="main-body">
                 <nav-component></nav-component>
                 <main>
-                    <section id="posts">
+                    <div v-if="!numberOfClubsDisplaying" class="no-content">
+                        <p>
+                            You are not following any Clubs!
+                        </p>
+                    </div>
+                    <section id="posts" v-else>
                         <table style="border: 0px solid black;">
                             <tr>
                                 <td>

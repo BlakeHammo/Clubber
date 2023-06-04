@@ -73,7 +73,7 @@ router.post("/clubs/join", function(req, res, next) {
     if (req.body.join) {
       query = `INSERT INTO Club_members (club_id, user_id, date_joined) VALUES (?, ?, NOW())`;
     } else {
-      query = `DELETE FROM Club_members WHERE user_id = ${req.session.user_id}`;
+      query = `DELETE FROM Club_members WHERE user_id = ${req.session.user_id} AND club_id = ?`;
     }
 
     connection.query(query, [req.body.club_id, req.session.user_id], function(qerr, rows, fields) {
