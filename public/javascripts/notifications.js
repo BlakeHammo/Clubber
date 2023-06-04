@@ -29,6 +29,8 @@ const vueinst = Vue.createApp({
                 }
             } else if (vueinst.notifications_enabled) {
                 return;
+            } else {
+                vueinst.clubs = vueinst.clubs.map((v) => ({ ...v, post_enabled: false, event_enabled: false}));
             }
 
             let req = new XMLHttpRequest();
