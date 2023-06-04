@@ -141,8 +141,9 @@ router.get("/notifications", function(req, res, next) {
       return;
     }
 
-    const query = `SELECT Clubs.id, Clubs.club_name, Notification.notification_setting FROM Clubs
-    INNER JOIN Notification ON Notification.club_id = Clubs.id AND Notification.user_id = ?;`;
+    const query = `SELECT Clubs.id, Clubs.club_name, Notification.notification_setting FROM Club_members
+    INNER JOIN Clubs ON Club_members.club_id = Clubs.id
+    LEFT JOIN Notification ON Notification.club_id = Clubs.id WHERE Club_members.user_id = ?;`;
 
     connection.query(query, [req.session.user_id], function(qerr, rows, fields) {
 
@@ -167,10 +168,12 @@ router.post("/notifications/update", function(req, res, next) {
 
     let query = "";
 
-    if (req.query.notification_setting === 0) {
+    if (Number(req.query.notification_setting) === 0) {
       query = `DELETE FROM Notification WHERE user_id = ${req.session.user_id} AND club_id = ${req.query.club_id};`;
+    } else if (Number(req.query.club_id) !== -1) {
+      query = `INSERT INTO Notification (user_id, club_id, notification_setting) VALUES(${req.session.user_id}, ${req.query.club_id}, ${req.query.notification_setting}) ON DUPLICATE KEY UPDATE notification_setting = ${req.query.notification_setting}`;
     } else {
-      query = `INSERT INTO Notification (user_id, club_id, notification_setting) VALUES(${req.session.user_id}, ${req.query.club_id}, ${req.query.notification_setting}) ON DUPLICATE KEY UPDATE notification_setting = ${req.query.notification_setting}`
+      query = `DELETE FROM Notification WHERE user_id = ${req.session.user_id};`;
     }
 
     connection.query(query, function(qerr, rows, fields) {

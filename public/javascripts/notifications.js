@@ -12,17 +12,23 @@ const vueinst = Vue.createApp({
     },
     methods: {
         updateNotification(club_id) {
-            const post_setting = document.querySelector(`#a${club_id} .post-setting input`);
-            const event_setting = document.querySelector(`#a${club_id} .event-setting input`);
+            let notification_setting = -1;
 
-            let notification_setting = 0;
+            if (club_id !== -1) {
+                const post_setting = document.querySelector(`#a${club_id} .post-setting input`);
+                const event_setting = document.querySelector(`#a${club_id} .event-setting input`);
 
-            if (post_setting.checked) {
-                notification_setting += 1;
-            }
+                notification_setting = 0;
 
-            if (event_setting.checked) {
-                notification_setting += 1;
+                if (post_setting.checked && !event_setting.checked) {
+                    notification_setting = 1;
+                } else if (!post_setting.checked && event_setting.checked) {
+                    notification_setting = 2;
+                } else if (post_setting.checked && event_setting.checked) {
+                    notification_setting = 3;
+                }
+            } else if (vueinst.notifications_enabled) {
+                return;
             }
 
             let req = new XMLHttpRequest();
@@ -37,12 +43,35 @@ const vueinst = Vue.createApp({
         }
     },
     mounted() {
+        function setNotificationValue(club) {
+            if (Number(club.notification_setting) == 1) {
+                club.post_enabled = true;
+                club.event_enabled = false;
+                vueinst.notifications_enabled = true;
+            } else if (Number(club.notification_setting) == 2) {
+                club.post_enabled = false;
+                club.event_enabled = true;
+                vueinst.notifications_enabled = true;
+            } else if (Number(club.notification_setting) == 3) {
+                club.post_enabled = true;
+                club.event_enabled = true;
+                vueinst.notifications_enabled = true;
+            } else {
+                club.post_enabled = false;
+                club.event_enabled = false;
+            }
+        }
+
         let req = new XMLHttpRequest();
 
         req.onreadystatechange = function(){
             if(req.readyState === 4 && req.status === 200){
-                vueinst.clubs = JSON.parse(req.responseText);
+                let clubs_initial = JSON.parse(req.responseText);
                 vueinst.numberOfClubsDisplaying = JSON.parse(req.responseText).length;
+
+                clubs_initial.forEach(setNotificationValue);
+
+                vueinst.clubs = clubs_initial;
             }
         };
         req.open('GET',`/users/notifications`);

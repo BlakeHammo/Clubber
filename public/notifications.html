@@ -27,7 +27,7 @@
                                 </td>
                                 <td>
                                     <label class="switch">
-                                        <input type="checkbox" v-model="notifications_enabled">
+                                        <input type="checkbox" v-model="notifications_enabled" v-on:change="updateNotification(-1)">
                                         <span class="slider round"></span>
                                     </label>
                                 </td>
@@ -42,11 +42,11 @@
                             <tr v-for="club in clubs" v-bind:id="'a'+club.id">
                                 <td>{{club.club_name}}</td>
                                 <td class="post-setting"><label class="switch">
-                                    <input type="checkbox" v-on:change="updateNotification(club.id)">
+                                    <input type="checkbox" v-on:change="updateNotification(club.id)" v-model="club.post_enabled">
                                     <span class="slider round"></span>
                                 </label></td>
                                 <td class="event-setting"><label class="switch">
-                                    <input type="checkbox" v-on:change="updateNotification(club.id)">
+                                    <input type="checkbox" v-on:change="updateNotification(club.id)" v-model="club.event_enabled">
                                     <span class="slider round"></span>
                                 </label></td>
                             </tr>
