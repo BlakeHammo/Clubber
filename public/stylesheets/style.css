@@ -1054,6 +1054,18 @@ table th {
 	padding-left: 7px;
 }
 
+/*Styles for google sign in button*/
+.g_id_signin-container
+{
+	display: flex;
+	justify-content: center;
+}
+
+.g_id_signin
+{
+	padding-top: 12px;
+}
+
 /* Notification page toggles */
 
 /* The switch - the box around the slider */
