@@ -144,7 +144,6 @@ const vueinst = Vue.createApp({
             this.eventDate = "";
             this.location = "";
             this.title = "";
-            this.post_creation_type = "";
             this.post_type = "";
             this.post_content = "";
 
@@ -169,7 +168,8 @@ const vueinst = Vue.createApp({
             let email = {
                 tag: this.post_creation_type,
                 title: `(Cluber) ${this.viewing_club_name} - ${this.title}`,
-                content: emailContent
+                content: emailContent,
+                club_id: this.viewing_club
             };
 
             req2.onreadystatechange = await function(){
@@ -177,9 +177,11 @@ const vueinst = Vue.createApp({
                     /* */
                 }
             };
-            req2.open('POST','/notifications/send');
+            req2.open('POST','/users/notifications/send');
             req2.setRequestHeader('Content-Type','application/json');
             req2.send(JSON.stringify(email));
+
+            this.post_creation_type = "";
 
             this.filterPosts();
         },

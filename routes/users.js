@@ -9,6 +9,9 @@ const transporter = nodemailer.createTransport({
   auth: {
       user: 'ike88@ethereal.email',
       pass: 'enDbPF1FrRWbXFAFmT'
+  },
+  tls: {
+    rejectUnauthorized: false
   }
 });
 
@@ -204,21 +207,69 @@ router.post("/notifications/update", function(req, res, next) {
 /* Will have a block if requestor is not a club admin */
 
 router.post("/notifications/send", function(req, res, next) {
+  let recipients = [];
+  let query = ``;
   if (req.body.tag === 'post') {
-    let info = transporter.sendMail({
-      from: 'ike88@ethereal.email',
-      to: req.session.email,
-      subject: req.body.title,
-      html: req.body.content
-    });
+    query = `SELECT Users.email FROM Users
+    INNER JOIN Club_members ON Club_members.user_id = Users.id
+    INNER JOIN Notification ON Notification.user_id = Club_members.user_id
+    INNER JOIN Clubs ON Clubs.id = Club_members.club_id
+    WHERE Clubs.id = ? AND Notification.notification_setting IN (1, 3);`;
   } else {
-    let info = transporter.sendMail({
-      from: 'ike88@ethereal.email',
-      to: req.session.email,
-      subject: req.body.title,
-      html: req.body.content
-    });
+    query = `SELECT Users.email FROM Users
+    INNER JOIN Club_members ON Club_members.user_id = Users.id
+    INNER JOIN Notification ON Notification.user_id = Club_members.user_id
+    INNER JOIN Clubs ON Clubs.id = Club_members.club_id
+    WHERE Clubs.id = ? AND Notification.notification_setting IN (2, 3);`;
   }
+
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    connection.query(query, [req.body.club_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      recipients = rows.map((a) => a.email);
+
+      if (req.body.tag === 'post') {
+        console.log(recipients);
+        let mailContent = {
+          from: 'ike88@ethereal.email',
+          to: recipients,
+          subject: req.body.title,
+          html: req.body.content
+        };
+        transporter.sendMail(mailContent, function (err, info) {
+        if(err)
+          console.log(err);
+        else
+          console.log(info);
+        });
+      } else {
+        let mailContent = {
+          from: 'ike88@ethereal.email',
+          to: recipients,
+          subject: req.body.title,
+          html: req.body.content
+        };
+        transporter.sendMail(mailContent, function (err, info) {
+        if(err)
+          console.log(err);
+        else
+          console.log(info);
+        });
+      }
+    });
+  });
   res.send();
 });
 

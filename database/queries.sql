@@ -301,13 +301,3 @@ INSERT INTO Club_members (
     2,
     "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)"
 );
-
-INSERT INTO Notification (
-    club_id,
-    user_id,
-    notification_setting
-) Values (
-    1,
-    1,
-    1
-);
