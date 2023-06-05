@@ -56,7 +56,8 @@ router.post('/login', async function(req,res,next)
           console.log('google user already exists');
           [req.session.user] = result; // using array destructuring to save all the user info to this "user variable"
           req.session.username = result[0].username; // attach username to the session.username variable
-          req.session.user_id = result[0].id; // attachk id to user_id session variable
+          req.session.user_id = result[0].id; // attach id to user_id session variable
+          req.session.email = result[0].email;
           res.sendStatus(200);
         }
         else // if is no user with that username, add them to the database since they are already verified with google (essentially sign up)

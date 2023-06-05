@@ -46,15 +46,15 @@ const vueinst = Vue.createApp({
     },
     mounted() {
         function setNotificationValue(club) {
-            if (Number(club.notification_setting) == 1) {
+            if (Number(club.notification_setting) === 1) {
                 club.post_enabled = true;
                 club.event_enabled = false;
                 vueinst.notifications_enabled = true;
-            } else if (Number(club.notification_setting) == 2) {
+            } else if (Number(club.notification_setting) === 2) {
                 club.post_enabled = false;
                 club.event_enabled = true;
                 vueinst.notifications_enabled = true;
-            } else if (Number(club.notification_setting) == 3) {
+            } else if (Number(club.notification_setting) === 3) {
                 club.post_enabled = true;
                 club.event_enabled = true;
                 vueinst.notifications_enabled = true;

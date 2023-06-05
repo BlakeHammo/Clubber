@@ -133,35 +133,20 @@ const vueinst = Vue.createApp({
 
             req.onreadystatechange = await function(){
                 if(req.readyState === 4 && req.status === 200){
-                    /* */
+                    vueinst.filterPosts();
                 }
             };
             req.open('POST','/users/posts/create');
             req.setRequestHeader('Content-Type','application/json');
             req.send(JSON.stringify(post));
 
-            this.show_post_creation = false;
-            this.eventDate = "";
-            this.location = "";
-            this.title = "";
-            this.post_creation_type = "";
-            this.post_type = "";
-            this.post_content = "";
-
             let emailContent = ``;
 
             if (this.post_creation_type === 'post') {
-                emailContent = `<h2>There is a new post for ${this.viewing_club_name}</h2>
-                <br>
-                <p>${this.post_content}</p>`;
+                emailContent = `<h2>There is a new post for ${this.viewing_club_name}</h2><p>${this.post_content}</p>`;
             } else {
-                emailContent = `<h2>There is a new event for ${this.viewing_club_name}</h2>
-                <br>
-                <h3>Where: </h3><p>${this.location}</p>
-                <br>
-                <h3>When: </h3><p>${new Date(this.eventDate).toLocaleString}</p>
-                <br>
-                <p>${this.post_content}</p>`;
+                const event_date_formatted = new Date(this.eventDate).toLocaleString();
+                emailContent = `<h2>There is a new event for ${this.viewing_club_name}</h2><h3>Where: </h3><p>${this.location}</p><br><h3>When: </h3><p>${event_date_formatted}</p><br><p>${this.post_content}</p>`;
             }
 
             let req2 = new XMLHttpRequest();
@@ -169,7 +154,8 @@ const vueinst = Vue.createApp({
             let email = {
                 tag: this.post_creation_type,
                 title: `(Cluber) ${this.viewing_club_name} - ${this.title}`,
-                content: emailContent
+                content: emailContent,
+                club_id: this.viewing_club
             };
 
             req2.onreadystatechange = await function(){
@@ -177,11 +163,17 @@ const vueinst = Vue.createApp({
                     /* */
                 }
             };
-            req2.open('POST','/notifications/send');
+            req2.open('POST','/users/notifications/send');
             req2.setRequestHeader('Content-Type','application/json');
             req2.send(JSON.stringify(email));
 
-            this.filterPosts();
+            this.post_creation_type = "";
+            this.show_post_creation = false;
+            this.eventDate = "";
+            this.location = "";
+            this.title = "";
+            this.post_type = "";
+            this.post_content = "";
         },
         getClubs() {
             let req = new XMLHttpRequest();
