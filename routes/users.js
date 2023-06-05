@@ -212,15 +212,15 @@ router.post("/notifications/send", function(req, res, next) {
   if (req.body.tag === 'post') {
     query = `SELECT Users.email FROM Users
     INNER JOIN Club_members ON Club_members.user_id = Users.id
-    INNER JOIN Notification ON Notification.user_id = Club_members.user_id
+    INNER JOIN Notification ON Notification.user_id = Club_members.user_id AND Club_members.club_id = Notification.club_id
     INNER JOIN Clubs ON Clubs.id = Club_members.club_id
-    WHERE Clubs.id = ? AND Notification.notification_setting IN (1, 3);`;
+    WHERE Club_members.club_id = ? AND Notification.notification_setting IN (1, 3);`;
   } else {
     query = `SELECT Users.email FROM Users
     INNER JOIN Club_members ON Club_members.user_id = Users.id
-    INNER JOIN Notification ON Notification.user_id = Club_members.user_id
+    INNER JOIN Notification ON Notification.user_id = Club_members.user_id AND Club_members.club_id = Notification.club_id
     INNER JOIN Clubs ON Clubs.id = Club_members.club_id
-    WHERE Clubs.id = ? AND Notification.notification_setting IN (2, 3);`;
+    WHERE Club_members.club_id = ? AND Notification.notification_setting IN (2, 3);`;
   }
 
   req.pool.getConnection(function(cerr, connection) {
@@ -240,33 +240,34 @@ router.post("/notifications/send", function(req, res, next) {
 
       recipients = rows.map((a) => a.email);
 
-      if (req.body.tag === 'post') {
-        console.log(req.body.content);
-        let mailContent = {
-          from: 'ike88@ethereal.email',
-          to: recipients,
-          subject: req.body.title,
-          html: req.body.content
-        };
-        transporter.sendMail(mailContent, function (err, info) {
-        if(err)
-          console.log(err);
-        else
-          console.log(info);
-        });
-      } else {
-        let mailContent = {
-          from: 'ike88@ethereal.email',
-          to: recipients,
-          subject: req.body.title,
-          html: req.body.content
-        };
-        transporter.sendMail(mailContent, function (err, info) {
-        if(err)
-          console.log(err);
-        else
-          console.log(info);
-        });
+      for (let i = 0; i < recipients.length; i++) {
+        if (req.body.tag === 'post') {
+          let mailContent = {
+            from: 'ike88@ethereal.email',
+            to: recipients[i],
+            subject: req.body.title,
+            html: req.body.content
+          };
+          transporter.sendMail(mailContent, function (err, info) {
+          if(err)
+            console.log(err);
+          else
+            console.log(info);
+          });
+        } else {
+          let mailContent = {
+            from: 'ike88@ethereal.email',
+            to: recipients[i],
+            subject: req.body.title,
+            html: req.body.content
+          };
+          transporter.sendMail(mailContent, function (err, info) {
+          if(err)
+            console.log(err);
+          else
+            console.log(info);
+          });
+        }
       }
     });
   });
