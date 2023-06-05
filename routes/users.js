@@ -241,7 +241,7 @@ router.post("/notifications/send", function(req, res, next) {
       recipients = rows.map((a) => a.email);
 
       if (req.body.tag === 'post') {
-        console.log(recipients);
+        console.log(req.body.content);
         let mailContent = {
           from: 'ike88@ethereal.email',
           to: recipients,
