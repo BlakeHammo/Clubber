@@ -66,9 +66,14 @@ function signup()
         if(xhttp.readyState === 4 && xhttp.status === 200)
         {
             alert('Account Created');
-        } else if(xhttp.readyState === 4 && xhttp.status === 401)
+        }
+        else if(xhttp.readyState === 4 && xhttp.status === 401)
         {
            alert('Account Creation Failed');
+        }
+        else if(xhttp.readyState === 4 && xhttp.status === 400) //400 error if password too short (< 12 characters)
+        {
+            alert('Password too short, must be at least 12 characters');
         }
     };
 

@@ -161,6 +161,12 @@ router.post("/signup", function(req, res, next)
   {
     console.log('signup payload object recieved from ' + req.body.username + " " + req.body.email);
 
+    //check if password length is > 12, if not, send 400 error and return out of method
+    if(req.body.password.length < 12)
+    {
+      res.sendStatus(400);
+      return;
+    }
     let pool = req.pool;
     // query used to insert username, email and password into database
     let query = `INSERT INTO Users (
