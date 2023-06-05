@@ -84,7 +84,10 @@
                                 <span class="hide-text"> View members</span>
                             </button>
                             <button type="button" id="join-club-button" v-on:click="joinClub()" title="Join this club">
-                                <i class="fa fa-plus fa-regular" style="padding-right: 0;"></i><span class="hide-text"> Join Club</span>
+                                <i class="fa fa-plus fa-regular" style="padding-right: 0;"></i><span> Join Club</span>
+                            </button>
+                            <button type="button" id="leave-club-button" v-on:click="joinClub()" title="Leave this club" style="background-color: 'red'; display: none;">
+                                <span> Leave Club</span>
                             </button>
                         </div>
                     </div>
@@ -123,7 +126,7 @@
                             <div class="right-aligned">
                                 <i class="fa fa-solid fa-xmark close close-icon" v-on:click="show_club_members = false"></i>
                             </div>
-                            <table>
+                            <table v-if="numberOfUsersDisplaying">
                                 <thead>
                                     <tr>
                                         <th>Username</th>
@@ -137,6 +140,11 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            <div v-else>
+                                <p>
+                                    This Club has no members!
+                                </p>
+                            </div>
                         </div>
                     </div>
                     <div class="modal" v-if="show_rsvps">
@@ -144,7 +152,7 @@
                             <div class="right-aligned">
                                 <i class="fa fa-solid fa-xmark close close-icon" v-on:click="show_rsvps = false"></i>
                             </div>
-                            <table>
+                            <table v-if="numberOfUsersDisplaying">
                                 <thead>
                                     <tr>
                                         <th>Username</th>
@@ -158,6 +166,11 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            <div v-else>
+                                <p>
+                                    No one has rsvp'd yet!
+                                </p>
+                            </div>
                         </div>
                     </div>
                     <section v-if="numberOfPostsDisplaying !== 0" id="posts">

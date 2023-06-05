@@ -1,4 +1,5 @@
 var express = require('express');
+const PoolCluster = require('mysql/lib/PoolCluster');
 var router = express.Router();
 
 //google ID essentials
@@ -321,6 +322,19 @@ router.post("/posts", function(req, res, next) {
         posts = posts.map((v) => ({ ...v, isExpanded: false, isHovered: false, notUser: false }));
       }
 
+      function oldPosts(post) {
+        if (post.Post_viewed === 1) {
+          return;
+        }
+        if (((new Date()) - (new Date(post.creation_date_time))) / (24 * 60 * 60 * 1000) >= 7) {
+          post.Post_viewed = 1;
+        }
+      }
+
+      if ('user_id' in req.session) {
+        posts.forEach(oldPosts);
+      }
+
       res.json(posts);
     });
   });
@@ -339,6 +353,7 @@ router.get("/clubs", function(req, res, next) {
       let tag_added = false;
       if (req.query.tag !== "") {
         filter += ` WHERE Clubs.club_tag = '${req.query.tag}'`;
+        tag_added = true;
       }
 
       if (req.query.club !== "") {
@@ -375,6 +390,43 @@ router.get("/clubs", function(req, res, next) {
       res.json(clubs);
     });
   });
+});
+
+router.get("/posts/unread", function(req, res, next) {
+  if (!('user_id' in req.session)) {
+    res.send("?");
+  } else {
+    req.pool.getConnection(function(cerr, connection) {
+      if (cerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      let query = `SELECT COUNT(Posts.id) AS count FROM Posts
+      INNER JOIN Clubs ON Posts.club_id = Clubs.id
+      INNER JOIN Club_members ON Club_members.club_id = Clubs.id AND Club_members.user_id = ?
+      LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id
+      WHERE Posts_viewed.user_id IS NULL AND Posts.creation_date_time BETWEEN date_sub(NOW(),INTERVAL 1 WEEK) AND NOW();`;
+
+      connection.query(query, [req.session.user_id], function(qerr, rows, fields) {
+
+        connection.release();
+
+        if (qerr) {
+          res.sendStatus(500);
+          return;
+        }
+
+        let number = `${rows[0].count}`;
+
+        if (rows[0].count > 99) {
+          number = "99+";
+        }
+
+        res.send(number);
+      });
+    });
+  }
 });
 
 module.exports = router;

@@ -1,6 +1,17 @@
 var express = require('express');
 var router = express.Router();
 
+var nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  host: 'smtp.ethereal.email',
+  port: 587,
+  auth: {
+      user: 'ike88@ethereal.email',
+      pass: 'enDbPF1FrRWbXFAFmT'
+  }
+});
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
@@ -68,7 +79,13 @@ router.post("/clubs/join", function(req, res, next) {
       return;
     }
 
-    let query = `INSERT INTO Club_members (club_id, user_id, date_joined) VALUES (?, ?, NOW())`;
+    let query = "";
+
+    if (req.body.join) {
+      query = `INSERT INTO Club_members (club_id, user_id, date_joined) VALUES (?, ?, NOW())`;
+    } else {
+      query = `DELETE FROM Club_members WHERE user_id = ${req.session.user_id} AND club_id = ?`;
+    }
 
     connection.query(query, [req.body.club_id, req.session.user_id], function(qerr, rows, fields) {
 
@@ -128,7 +145,82 @@ router.post("/posts/mark-as-read", function(req, res, next) {
   });
 });
 
+router.get("/notifications", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    const query = `SELECT Clubs.id, Clubs.club_name, Notification.notification_setting FROM Club_members
+    INNER JOIN Clubs ON Club_members.club_id = Clubs.id
+    LEFT JOIN Notification ON Notification.club_id = Clubs.id WHERE Club_members.user_id = ?;`;
+
+    connection.query(query, [req.session.user_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      res.send(rows);
+    });
+  });
+});
+
+router.post("/notifications/update", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    let query = "";
+
+    if (Number(req.query.notification_setting) === 0) {
+      query = `DELETE FROM Notification WHERE user_id = ${req.session.user_id} AND club_id = ${req.query.club_id};`;
+    } else if (Number(req.query.club_id) !== -1) {
+      query = `INSERT INTO Notification (user_id, club_id, notification_setting) VALUES(${req.session.user_id}, ${req.query.club_id}, ${req.query.notification_setting}) ON DUPLICATE KEY UPDATE notification_setting = ${req.query.notification_setting}`;
+    } else {
+      query = `DELETE FROM Notification WHERE user_id = ${req.session.user_id};`;
+    }
+
+    connection.query(query, function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      res.send();
+    });
+  });
+});
+
 /* Will have a block if requestor is not a club admin */
+
+router.post("/notifications/send", function(req, res, next) {
+  if (req.body.tag === 'post') {
+    let info = transporter.sendMail({
+      from: 'ike88@ethereal.email',
+      to: req.session.email,
+      subject: req.body.title,
+      html: req.body.content
+    });
+  } else {
+    let info = transporter.sendMail({
+      from: 'ike88@ethereal.email',
+      to: req.session.email,
+      subject: req.body.title,
+      html: req.body.content
+    });
+  }
+  res.send();
+});
 
 router.post("/posts/create", function(req, res, next) {
   req.pool.getConnection(function(cerr, connection) {

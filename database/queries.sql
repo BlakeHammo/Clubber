@@ -115,7 +115,7 @@ INSERT INTO Posts (
 ) Values (
     "Update 1",
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-    "2023-05-24T09:31:15.168Z",
+    NOW(),
     "post",
     1
 );
@@ -129,7 +129,7 @@ INSERT INTO Posts (
 ) Values (
     "Update 1",
     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum officiis sint, doloremque fugiat quia consequatur rem voluptatem aspernatur consectetur molestiae accusantium itaque explicabo, commodi dolor corporis sunt placeat voluptates. Corporis? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia facere optio nulla consectetur iste recusandae quasi nisi, sit amet repellendus molestiae quis ut eos soluta hic ipsum ducimus, veritatis quos.",
-    "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
+    NOW(),
     "post",
     2
 );
@@ -254,22 +254,6 @@ INSERT INTO Posts_viewed (
     post_id,
     user_id
 ) Values (
-    1,
-    1
-);
-
-INSERT INTO Posts_viewed (
-    post_id,
-    user_id
-) Values (
-    2,
-    1
-);
-
-INSERT INTO Posts_viewed (
-    post_id,
-    user_id
-) Values (
     5,
     1
 );
@@ -316,4 +300,14 @@ INSERT INTO Club_members (
     1,
     2,
     "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)"
+);
+
+INSERT INTO Notification (
+    club_id,
+    user_id,
+    notification_setting
+) Values (
+    1,
+    1,
+    1
 );
