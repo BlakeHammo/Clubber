@@ -147,6 +147,40 @@ const vueinst = Vue.createApp({
             this.post_creation_type = "";
             this.post_type = "";
             this.post_content = "";
+
+            let emailContent = ``;
+
+            if (this.post_creation_type === 'post') {
+                emailContent = `<h2>There is a new post for ${this.viewing_club_name}</h2>
+                <br>
+                <p>${this.post_content}</p>`;
+            } else {
+                emailContent = `<h2>There is a new event for ${this.viewing_club_name}</h2>
+                <br>
+                <h3>Where: </h3><p>${this.location}</p>
+                <br>
+                <h3>When: </h3><p>${new Date(this.eventDate).toLocaleString}</p>
+                <br>
+                <p>${this.post_content}</p>`;
+            }
+
+            let req2 = new XMLHttpRequest();
+
+            let email = {
+                tag: this.post_creation_type,
+                title: `(Cluber) ${this.viewing_club_name} - ${this.title}`,
+                content: emailContent
+            };
+
+            req2.onreadystatechange = await function(){
+                if(req2.readyState === 4 && req2.status === 200){
+                    /* */
+                }
+            };
+            req2.open('POST','/notifications/send');
+            req2.setRequestHeader('Content-Type','application/json');
+            req2.send(JSON.stringify(email));
+
             this.filterPosts();
         },
         getClubs() {

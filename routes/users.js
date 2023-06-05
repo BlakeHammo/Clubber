@@ -1,6 +1,17 @@
 var express = require('express');
 var router = express.Router();
 
+var nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+  host: 'smtp.ethereal.email',
+  port: 587,
+  auth: {
+      user: 'ike88@ethereal.email',
+      pass: 'enDbPF1FrRWbXFAFmT'
+  }
+});
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
@@ -191,6 +202,25 @@ router.post("/notifications/update", function(req, res, next) {
 });
 
 /* Will have a block if requestor is not a club admin */
+
+router.post("/notifications/send", function(req, res, next) {
+  if (req.body.tag === 'post') {
+    let info = transporter.sendMail({
+      from: 'ike88@ethereal.email',
+      to: req.session.email,
+      subject: req.body.title,
+      html: req.body.content
+    });
+  } else {
+    let info = transporter.sendMail({
+      from: 'ike88@ethereal.email',
+      to: req.session.email,
+      subject: req.body.title,
+      html: req.body.content
+    });
+  }
+  res.send();
+});
 
 router.post("/posts/create", function(req, res, next) {
   req.pool.getConnection(function(cerr, connection) {
