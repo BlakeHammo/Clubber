@@ -133,7 +133,7 @@ const vueinst = Vue.createApp({
 
             req.onreadystatechange = await function(){
                 if(req.readyState === 4 && req.status === 200){
-                    /* */
+                    vueinst.filterPosts();
                 }
             };
             req.open('POST','/users/posts/create');
@@ -174,8 +174,6 @@ const vueinst = Vue.createApp({
             this.title = "";
             this.post_type = "";
             this.post_content = "";
-
-            this.filterPosts();
         },
         getClubs() {
             let req = new XMLHttpRequest();
