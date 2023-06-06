@@ -11,6 +11,8 @@
         <script src="./javascripts/manage-profile.js" defer></script>
         <script src="./components/header.js"></script>
         <script src="./components/nav.js"></script>
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#455db2">
         <title>CLUBER - My Profile</title>
     </head>
     <body>
@@ -72,10 +74,13 @@
                             Upload Image
                         </button>
                     </div>
-
-
                 </main>
             </div>
         </div>
+        <script>
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("./service-worker.js");
+            }
+        </script>
     </body>
 </html>
