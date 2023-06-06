@@ -180,51 +180,71 @@ router.post("/signup", function(req, res, next)
   {
     console.log('signup payload object recieved from ' + req.body.username + " " + req.body.email);
 
-    //check if password length is > 12, if not, send 400 error and return out of method
+    // check if password length is > 12, if not, send 400 error and return out of method
     if(req.body.password.length < 12)
     {
-      res.sendStatus(400);
+      res.sendStatus(422);
       return;
     }
 
-    //let pool = req.pool;
+    let pool = req.pool;
 
-    req.pool.getConnection(async function (gCerr, connection)
+    // query database to see if the username or email already exist (must be unique)
+    let validateQuery = "SELECT COUNT(*) AS count FROM Users WHERE username = ? OR email = ?";
+    pool.query(validateQuery, [req.body.username, req.body.email], function(qerr, result, fields)
     {
-      if(gCerr)
+      if(qerr)
       {
+        console.error('Error executing query:', qerr);
         res.sendStatus(500);
         return;
       }
-      const hash = await argon2.hash(req.body.password); //hash password from req.body
 
-      // query used to insert username, email and password into database
-      let query = `INSERT INTO Users (
-                      first_name,
-                      last_name,
-                      username,
-                      email,
-                      passwords
-                  ) VALUES (
-                      NULL,
-                      NULL,
-                      ?,
-                      ?,
-                      ?
-                  );`;
-
-      connection.query(query, [req.body.username, req.body.email, hash], function(qerr, result, fields)
+      // if username or email already exist, send 409 and return
+      console.log(result[0].count);
+      if(result[0].count > 0)
       {
+        res.sendStatus(409);
+        return;
+      }
 
-        connection.release();
-
-        if(qerr)
+      // if username and email unqiue and password > 12, allow user to create account
+      req.pool.getConnection(async function (gCerr, connection)
+      {
+        if(gCerr)
         {
-          console.error('Error executing query:', qerr);
           res.sendStatus(500);
           return;
         }
-        res.end();
+        const hash = await argon2.hash(req.body.password); // hash password from req.body
+
+        // query used to insert username, email and password into database
+        let query = `INSERT INTO Users (
+                        first_name,
+                        last_name,
+                        username,
+                        email,
+                        passwords
+                    ) VALUES (
+                        NULL,
+                        NULL,
+                        ?,
+                        ?,
+                        ?
+                    );`;
+
+        connection.query(query, [req.body.username, req.body.email, hash], function(qerr, result, fields)
+        {
+          connection.release();
+
+          if(qerr)
+          {
+            console.error('Error executing query:', qerr);
+            res.sendStatus(500);
+            return;
+          }
+          res.end();
+        });
       });
     });
   }
