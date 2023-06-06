@@ -353,3 +353,24 @@ router.get("/clubs/members", function(req, res, next) {
     });
   });
 });
+
+/* Push Notification setup */
+
+const webPush = require('web-push');
+
+const vapidKeys = {
+  publicKey: 'BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI',
+  privateKey: 'fNPErbeqJ2_5XNfYmE9_UWBCj2GWB1KaO5f-MUTNITA'
+};
+
+webPush.setVapidDetails("mailto:test@test.com", vapidKeys.publicKey, vapidKeys.privateKey);
+
+router.post("/subscribe", function(req, res, next) {
+  const subscription = req.body;
+
+  console.log(subscription);
+
+  webPush.sendNotification(subscription, JSON.stringify({ title: "Test" })).catch((err) => console.error(err));
+
+  res.status(201).send();
+});

@@ -13,6 +13,9 @@ CREATE TABLE Users (
     phone_number VARCHAR(255),
     system_administrator INT,
     profile_pic_path VARCHAR(255),
+    push_endpoint VARCHAR(500) UNIQUE,
+    push_p256dh VARCHAR(500) UNIQUE,
+    auth VARCHAR(500) UNIQUE,
     PRIMARY KEY(id)
 );
 

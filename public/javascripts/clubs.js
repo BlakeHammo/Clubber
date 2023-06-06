@@ -493,3 +493,30 @@ function updateNotificationBadge() {
 }
 
 updateNotificationBadge();
+
+const vapidPublicKey = "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI";
+
+async function send() {
+    const register = await navigator.serviceWorker.register("./javascripts/service-worker.js");
+
+    const subscription = await register.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI"
+    });
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if(xhttp.readyState === 4 && xhttp.status === 200) {
+            /* */
+        }
+    };
+
+    xhttp.open('POST', '/users/subscribe');
+    xhttp.setRequestHeader('Content-Type','application/json');
+    xhttp.send(JSON.stringify(subscription));
+}
+
+if ("serviceWorker" in navigator) {
+    send().catch((err) => console.error(err));
+}
