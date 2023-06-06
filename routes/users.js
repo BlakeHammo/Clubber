@@ -287,9 +287,9 @@ router.post("/posts/create", function(req, res, next) {
       return;
     }
 
-    let query = `INSERT INTO Posts (title, content, event_date_time, event_location, tag, event_type, club_id) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    let query = `INSERT INTO Posts (title, content, event_date_time, event_location, tag, event_type, club_id, creation_date_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    connection.query(query, [req.body.title, req.body.content, req.body.eventDate, req.body.location, req.body.tag, req.body.type, req.body.clubId], function(qerr, rows, fields) {
+    connection.query(query, [req.body.title, req.body.content, req.body.eventDate, req.body.location, req.body.tag, req.body.type, req.body.clubId, req.body.creation_date_time], function(qerr, rows, fields) {
 
       connection.release();
 

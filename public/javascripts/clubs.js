@@ -115,7 +115,8 @@ const vueinst = Vue.createApp({
                         title: this.title,
                         tag: this.post_creation_type,
                         type: this.post_type,
-                        content: this.post_content
+                        content: this.post_content,
+                        creation_date_time: new Date().toISOString()
                 };
             } else {
                 post = {
@@ -125,7 +126,8 @@ const vueinst = Vue.createApp({
                         title: this.title,
                         tag: this.post_creation_type,
                         type: this.post_type,
-                        content: this.post_content
+                        content: this.post_content,
+                        creation_date_time: new Date().toISOString()
                 };
             }
 
