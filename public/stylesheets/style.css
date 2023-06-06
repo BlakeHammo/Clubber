@@ -1130,3 +1130,20 @@ table th {
   .slider.round:before {
 	border-radius: 50%;
   }
+
+/*styles for error messages*/
+  #creation-error-message.error
+  {
+	color: red;
+	font-size: 14px;
+	margin-top: 5px;
+	display: none;
+  }
+
+  #login-error-message.error
+  {
+	color: red;
+	font-size: 14px;
+	margin-top: 5px;
+	display: none;
+  }

@@ -215,11 +215,10 @@ function logout()
     {
         if(xhttp.readyState === 4 && xhttp.status === 200)
         {
-            alert('Logged Out');
             console.log("logged out");
         } else if(xhttp.readyState === 4 && xhttp.status === 403)
         {
-            alert('Not logged in');
+            console.log("logout not successful or not logged in");
         }
     };
     xhttp.open('POST','/logout');
