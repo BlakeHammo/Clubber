@@ -12,6 +12,7 @@
         <script src="./data/posts.js" defer></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <script src="./javascripts/feed.js" defer></script>
+        <link rel="manifest" href="manifest.json">
         <title>CLUBER - Feed</title>
     </head>
     <body>
@@ -74,5 +75,10 @@
                 </main>
             </div>
         </div>
+        <script>
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("./service-worker.js");
+            }
+        </script>
     </body>
 </html>

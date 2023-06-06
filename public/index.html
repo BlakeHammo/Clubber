@@ -11,6 +11,8 @@
 
         <script src="./javascripts/index.js" defer></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#455db2">
         <title>CLUBER</title>
     </head>
     <body>
@@ -70,5 +72,10 @@
                 </main>
             </div>
         </div>
+        <script>
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("./service-worker.js");
+            }
+        </script>
     </body>
 </html>
