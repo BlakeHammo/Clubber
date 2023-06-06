@@ -147,7 +147,7 @@ router.post('/login', async function(req,res,next)
         // if result from query (returned as an array) is > 0 (it exists)
         if(result.length > 0)
         {
-          if(await argon2.verify(result[0].passwords, req.body.password)) //if password = hashed stored password
+          if(await argon2.verify(result[0].passwords, req.body.password)) //if password sent from user = hashed stored password
           {
             let [dummy_user] = result;
             delete dummy_user.passwords;
@@ -241,7 +241,7 @@ router.post('/logout', function (req, res, next)
   {
       console.log("deleting user_id: " + req.session.user_id);
       delete req.session.user_id;
-      console.log("logout successful for " + req.session.email);
+      console.log("logout successful for " + req.session.username);
       res.end();
   } else
   {
