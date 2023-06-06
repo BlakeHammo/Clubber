@@ -212,17 +212,19 @@ router.post("/notifications/update", function(req, res, next) {
 
 /* Will have a block if requestor is not a club admin */
 
+const webPush = require('web-push');
+
 router.post("/notifications/send", function(req, res, next) {
   let recipients = [];
   let query = ``;
   if (req.body.tag === 'post') {
-    query = `SELECT Users.email FROM Users
+    query = `SELECT Users.email, Users.push_endpoint, Users.push_p256dh, Users.auth FROM Users
     INNER JOIN Club_members ON Club_members.user_id = Users.id
     INNER JOIN Notification ON Notification.user_id = Club_members.user_id AND Club_members.club_id = Notification.club_id
     INNER JOIN Clubs ON Clubs.id = Club_members.club_id
     WHERE Club_members.club_id = ? AND Notification.notification_setting IN (1, 3);`;
   } else {
-    query = `SELECT Users.email FROM Users
+    query = `SELECT Users.email, Users.push_endpoint, Users.push_p256dh, Users.auth FROM Users
     INNER JOIN Club_members ON Club_members.user_id = Users.id
     INNER JOIN Notification ON Notification.user_id = Club_members.user_id AND Club_members.club_id = Notification.club_id
     INNER JOIN Clubs ON Clubs.id = Club_members.club_id
@@ -245,7 +247,7 @@ router.post("/notifications/send", function(req, res, next) {
       }
 
       recipients = rows.map((a) => a.email);
-
+      // Email Notification Portion
       for (let i = 0; i < recipients.length; i++) {
         if (req.body.tag === 'post') {
           let mailContent = {
@@ -273,6 +275,36 @@ router.post("/notifications/send", function(req, res, next) {
           else
             console.log(info);
           });
+        }
+      }
+      // Push Notification Portion
+      let payload = {};
+
+      if (req.body.tag === 'post') {
+        payload = {
+          title: "New Post on Cluber",
+          main_content: req.body.content
+        };
+      } else {
+        payload = {
+          title: "New Event on Cluber",
+          main_content: req.body.content
+        };
+      }
+
+      let push_recipients = rows.map((a) => ({
+        endpoint: a.push_endpoint,
+        expirationTime: null,
+        keys: {
+          p256dh: a.push_p256dh,
+          auth: a.auth
+        }
+      }));
+      for (let i = 0; i < recipients.length; i++) {
+        if (push_recipients.endpoint === null || push_recipients.keys.p256dh === null || push_recipients.keys.auth === null) {
+          continue;
+        } else {
+          webPush.sendNotification(push_recipients[i], JSON.stringify(payload)).catch((err) => console.error(err));
         }
       }
     });
@@ -356,8 +388,6 @@ router.get("/clubs/members", function(req, res, next) {
 
 /* Push Notification setup */
 
-const webPush = require('web-push');
-
 const vapidKeys = {
   publicKey: 'BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI',
   privateKey: 'fNPErbeqJ2_5XNfYmE9_UWBCj2GWB1KaO5f-MUTNITA'
@@ -368,9 +398,23 @@ webPush.setVapidDetails("mailto:test@test.com", vapidKeys.publicKey, vapidKeys.p
 router.post("/subscribe", function(req, res, next) {
   const subscription = req.body;
 
-  console.log(subscription);
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
 
-  webPush.sendNotification(subscription, JSON.stringify({ title: "Test" })).catch((err) => console.error(err));
+    let query = `UPDATE Users SET push_endpoint = ?, push_p256dh = ?, auth = ? WHERE id = ?`;
 
-  res.status(201).send();
+    connection.query(query, [subscription.endpoint, subscription.keys.p256dh, subscription.keys.auth, req.session.user_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+      res.sendStatus(201);
+    });
+  });
 });
