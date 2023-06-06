@@ -1,3 +1,5 @@
+USE cluber;
+
 INSERT INTO Users (
     first_name,
     last_name,
@@ -273,31 +275,59 @@ INSERT INTO Rsvps (
 INSERT INTO Club_members (
     club_id,
     user_id,
-    date_joined,
-    club_manager
-) Values (
+    club_manager,
+    date_joined
+) VALUES (
     1,
     1,
-    "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)",
-    1
+    1,
+    'Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)'
 );
 
 INSERT INTO Club_members (
     club_id,
     user_id,
+    club_manager,
     date_joined
-) Values (
+) VALUES (
+    2,
     2,
     1,
-    "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)"
+    'Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)'
 );
 
 INSERT INTO Club_members (
     club_id,
     user_id,
+    club_manager,
     date_joined
-) Values (
-    1,
+) VALUES (
     2,
-    "Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)"
+    3,
+    1,
+    'Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)'
+);
+
+INSERT INTO Club_members (
+    club_id,
+    user_id,
+    club_manager,
+    date_joined
+) VALUES (
+    3,
+    4,
+    1,
+    'Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)'
+);
+
+INSERT INTO Club_members (
+    club_id,
+    user_id,
+    club_manager,
+    date_joined
+) VALUES (
+    3,
+    1,
+    0,
+    'Thu Apr 13 2023 17:39:14 GMT+0930 (Australian Central Standard Time)'
 );

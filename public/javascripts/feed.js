@@ -122,7 +122,11 @@ const vueinst = Vue.createApp({
             req.onreadystatechange = function(){
                 if(req.readyState === 4 && req.status === 200){
                     vueinst.user_id = req.responseText;
-                    if (req.responseText === "") {
+                    let res = JSON.parse(req.responseText);
+                    if (res.user_id === "") {
+                        const filter = document.querySelector("#tags");
+                        filter.remove();
+
                         const profile = document.querySelector("#profile-nav");
                         profile.remove();
 
@@ -138,10 +142,16 @@ const vueinst = Vue.createApp({
                         const logout = document.querySelector("#logout");
                         logout.innerText = "Log In/Sign Up";
                         logout.title = "Log In or Sign Up";
+                    } else if (!res.is_admin) {
+                        const manage_users = document.querySelector("#manage-users-nav");
+                        manage_users.remove();
+
+                        const manage_clubs = document.querySelector("#manage-clubs-nav");
+                        manage_clubs.remove();
                     }
                 }
             };
-            req.open('GET','/users/info');
+            req.open('GET',`/users/info`);
             req.send();
         }
     },

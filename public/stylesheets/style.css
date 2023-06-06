@@ -889,6 +889,11 @@ table th {
 	box-sizing: border-box;
 }
 
+.modal input[type=checkbox] {
+	padding: 8px 16px;
+	margin: 8px 0;
+}
+
 .textfield-w-remove,
 .select-w-add {
 	display: flex;
