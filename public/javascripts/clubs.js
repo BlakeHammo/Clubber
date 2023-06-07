@@ -522,6 +522,19 @@ async function send() {
     xhttp.send(JSON.stringify(subscription));
 }
 
+
 if ("serviceWorker" in navigator) {
     send().catch((err) => console.error(err));
 }
+
+//logout AJAX function called when user clicks logout button (implemented in the nav.js folder for feed.html)
+function logout()
+{
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.open('POST','/logout');
+    xhttp.send();
+}
+
+updateNotificationBadge();
+

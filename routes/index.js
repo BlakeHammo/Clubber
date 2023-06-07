@@ -9,6 +9,9 @@ const {OAuth2Client} = require('google-auth-library');
 const client = new OAuth2Client(CLIENT_ID);
 /*-----------------------------------------------------*/
 
+//argon2 hashing + salting
+const argon2 = require('argon2');
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -123,35 +126,49 @@ router.post('/login', async function(req,res,next)
   }
   else if('username' in req.body && 'password' in req.body) // check if username and password variable exist in req.body
   {
-    let query = "SELECT id,username,email,profile_pic_path,system_administrator FROM Users WHERE username = ? AND passwords = ?";
+    let query = "SELECT id,username,email,passwords,profile_pic_path,system_administrator FROM Users WHERE username = ?"; //argon2 query
 
-    // query with prepared statements using username and password sent from client
-    pool.query(query, [req.body.username, req.body.password], function(err, result, fields)
+    req.pool.getConnection(function (gCerr, connection)
     {
-      if(err)
+        // query with prepared statements using username and password sent from client
+      connection.query(query, [req.body.username], async function(qerr, result, fields)
       {
-        console.error('Error executing query:', err);
-        res.sendStatus(500);
-        return;
-      }
+        connection.release();
+        if(qerr)
+        {
+          console.error('Error executing query:', qerr);
+          res.sendStatus(500);
+          return;
+        }
 
-      console.log(JSON.stringify(result));
+        console.log(JSON.stringify(result));
 
-      // if result from query (returned as an array) is > 0 (it exists)
-      if(result.length > 0)
-      {
-        [req.session.user] = result; //using array destructuring to save all the user info to this "user variable"
-        req.session.username = result[0].username; // attach username to the session.username variable
-        req.session.user_id = result[0].id; // attachk id to user_id session variable
+        // if result from query (returned as an array) is > 0 (it exists)
+        if(result.length > 0)
+        {
+          if(await argon2.verify(result[0].passwords, req.body.password)) //if password sent from user = hashed stored password
+          {
+            let [dummy_user] = result;
+            delete dummy_user.passwords;
 
-        console.log('login successful for: ' + req.body.username + " " + req.session.user_id);
+            [req.session.user] = result; //using array destructuring to save all the user info to this "user variable"
+            req.session.username = result[0].username; // attach username to the session.username variable
+            req.session.user_id = result[0].id; // attach id to user_id session variable
 
-        res.sendStatus(200);
-      }
-      else
-      {
-        res.sendStatus(401);
-      }
+            console.log('login successful for: ' + req.body.username + " " + req.session.user_id);
+
+            res.sendStatus(200);
+          }
+          else //if password wrong send error
+          {
+            res.sendStatus(401);
+          }
+        }
+        else
+        {
+          res.sendStatus(401);
+        }
+      });
     });
   }
 });
@@ -162,31 +179,72 @@ router.post("/signup", function(req, res, next)
   {
     console.log('signup payload object recieved from ' + req.body.username + " " + req.body.email);
 
-    let pool = req.pool;
-    // query used to insert username, email and password into database
-    let query = `INSERT INTO Users (
-                    first_name,
-                    last_name,
-                    username,
-                    email,
-                    passwords
-                ) VALUES (
-                    NULL,
-                    NULL,
-                    ?,
-                    ?,
-                    ?
-                );`;
-
-    pool.query(query, [req.body.username, req.body.email, req.body.password], function(err, result, fields)
+    // check if password length is > 12, if not, send 400 error and return out of method
+    if(req.body.password.length < 12)
     {
-      if(err)
+      res.sendStatus(422);
+      return;
+    }
+
+    let pool = req.pool;
+
+    // query database to see if the username or email already exist (must be unique)
+    let validateQuery = "SELECT COUNT(*) AS count FROM Users WHERE username = ? OR email = ?";
+    pool.query(validateQuery, [req.body.username, req.body.email], function(qerr, result, fields)
+    {
+      if(qerr)
       {
-        console.error('Error executing query:', err);
+        console.error('Error executing query:', qerr);
         res.sendStatus(500);
         return;
       }
-      res.end();
+
+      // if username or email already exist, send 409 and return
+      console.log(result[0].count);
+      if(result[0].count > 0)
+      {
+        res.sendStatus(409);
+        return;
+      }
+
+      // if username and email unqiue and password > 12, allow user to create account
+      req.pool.getConnection(async function (gCerr, connection)
+      {
+        if(gCerr)
+        {
+          res.sendStatus(500);
+          return;
+        }
+        const hash = await argon2.hash(req.body.password); // hash password from req.body
+
+        // query used to insert username, email and password into database
+        let query = `INSERT INTO Users (
+                        first_name,
+                        last_name,
+                        username,
+                        email,
+                        passwords
+                    ) VALUES (
+                        NULL,
+                        NULL,
+                        ?,
+                        ?,
+                        ?
+                    );`;
+
+        connection.query(query, [req.body.username, req.body.email, hash], function(qerr, result, fields)
+        {
+          connection.release();
+
+          if(qerr)
+          {
+            console.error('Error executing query:', qerr);
+            res.sendStatus(500);
+            return;
+          }
+          res.end();
+        });
+      });
     });
   }
   else
@@ -202,7 +260,7 @@ router.post('/logout', function (req, res, next)
   {
       console.log("deleting user_id: " + req.session.user_id);
       delete req.session.user_id;
-      console.log("logout successful for " + req.session.email);
+      console.log("logout successful for " + req.session.username);
       res.end();
   } else
   {

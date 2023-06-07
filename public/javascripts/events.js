@@ -215,6 +215,15 @@ function updateNotificationBadge() {
     req.send();
 }
 
+//logout AJAX function called when user clicks logout button (implemented in the nav.js folder for feed.html)
+function logout()
+{
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.open('POST','/logout');
+    xhttp.send();
+}
+
 updateNotificationBadge();
 
 const vapidPublicKey = "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI";

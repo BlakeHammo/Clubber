@@ -56,8 +56,9 @@
                         <input v-model="password" type="password" id="password" name="password" title="Enter your password" required/><br>
                         <input type="submit" value="LOG IN" title="Click to log in" /><br>
                         <button type="button" id="create-account" v-on:click="signIn = false; password = ''"><span>Don't have an account?</span> <u>Click here!</u></button>
+                        <div id="login-error-message" class="error"></div> <!-- Error message element -->
                     </form>
-                    <form id="creation-details" v-else method="post" action="/accountCreationComplete" onsubmit="signup()">
+                    <form id="creation-details" v-else method="post" action="/accountCreationComplete" onsubmit="submitSignupForm(event)">
                         <label for="email">EMAIL</label><br>
                         <input v-model="email" type="email" id="email" name="email" title="Enter your email" required/><br>
                         <label for="username">USERNAME</label><br>
@@ -68,6 +69,7 @@
                         <input v-model="repeatPassword" type="password" id="password-repeat" name="password-repeat" title="Enter the password again" required/><br>
                         <input type="submit" value="SIGN UP" title="Click to sign up"/><br>
                         <button type="button" id="login-account" v-on:click="signIn = true; password = ''"><span>Already have an account?</span> <u>Click here!</u></button>
+                        <div id="creation-error-message" class="error"></div> <!-- Error message element -->
                     </form>
                 </main>
             </div>
