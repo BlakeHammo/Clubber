@@ -522,7 +522,6 @@ async function send() {
     xhttp.send(JSON.stringify(subscription));
 }
 
-
 if ("serviceWorker" in navigator) {
     send().catch((err) => console.error(err));
 }
