@@ -49,7 +49,10 @@ router.get("/info/club-manager", function(req, res, next) {
         const query = `SELECT Club_members.* FROM Club_members
         WHERE Club_members.user_id = ? AND Club_members.club_id = ?;`;
 
-        connection.query(query, [req.session.user_id, req.query.club_id], function(qerr, rows, fields) {
+        connection.query(query, [
+          req.session.user_id,
+          req.query.club_id
+        ], function(qerr, rows, fields) {
 
           connection.release();
 
@@ -118,7 +121,14 @@ router.post("/posts/rsvp", function(req, res, next) {
 
     let query = `INSERT INTO Rsvps (post_id, user_id, rsvp, date_responded) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE rsvp = ?, date_responded = ?`;
 
-    connection.query(query, [req.body.post_id, req.session.user_id, req.body.rsvp, req.body.date_responded, req.body.rsvp, req.body.date_responded], function(qerr, rows, fields) {
+    connection.query(query, [
+      req.body.post_id,
+      req.session.user_id,
+      req.body.rsvp,
+      req.body.date_responded,
+      req.body.rsvp,
+      req.body.date_responded
+    ], function(qerr, rows, fields) {
 
       connection.release();
 
@@ -302,7 +312,10 @@ router.post("/notifications/send", function(req, res, next) {
       for (let i = 0; i < recipients.length; i++) {
         const recipient = push_recipients[i];
         if (recipient.endpoint) {
-          webPush.sendNotification(push_recipients[i], JSON.stringify(payload)).catch((err) => console.error(err));
+          webPush.sendNotification(
+            push_recipients[i],
+            JSON.stringify(payload)
+          ).catch((err) => console.error(err));
         }
       }
     });
@@ -319,7 +332,16 @@ router.post("/posts/create", function(req, res, next) {
 
     let query = `INSERT INTO Posts (title, content, event_date_time, event_location, tag, event_type, club_id, creation_date_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    connection.query(query, [req.body.title, req.body.content, req.body.eventDate, req.body.location, req.body.tag, req.body.type, req.body.clubId, req.body.creation_date_time], function(qerr, rows, fields) {
+    connection.query(query, [
+      req.body.title,
+      req.body.content,
+      req.body.eventDate,
+      req.body.location,
+      req.body.tag,
+      req.body.type,
+      req.body.clubId,
+      req.body.creation_date_time
+    ], function(qerr, rows, fields) {
 
       connection.release();
 
@@ -404,7 +426,12 @@ router.post("/subscribe", function(req, res, next) {
 
     let query = `UPDATE Users SET push_endpoint = ?, push_p256dh = ?, auth = ? WHERE id = ?`;
 
-    connection.query(query, [subscription.endpoint, subscription.keys.p256dh, subscription.keys.auth, req.session.user_id], function(qerr, rows, fields) {
+    connection.query(query, [
+      subscription.endpoint,
+      subscription.keys.p256dh,
+      subscription.keys.auth,
+      req.session.user_id
+    ], function(qerr, rows, fields) {
 
       connection.release();
 
