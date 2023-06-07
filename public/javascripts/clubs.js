@@ -1,3 +1,17 @@
+// In menu shows number of unread posts
+function updateNotificationBadge() {
+    let req = new XMLHttpRequest();
+
+    req.onreadystatechange = function(){
+        if(req.readyState === 4 && req.status === 200){
+            const notificationBadge = document.querySelector("#notifications");
+            notificationBadge.innerText = req.responseText;
+        }
+    };
+    req.open('GET',`/posts/unread`);
+    req.send();
+}
+
 const vueinst = Vue.createApp({
     data() {
         return {
@@ -115,7 +129,8 @@ const vueinst = Vue.createApp({
                         title: this.title,
                         tag: this.post_creation_type,
                         type: this.post_type,
-                        content: this.post_content
+                        content: this.post_content,
+                        creation_date_time: new Date().toISOString()
                 };
             } else {
                 post = {
@@ -125,15 +140,18 @@ const vueinst = Vue.createApp({
                         title: this.title,
                         tag: this.post_creation_type,
                         type: this.post_type,
-                        content: this.post_content
+                        content: this.post_content,
+                        creation_date_time: new Date().toISOString()
                 };
             }
 
             let req = new XMLHttpRequest();
 
-            req.onreadystatechange = await function(){
+            req.onreadystatechange = function(){
                 if(req.readyState === 4 && req.status === 200){
                     vueinst.filterPosts();
+                    const notificationBadge = document.querySelector("#notifications");
+                    notificationBadge.innerText = Number(notificationBadge.innerText) + 1;
                 }
             };
             req.open('POST','/users/posts/create');
@@ -141,12 +159,16 @@ const vueinst = Vue.createApp({
             req.send(JSON.stringify(post));
 
             let emailContent = ``;
+            let event_date_formatted = "";
+            let push_content = "";
 
             if (this.post_creation_type === 'post') {
                 emailContent = `<h2>There is a new post for ${this.viewing_club_name}</h2><p>${this.post_content}</p>`;
+                push_content = `There is a new post for ${this.viewing_club_name}`;
             } else {
-                const event_date_formatted = new Date(this.eventDate).toLocaleString();
+                event_date_formatted = new Date(this.eventDate).toLocaleString();
                 emailContent = `<h2>There is a new event for ${this.viewing_club_name}</h2><h3>Where: </h3><p>${this.location}</p><br><h3>When: </h3><p>${event_date_formatted}</p><br><p>${this.post_content}</p>`;
+                push_content = `There is a new event for ${this.viewing_club_name} at ${this.location} on ${event_date_formatted}`;
             }
 
             let req2 = new XMLHttpRequest();
@@ -155,7 +177,8 @@ const vueinst = Vue.createApp({
                 tag: this.post_creation_type,
                 title: `(Cluber) ${this.viewing_club_name} - ${this.title}`,
                 content: emailContent,
-                club_id: this.viewing_club
+                club_id: this.viewing_club,
+                push_content: push_content
             };
 
             req2.onreadystatechange = await function(){
@@ -392,7 +415,7 @@ const vueinst = Vue.createApp({
 
             req.onreadystatechange = function(){
                 if(req.readyState === 4 && req.status === 200){
-                    /* */
+                    updateNotificationBadge();
                 }
             };
             req.open('POST','/users/clubs/join');
@@ -476,18 +499,32 @@ function revealBackToTop() {
 
 document.addEventListener("scroll", revealBackToTop, false);
 
-// In menu shows number of unread posts
-function updateNotificationBadge() {
-    let req = new XMLHttpRequest();
+updateNotificationBadge();
 
-    req.onreadystatechange = function(){
-        if(req.readyState === 4 && req.status === 200){
-            const notificationBadge = document.querySelector("#notifications");
-            notificationBadge.innerText = req.responseText;
+async function send() {
+    const register = await navigator.serviceWorker.register("./javascripts/service-worker.js");
+
+    const subscription = await register.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI"
+    });
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if(xhttp.readyState === 4 && xhttp.status === 200) {
+            /* */
         }
     };
-    req.open('GET',`/posts/unread`);
-    req.send();
+
+    xhttp.open('POST', '/users/subscribe');
+    xhttp.setRequestHeader('Content-Type','application/json');
+    xhttp.send(JSON.stringify(subscription));
+}
+
+
+if ("serviceWorker" in navigator) {
+    send().catch((err) => console.error(err));
 }
 
 //logout AJAX function called when user clicks logout button (implemented in the nav.js folder for feed.html)
@@ -500,3 +537,4 @@ function logout()
 }
 
 updateNotificationBadge();
+

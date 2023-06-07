@@ -42,6 +42,44 @@ const vueinst = Vue.createApp({
             };
             req.open('POST',`/users/notifications/update?club_id=${club_id}&notification_setting=${notification_setting}`);
             req.send();
+        },
+        getUserInfo() {
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    vueinst.user_id = req.responseText;
+                    let res = JSON.parse(req.responseText);
+                    if (res.user_id === "") {
+                        const filter = document.querySelector("#tags");
+                        filter.remove();
+
+                        const profile = document.querySelector("#profile-nav");
+                        profile.remove();
+
+                        const notifications = document.querySelector("#notifications-nav");
+                        notifications.remove();
+
+                        const manage_users = document.querySelector("#manage-users-nav");
+                        manage_users.remove();
+
+                        const manage_clubs = document.querySelector("#manage-clubs-nav");
+                        manage_clubs.remove();
+
+                        const logout = document.querySelector("#logout");
+                        logout.innerText = "Log In/Sign Up";
+                        logout.title = "Log In or Sign Up";
+                    } else if (!res.is_admin) {
+                        const manage_users = document.querySelector("#manage-users-nav");
+                        manage_users.remove();
+
+                        const manage_clubs = document.querySelector("#manage-clubs-nav");
+                        manage_clubs.remove();
+                    }
+                }
+            };
+            req.open('GET',`/users/info`);
+            req.send();
         }
     },
     mounted() {
@@ -78,6 +116,8 @@ const vueinst = Vue.createApp({
         };
         req.open('GET',`/users/notifications`);
         req.send();
+
+        this.getUserInfo();
     }
 }).mount("#app");
 
@@ -131,3 +171,30 @@ function logout()
 
 hamburger.addEventListener("click", toggleMenuOn, false);
 exit.addEventListener("click", toggleMenuOff, false);
+
+const vapidPublicKey = "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI";
+
+async function send() {
+    const register = await navigator.serviceWorker.register("./javascripts/service-worker.js");
+
+    const subscription = await register.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI"
+    });
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if(xhttp.readyState === 4 && xhttp.status === 200) {
+            /* */
+        }
+    };
+
+    xhttp.open('POST', '/users/subscribe');
+    xhttp.setRequestHeader('Content-Type','application/json');
+    xhttp.send(JSON.stringify(subscription));
+}
+
+if ("serviceWorker" in navigator) {
+    send().catch((err) => console.error(err));
+}
