@@ -45,7 +45,7 @@ router.post('/login', async function(req,res,next)
       // const domain = payload['hd'];
 
       //check if this user has logged into cluber with google sign in API before
-      let query = "SELECT id,username,email,passwords,profile_pic_path FROM Users WHERE email = ?";
+      let query = "SELECT id,username,email,passwords,profile_pic_path,system_administrator FROM Users WHERE email = ?";
 
       pool.query(query, [payload['email']], function(cerr, result, fields)
       {
@@ -59,7 +59,8 @@ router.post('/login', async function(req,res,next)
           console.log('google user already exists');
           [req.session.user] = result; // using array destructuring to save all the user info to this "user variable"
           req.session.username = result[0].username; // attach username to the session.username variable
-          req.session.user_id = result[0].id; // attachk id to user_id session variable
+          req.session.user_id = result[0].id; // attach id to user_id session variable
+          req.session.email = result[0].email;
           res.sendStatus(200);
         }
         else // if is no user with that username, add them to the database since they are already verified with google (essentially sign up)
@@ -96,7 +97,7 @@ router.post('/login', async function(req,res,next)
                 res.sendStatus(500);
                 return;
               }
-              let getInfoQuery = "SELECT id,username,email,passwords,profile_pic_path FROM Users WHERE email = ?";
+              let getInfoQuery = "SELECT id,username,email,passwords,profile_pic_path,system_administrator FROM Users WHERE email = ?";
 
               //now after creating entry for first time google sign in user, must attach info to their session token
               pool.query(getInfoQuery, [payload['email']], function(qerr, row, fields)
@@ -125,9 +126,7 @@ router.post('/login', async function(req,res,next)
   }
   else if('username' in req.body && 'password' in req.body) // check if username and password variable exist in req.body
   {
-    //let query = "SELECT id,username,email,profile_pic_path FROM Users WHERE username = ? AND passwords = ?"; //old query
-
-    let query = "SELECT id,username,email,passwords,profile_pic_path FROM Users WHERE username = ?"; //argon2 query
+    let query = "SELECT id,username,email,passwords,profile_pic_path,system_administrator FROM Users WHERE username = ?"; //argon2 query
 
     req.pool.getConnection(function (gCerr, connection)
     {

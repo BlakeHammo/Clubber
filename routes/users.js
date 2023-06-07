@@ -9,6 +9,9 @@ const transporter = nodemailer.createTransport({
   auth: {
       user: 'ike88@ethereal.email',
       pass: 'enDbPF1FrRWbXFAFmT'
+  },
+  tls: {
+    rejectUnauthorized: false
   }
 });
 
@@ -20,12 +23,18 @@ router.get('/', function(req, res, next) {
 module.exports = router;
 
 router.get("/info", function(req, res, next) {
-  let response = "";
+  let response = {
+    user_id: "",
+    is_admin: false
+  };
   if ('user_id' in req.session) {
-    response = req.session.user_id;
+    response = {
+      user_id: req.session.user_id,
+      is_admin: req.session.user.system_administrator
+    };
   }
 
-  res.send(`${response}`);
+  res.json(response);
 });
 
 router.get("/info/club-manager", function(req, res, next) {
@@ -152,9 +161,9 @@ router.get("/notifications", function(req, res, next) {
       return;
     }
 
-    const query = `SELECT Clubs.id, Clubs.club_name, Notification.notification_setting FROM Club_members
-    INNER JOIN Clubs ON Club_members.club_id = Clubs.id
-    LEFT JOIN Notification ON Notification.club_id = Clubs.id WHERE Club_members.user_id = ?;`;
+    const query = `SELECT Clubs.id, Clubs.club_name, Notification.notification_setting FROM Clubs
+    INNER JOIN Club_members ON Club_members.club_id = Clubs.id
+    LEFT JOIN Notification ON Notification.club_id = Clubs.id AND Notification.user_id = Club_members.user_id WHERE Club_members.user_id = ?;`;
 
     connection.query(query, [req.session.user_id], function(qerr, rows, fields) {
 
@@ -204,21 +213,70 @@ router.post("/notifications/update", function(req, res, next) {
 /* Will have a block if requestor is not a club admin */
 
 router.post("/notifications/send", function(req, res, next) {
+  let recipients = [];
+  let query = ``;
   if (req.body.tag === 'post') {
-    let info = transporter.sendMail({
-      from: 'ike88@ethereal.email',
-      to: req.session.email,
-      subject: req.body.title,
-      html: req.body.content
-    });
+    query = `SELECT Users.email FROM Users
+    INNER JOIN Club_members ON Club_members.user_id = Users.id
+    INNER JOIN Notification ON Notification.user_id = Club_members.user_id AND Club_members.club_id = Notification.club_id
+    INNER JOIN Clubs ON Clubs.id = Club_members.club_id
+    WHERE Club_members.club_id = ? AND Notification.notification_setting IN (1, 3);`;
   } else {
-    let info = transporter.sendMail({
-      from: 'ike88@ethereal.email',
-      to: req.session.email,
-      subject: req.body.title,
-      html: req.body.content
-    });
+    query = `SELECT Users.email FROM Users
+    INNER JOIN Club_members ON Club_members.user_id = Users.id
+    INNER JOIN Notification ON Notification.user_id = Club_members.user_id AND Club_members.club_id = Notification.club_id
+    INNER JOIN Clubs ON Clubs.id = Club_members.club_id
+    WHERE Club_members.club_id = ? AND Notification.notification_setting IN (2, 3);`;
   }
+
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    connection.query(query, [req.body.club_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      recipients = rows.map((a) => a.email);
+
+      for (let i = 0; i < recipients.length; i++) {
+        if (req.body.tag === 'post') {
+          let mailContent = {
+            from: 'ike88@ethereal.email',
+            to: recipients[i],
+            subject: req.body.title,
+            html: req.body.content
+          };
+          transporter.sendMail(mailContent, function (err, info) {
+          if(err)
+            console.log(err);
+          else
+            console.log(info);
+          });
+        } else {
+          let mailContent = {
+            from: 'ike88@ethereal.email',
+            to: recipients[i],
+            subject: req.body.title,
+            html: req.body.content
+          };
+          transporter.sendMail(mailContent, function (err, info) {
+          if(err)
+            console.log(err);
+          else
+            console.log(info);
+          });
+        }
+      }
+    });
+  });
   res.send();
 });
 

@@ -43,7 +43,7 @@
                                     <td>{{club.id}}</td>
                                     <td class="hidden-column-550" v-bind:style="{'background-color': club.color}"></td>
                                     <td>{{club.name}}</td>
-                                    <td class="hidden-column-550">{{getClubManagers(club.id)}}</td>
+                                    <td class="hidden-column-550">{{club.managers}}</td>
                                     <td>
                                         <i class="fa fa-solid fa-pen edit" v-on:click="showEditModal(club.id)"></i>
                                         <i class="fa fa-solid fa-trash delete" v-on:click="delete_modal_visible = true; selected_club = club.id"></i>
