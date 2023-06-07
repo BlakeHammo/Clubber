@@ -283,12 +283,12 @@ router.post("/notifications/send", function(req, res, next) {
       if (req.body.tag === 'post') {
         payload = {
           title: "New Post on Cluber",
-          main_content: req.body.content
+          main_content: req.body.push_content
         };
       } else {
         payload = {
           title: "New Event on Cluber",
-          main_content: req.body.content
+          main_content: req.body.push_content
         };
       }
 
@@ -300,8 +300,9 @@ router.post("/notifications/send", function(req, res, next) {
           auth: a.auth
         }
       }));
+
       for (let i = 0; i < recipients.length; i++) {
-        if (push_recipients.endpoint === null || push_recipients.keys.p256dh === null || push_recipients.keys.auth === null) {
+        if (typeof push_recipients === "undefined") {
           continue;
         } else {
           webPush.sendNotification(push_recipients[i], JSON.stringify(payload)).catch((err) => console.error(err));
@@ -411,7 +412,6 @@ router.post("/subscribe", function(req, res, next) {
       connection.release();
 
       if (qerr) {
-        console.log(qerr);
         res.sendStatus(500);
         return;
       }

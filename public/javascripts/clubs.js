@@ -147,9 +147,11 @@ const vueinst = Vue.createApp({
 
             let req = new XMLHttpRequest();
 
-            req.onreadystatechange = await function(){
+            req.onreadystatechange = function(){
                 if(req.readyState === 4 && req.status === 200){
                     vueinst.filterPosts();
+                    const notificationBadge = document.querySelector("#notifications");
+                    notificationBadge.innerText = Number(notificationBadge.innerText) + 1;
                 }
             };
             req.open('POST','/users/posts/create');
@@ -157,12 +159,16 @@ const vueinst = Vue.createApp({
             req.send(JSON.stringify(post));
 
             let emailContent = ``;
+            let event_date_formatted = "";
+            let push_content = "";
 
             if (this.post_creation_type === 'post') {
                 emailContent = `<h2>There is a new post for ${this.viewing_club_name}</h2><p>${this.post_content}</p>`;
+                push_content = `There is a new post for ${this.viewing_club_name}`;
             } else {
-                const event_date_formatted = new Date(this.eventDate).toLocaleString();
+                event_date_formatted = new Date(this.eventDate).toLocaleString();
                 emailContent = `<h2>There is a new event for ${this.viewing_club_name}</h2><h3>Where: </h3><p>${this.location}</p><br><h3>When: </h3><p>${event_date_formatted}</p><br><p>${this.post_content}</p>`;
+                push_content = `There is a new event for ${this.viewing_club_name} at ${this.location} on ${event_date_formatted}`;
             }
 
             let req2 = new XMLHttpRequest();
@@ -171,7 +177,8 @@ const vueinst = Vue.createApp({
                 tag: this.post_creation_type,
                 title: `(Cluber) ${this.viewing_club_name} - ${this.title}`,
                 content: emailContent,
-                club_id: this.viewing_club
+                club_id: this.viewing_club,
+                push_content: push_content
             };
 
             req2.onreadystatechange = await function(){
@@ -501,10 +508,6 @@ async function send() {
         userVisibleOnly: true,
         applicationServerKey: "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI"
     });
-
-    if (subscription) {
-        return;
-    }
 
     let xhttp = new XMLHttpRequest();
 

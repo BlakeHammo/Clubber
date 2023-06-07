@@ -328,10 +328,6 @@ async function send() {
         applicationServerKey: "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI"
     });
 
-    if (subscription) {
-        return;
-    }
-
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
