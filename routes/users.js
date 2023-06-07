@@ -80,7 +80,9 @@ router.get("/profile", function(req, res, next) {
         return;
       }
 
-      res.json(rows);
+      let user_data = rows;
+
+      res.json(user_data);
     });
   });
 });

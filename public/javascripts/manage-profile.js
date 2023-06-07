@@ -37,20 +37,23 @@ const vueinst = new Vue({
             req.onreadystatechange = function() {
                 if(req.readyState === 4 && req.status === 200){
                     const response = JSON.parse(req.responseText);
-                    this.username = response.username;
-                    this.first_name = response.first_name;
-                    this.last_name = response.last_name;
-                    this.email = response.email;
-                    this.phone = response.phone;
+                    if (response.length > 0) {
+                        const userData = response[0];
+                        this.username = userData.username;
+                        this.first_name = userData.first_name;
+                        this.last_name = userData.last_name;
+                        this.email = userData.email;
+                        this.phone = userData.phone;
+                    }
                 }
-            };
+            }.bind(this);
 
             req.open('GET', '/users/profile', true);
             req.send();
 
         }
     },
-    created() {
+    mounted: function() {
         this.fetchProfileData();
     }
 });
