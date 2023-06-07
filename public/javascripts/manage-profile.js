@@ -1,11 +1,11 @@
 const vueinst = new Vue({
     el: '#app',
     data: {
-        username: 'Username',
-        first_name: 'First Name',
-        last_name: 'Last Name',
-        email: 'Email',
-        phone: 'Phone',
+        username: '',
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone: '',
         image: '/images/icon.png',
         edit_profile: false,
         profile_page: true
@@ -30,6 +30,8 @@ const vueinst = new Vue({
             req.open('POST','/users/profile/edit');
             req.setRequestHeader('Content-Type','application/json');
             req.send(JSON.stringify(request));
+
+            this.edit_profile = !this.edit_profile;
         },
         fetchProfileData() {
             let req = new XMLHttpRequest();
@@ -43,7 +45,7 @@ const vueinst = new Vue({
                         this.first_name = userData.first_name;
                         this.last_name = userData.last_name;
                         this.email = userData.email;
-                        this.phone = userData.phone;
+                        this.phone = userData.phone_number;
                     }
                 }
             }.bind(this);
