@@ -257,10 +257,9 @@ router.post("/notifications/send", function(req, res, next) {
             html: req.body.content
           };
           transporter.sendMail(mailContent, function (err, info) {
-          if(err)
-            console.log(err);
-          else
-            console.log(info);
+            if(err) {
+              console.log(err);
+            }
           });
         } else {
           let mailContent = {
@@ -270,10 +269,9 @@ router.post("/notifications/send", function(req, res, next) {
             html: req.body.content
           };
           transporter.sendMail(mailContent, function (err, info) {
-          if(err)
+          if(err) {
             console.log(err);
-          else
-            console.log(info);
+          }
           });
         }
       }
@@ -302,9 +300,8 @@ router.post("/notifications/send", function(req, res, next) {
       }));
 
       for (let i = 0; i < recipients.length; i++) {
-        if (typeof push_recipients === "undefined") {
-          continue;
-        } else {
+        const recipient = push_recipients[i];
+        if (recipient.endpoint) {
           webPush.sendNotification(push_recipients[i], JSON.stringify(payload)).catch((err) => console.error(err));
         }
       }
