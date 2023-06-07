@@ -1,3 +1,17 @@
+// In menu shows number of unread posts
+function updateNotificationBadge() {
+    let req = new XMLHttpRequest();
+
+    req.onreadystatechange = function(){
+        if(req.readyState === 4 && req.status === 200){
+            const notificationBadge = document.querySelector("#notifications");
+            notificationBadge.innerText = req.responseText;
+        }
+    };
+    req.open('GET',`/posts/unread`);
+    req.send();
+}
+
 const vueinst = Vue.createApp({
     data() {
         return {
@@ -394,7 +408,7 @@ const vueinst = Vue.createApp({
 
             req.onreadystatechange = function(){
                 if(req.readyState === 4 && req.status === 200){
-                    /* */
+                    updateNotificationBadge();
                 }
             };
             req.open('POST','/users/clubs/join');
@@ -478,20 +492,6 @@ function revealBackToTop() {
 
 document.addEventListener("scroll", revealBackToTop, false);
 
-// In menu shows number of unread posts
-function updateNotificationBadge() {
-    let req = new XMLHttpRequest();
-
-    req.onreadystatechange = function(){
-        if(req.readyState === 4 && req.status === 200){
-            const notificationBadge = document.querySelector("#notifications");
-            notificationBadge.innerText = req.responseText;
-        }
-    };
-    req.open('GET',`/posts/unread`);
-    req.send();
-}
-
 updateNotificationBadge();
 
 async function send() {
@@ -501,6 +501,10 @@ async function send() {
         userVisibleOnly: true,
         applicationServerKey: "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI"
     });
+
+    if (subscription) {
+        return;
+    }
 
     let xhttp = new XMLHttpRequest();
 

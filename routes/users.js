@@ -411,6 +411,7 @@ router.post("/subscribe", function(req, res, next) {
       connection.release();
 
       if (qerr) {
+        console.log(qerr);
         res.sendStatus(500);
         return;
       }
