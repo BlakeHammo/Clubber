@@ -94,5 +94,14 @@ function toggleMenuOff() {
     document.body.classList.remove("stop-scrolling");
 }
 
+//logout AJAX function called when user clicks logout button (implemented in the nav.js folder for feed.html)
+function logout()
+{
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.open('POST','/logout');
+    xhttp.send();
+}
+
 hamburger.addEventListener("click", toggleMenuOn, false);
 exit.addEventListener("click", toggleMenuOff, false);

@@ -490,4 +490,13 @@ function updateNotificationBadge() {
     req.send();
 }
 
+//logout AJAX function called when user clicks logout button (implemented in the nav.js folder for feed.html)
+function logout()
+{
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.open('POST','/logout');
+    xhttp.send();
+}
+
 updateNotificationBadge();
