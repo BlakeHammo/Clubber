@@ -23,7 +23,7 @@ router.post('/accountCreationComplete',function(req, res, next) {
 });
 
 router.post('/login', async function(req,res,next) {
-  var [pool] = req.pool; // easy variable to query directly from req.pool connection pool
+  var pool = req.pool; // easy variable to query directly from req.pool connection pool
   // google login
   /* ----------------------------------------------------------- */
   if ('client_id' in req.body && 'credential in req.body') {
@@ -370,10 +370,11 @@ router.post("/posts", function(req, res, next) {
       }
 
       function oldPosts(post) {
-        if (post.Post_viewed === 1) {
+        if (post.Post_viewed) {
+          post.Post_viewed = 1;
           return;
         }
-        if (((new Date()) - (new Date(post.creation_date_time))) / (24 * 60 * 60 * 1000) >= 7) {
+        if (((new Date()) - (new Date(post.creation_date_time))) / (24 * 60 * 60 * 1000) > 7) {
           post.Post_viewed = 1;
         }
       }
