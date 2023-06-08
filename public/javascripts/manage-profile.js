@@ -46,7 +46,9 @@ const vueinst = new Vue({
                         this.last_name = userData.last_name;
                         this.email = userData.email;
                         this.phone = userData.phone_number;
-                        this.image = userData.profile_pic_path;
+                        if (userData.profile_pic_path){
+                            this.image = userData.profile_pic_path;
+                        }
                     }
                 }
             }.bind(this);
