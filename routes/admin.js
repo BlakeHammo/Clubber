@@ -130,7 +130,7 @@ router.post('/clubs', function(req, res, next) {
             return;
         }
 
-        let query = "INSERT INTO Clubs (club_name, club_description, club_color) VALUES (?, ?, ?);";
+        let query = "INSERT INTO Clubs (club_name, club_description, club_color, club_tag) VALUES (?, ?, ?, 'Hobby');";
 
         connection.query(
             query,
