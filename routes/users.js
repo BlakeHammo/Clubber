@@ -130,6 +130,30 @@ router.post("/profile/upload", upload.single("image"), (req, res, next) => {
 });
 
 
+router.get("/profile/image", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    let query= `SELECT profile_pic_path FROM Users WHERE id = ?`;
+
+    connection.query(query, [req.session.user_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      let user_data = rows;
+
+      res.json(user_data);
+    });
+  });
+});
 
 router.get("/profile", function(req, res, next) {
   req.pool.getConnection(function(cerr, connection) {

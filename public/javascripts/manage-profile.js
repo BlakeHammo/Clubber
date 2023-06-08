@@ -55,6 +55,23 @@ const vueinst = new Vue({
             req.send();
 
         },
+        fetchProfileImage() {
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function() {
+                if(req.readyState === 4 && req.status === 200){
+                    const response = JSON.parse(req.responseText);
+                    if (response.length > 0) {
+                        const userData = response[0];
+                        this.image = userData.profile_pic_path;
+                    }
+                }
+            }.bind(this);
+
+            req.open('GET', '/users/profile/image', true);
+            req.send();
+
+        },
         uploadImage() {
             const { fileInput } = this.$refs;
             const file = fileInput.files[0];
@@ -73,6 +90,7 @@ const vueinst = new Vue({
             req.onreadystatechange = () => {
               if (req.readyState === 4) {
                 if (req.status === 200) {
+                    this.fetchProfileImage();
                   // Handle successful upload
                   console.log('Image uploaded successfully');
                 } else if (req.status == 400) {
