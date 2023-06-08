@@ -6,10 +6,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="./stylesheets/style.css" />
         <link rel="icon" href="./images/icon.png" />
-        <script src="https://kit.fontawesome.com/9ee0ab41a9.js" crossorigin="anonymous"></script>
-        <script src="./data/clubs.js" defer></script>
-        <script src="./data/posts.js" defer></script>
-        <script src="./data/users.js" defer></script>
         <script src="./javascripts/clubs.js" defer></script>
         <script src="./components/header.js"></script>
         <script src="./components/nav.js"></script>
@@ -185,7 +181,7 @@
                             <h4 v-if="post.tag === 'event'" class="event-details">
                                 <span> Where: </span>{{post.event_location}}
                             </h4>
-                            <div class="rsvp-flex" v-if="post.tag === 'event' && !post.notUser">
+                            <div class="rsvp-flex" v-if="post.tag === 'event' && !post.notUser && !post.disable_rsvp">
                                 <button type="button" v-on:click="rsvp(post.id, 2)" title="Going" class="goingButton">
                                     <svg width="2rem" height="2rem" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" v-bind:class="[{greyButtonGoing: (post.rsvp !== null && post.rsvp !== 2 && post.rsvp !== -1), greenButton: (post.rsvp === 2)}]">
                                         <rect x="0" fill="none" width="2rem" height="2rem"/>

@@ -369,7 +369,8 @@ router.post("/posts", function(req, res, next) {
       }
 
       function oldPosts(post) {
-        if (post.Post_viewed === 1) {
+        if (post.Post_viewed) {
+          post.Post_viewed = 1;
           return;
         }
         if (((new Date()) - (new Date(post.creation_date_time))) / (24 * 60 * 60 * 1000) >= 7) {

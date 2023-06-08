@@ -215,6 +215,28 @@ router.post("/notifications/update", function(req, res, next) {
 const webPush = require('web-push');
 
 router.post("/notifications/send", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    const query = "SELECT user_id FROM Club_members WHERE user_id = ? AND club_id = ? AND club_manager = 1;";
+
+    connection.query(query, [req.session.user_id, req.body.club_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      if (!rows) {
+        res.sendStatus(403);
+      }
+    });
+  });
   let recipients = [];
   let query = ``;
   if (req.body.tag === 'post') {
@@ -317,6 +339,29 @@ router.post("/posts/create", function(req, res, next) {
       return;
     }
 
+    const query = "SELECT user_id FROM Club_members WHERE user_id = ? AND club_id = ? AND club_manager = 1;";
+
+    connection.query(query, [req.session.user_id, req.body.clubId], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      if (!rows) {
+        res.sendStatus(403);
+      }
+    });
+  });
+
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
     let query = `INSERT INTO Posts (title, content, event_date_time, event_location, tag, event_type, club_id, creation_date_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
     connection.query(query, [req.body.title, req.body.content, req.body.eventDate, req.body.location, req.body.tag, req.body.type, req.body.clubId, req.body.creation_date_time], function(qerr, rows, fields) {
@@ -333,6 +378,33 @@ router.post("/posts/create", function(req, res, next) {
 });
 
 router.get("/posts/rsvp-users", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    const query = `SELECT user_id FROM Club_members
+    INNER JOIN Clubs ON
+    Club_members.club_id = Clubs.id
+    INNER JOIN Posts ON
+    Clubs.id = Posts.club_id WHERE user_id = ? AND Posts.id = ? AND club_manager = 1;`;
+
+    connection.query(query, [req.session.user_id, req.query.id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      if (!rows) {
+        res.sendStatus(403);
+      }
+    });
+  });
+
   req.pool.getConnection(function(cerr, connection) {
     if (cerr) {
       res.sendStatus(500);
@@ -359,6 +431,29 @@ router.get("/posts/rsvp-users", function(req, res, next) {
 });
 
 router.get("/clubs/members", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    const query = "SELECT user_id FROM Club_members WHERE user_id = ? AND club_id = ? AND club_manager = 1;";
+
+    connection.query(query, [req.session.user_id, req.query.id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      if (!rows) {
+        res.sendStatus(403);
+      }
+    });
+  });
+
   req.pool.getConnection(function(cerr, connection) {
     if (cerr) {
       res.sendStatus(500);
