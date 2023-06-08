@@ -39,12 +39,13 @@ router.post('/login', async function(req,res,next)
       const payload = ticket.getPayload();
       const userid = payload['sub'];
 
+      console.log(payload['email']);
+      console.log(payload['sub']);
       // If request specified a G Suite domain:
       // const domain = payload['hd'];
 
-      // check if this user has logged into cluber with google sign in API before
+      //check if this user has logged into cluber with google sign in API before
       let query = "SELECT id,username,email,passwords,profile_pic_path,system_administrator FROM Users WHERE email = ?";
-      const hashSub = await argon2.hash(payload['sub']);
 
       pool.query(query, [payload['email']], function(cerr, result, fields)
       {
@@ -55,6 +56,7 @@ router.post('/login', async function(req,res,next)
         }
         if(result.length > 0) //if they have, set their session token
         {
+          console.log('google user already exists');
           [req.session.user] = result; // using array destructuring to save all the user info to this "user variable"
           req.session.username = result[0].username; // attach username to the session.username variable
           req.session.user_id = result[0].id; // attach id to user_id session variable
@@ -87,7 +89,7 @@ router.post('/login', async function(req,res,next)
             Also using nested callback functions here (the getInfoQuery is nested inside the insertQuery)
             this is so the getInfoQuery will only execute AFTER the insertQuery is done inserting the user info into the database
           */
-            pool.query(insertQuery, [payload['given_name'], payload['family_name'],payload['given_name'],payload['email'], hashSub], function(err, result, fields)
+            pool.query(insertQuery, [payload['given_name'], payload['family_name'],payload['given_name'],payload['email'], payload['sub']], function(err, result, fields)
             {
               if(err)
               {
@@ -106,9 +108,14 @@ router.post('/login', async function(req,res,next)
                     res.sendStatus(500);
                     return;
                 }
+                console.log('Email:', payload['email']);
+                console.log('ADDING NEWLY ADDED GOOGLE USERS INFO TO SESSION');
+                console.log('Row Length:', row.length);
+                console.log('Row:', row);
                 [req.session.user] = row; // using array destructuring to save all the user info to this "user variable"
                 req.session.username = row[0].username; // attach username to the session.username variable
                 req.session.user_id = row[0].id; // attachk id to user_id session variable
+                console.log(req.session.user_id);
                 res.sendStatus(200);
               });
             });
@@ -133,6 +140,8 @@ router.post('/login', async function(req,res,next)
           res.sendStatus(500);
           return;
         }
+
+        console.log(JSON.stringify(result));
 
         // if result from query (returned as an array) is > 0 (it exists)
         if(result.length > 0)
@@ -168,6 +177,8 @@ router.post("/signup", function(req, res, next)
 {
   if('username' in req.body && 'password' in req.body && 'email' in req.body) // check if these three fields exist in req body
   {
+    console.log('signup payload object recieved from ' + req.body.username + " " + req.body.email);
+
     // check if password length is > 12, if not, send 400 error and return out of method
     if(req.body.password.length < 12)
     {
@@ -189,6 +200,7 @@ router.post("/signup", function(req, res, next)
       }
 
       // if username or email already exist, send 409 and return
+      console.log(result[0].count);
       if(result[0].count > 0)
       {
         res.sendStatus(409);
@@ -246,10 +258,11 @@ router.post('/logout', function (req, res, next)
 {
   if ('user_id' in req.session)
   {
+      console.log("deleting user_id: " + req.session.user_id);
       delete req.session.user_id;
+      console.log("logout successful for " + req.session.username);
       res.end();
-  }
-  else
+  } else
   {
       res.sendStatus(403);
   }
