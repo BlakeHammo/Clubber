@@ -140,9 +140,6 @@ const vueinst = new Vue({
                     vueinst.user_id = req.responseText;
                     let res = JSON.parse(req.responseText);
                     if (res.user_id === "") {
-                        const filter = document.querySelector("#tags");
-                        filter.remove();
-
                         const profile = document.querySelector("#profile-nav");
                         profile.remove();
 

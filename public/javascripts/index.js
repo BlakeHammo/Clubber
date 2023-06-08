@@ -133,8 +133,6 @@ function google_login(response)
     xhttp.send(JSON.stringify(response));
 }
 
-const vapidPublicKey = "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI";
-
 async function send() {
     const register = await navigator.serviceWorker.register("./javascripts/service-worker.js");
 

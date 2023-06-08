@@ -10,7 +10,6 @@
         <script src="./components/header.js"></script>
         <script src="./components/nav.js"></script>
         <title>CLUBER - Events</title>
-        <script src="./data/posts.js" defer></script>
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
         <script src="./javascripts/events.js" defer></script>
         <link rel="manifest" href="manifest.json">
@@ -45,7 +44,7 @@
                             <h4 class="event-details">
                                 <span> Where: </span>{{post.event_location}}
                             </h4>
-                            <div class="rsvp-flex" v-if="!post.notUser">
+                            <div class="rsvp-flex" v-if="!post.notUser && !post.disable_rsvp">
                                 <button type="button" v-on:click="rsvp(post.id, 2)" title="Going" class="goingButton">
                                     <svg width="2rem" height="2rem" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" v-bind:class="[{greyButtonGoing: (post.rsvp !== 2 && post.rsvp !== -1), greenButton: (post.rsvp === 2)}]">
                                         <rect x="0" fill="none" width="2rem" height="2rem"/>
