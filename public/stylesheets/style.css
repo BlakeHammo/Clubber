@@ -1033,6 +1033,7 @@ table th {
 
 .profile-label-text {
 	text-align: right;
+	overflow: hidden;
 }
 
 .profile-picture {
