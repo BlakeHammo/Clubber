@@ -49,3 +49,15 @@ Login details for Ethereal mail
 user: ike88@ethereal.email
 
 pass: enDbPF1FrRWbXFAFmT
+
+---------------------------------------------------
+
+Our site is optimised for mobile as well
+
+---------------------------------------------------
+
+You can use the sql query file to create the database and run a few basic queries to populate database
+
+Make sure you drop the existing cluber database beforehand
+
+$ mysql < database/queries.sql (We are assuming you are in the parent directory)
