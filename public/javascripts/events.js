@@ -9,96 +9,162 @@ const vueinst = Vue.createApp({
             unreadPostImage: "./images/unread.svg",
             unreadPostHoverImage: "./images/mark_as_read.svg",
             tag_filter_value: "",
-            club_filter_value: ""
+            club_filter_value: "",
+            clubs_obtained: false,
+            user_id: ""
         };
     },
     methods: {
-        updateNumberOfPostsDisplaying() {
-            this.numberOfPostsDisplaying = this.posts.length;
-        },
         getPosts() {
-            // Ajax call
-            this.posts = posts.filter((post) => post.tag === "event");
-            // Formats the data correctly
-            this.posts = this.posts.map((v) => ({ ...v, isExpanded: false, isHovered: false }));
+            const requestData = {
+                club_id: this.club_filter_value,
+                tag: "event",
+                event_type: this.tag_filter_value,
+                event_page: true
+            };
 
-            this.posts = this.posts.map((item) => {
-                let post = item;
+            let req = new XMLHttpRequest();
 
-                post.creationDate = new Date(post.creationDate).toLocaleString();
-                post.eventDate = new Date(post.eventDate).toLocaleString();
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    vueinst.posts = JSON.parse(req.responseText).map((item) => {
+                        let post = item;
 
-                return post;
-            });
-            this.numberOfPostsDisplaying = this.posts.length;
+                        const formatter = new Intl.DateTimeFormat(navigator.language, {
+                            dateStyle: "short",
+                            timeStyle: "short"
+                        });
+
+                        post.creation_date_time = formatter.format(new Date(post.creation_date_time));
+                        if (post.tag === 'event') {
+                            post.event_date_time = formatter.format(new Date(post.event_date_time));
+                        }
+
+                        return post;
+                    });
+                    vueinst.numberOfPostsDisplaying = JSON.parse(req.responseText).length;
+
+                    if (!vueinst.clubs_obtained) {
+                        const map = new Map();
+
+                        let clubsOfPosts = JSON.parse(req.responseText).filter((club) => {
+                            if (map.get(club.club_id)) {
+                            return false;
+                            }
+                            map.set(club.club_id, club);
+                            return true;
+                        });
+
+                        vueinst.userFollowedClubs = clubsOfPosts.map((item) => {
+                            let club = item;
+                            return { id: club.club_id, name: club.club_name };
+                        });
+                        vueinst.clubs_obtained = true;
+                    }
+                }
+            };
+            req.open('POST','/posts');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(requestData));
         },
         filter() {
-            if (this.tag_filter_value === "" && this.club_filter_value !== "") {
-                this.getPosts();
-                this.posts = this.posts.filter((post) => post.clubId === vueinst.club_filter_value);
-                this.updateNumberOfPostsDisplaying();
-            } else if (this.club_filter_value === "" && this.tag_filter_value !== "") {
-                this.getPosts();
-                this.posts = this.posts.filter((post) => post.type === this.tag_filter_value);
-                this.updateNumberOfPostsDisplaying();
-            } else if (this.tag_filter_value !== "" && this.club_filter_value !== "") {
-                this.getPosts();
-                this.posts = this.posts.filter((post) => post.clubId === this.club_filter_value && post.type === this.tag_filter_value);
-                this.updateNumberOfPostsDisplaying();
-            } else {
-                this.getPosts();
-                this.updateNumberOfPostsDisplaying();
-            }
+            this.getPosts();
         },
-        rsvp(post_id, rsvp_number) {
-            posts[posts.findIndex((x) => x.postId === post_id)].eventResponse = rsvp_number;
-            this.posts[this.posts.findIndex((x) => x.postId === post_id)].eventResponse = rsvp_number;
-        },
-        markPostAsRead(post_id) {
-            if (posts[posts.findIndex((x) => x.postId === post_id)].userRead === true) {
+        rsvp(id, rsvp_number) {
+            if (vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].rsvp === rsvp_number) {
                 return;
             }
-            posts[posts.findIndex((x) => x.postId === post_id)].userRead = true;
-            this.posts[this.posts.findIndex((x) => x.postId === post_id)].userRead = true;
+
+            vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].rsvp = rsvp_number;
+
+            const requestData = {
+                post_id: id,
+                rsvp: rsvp_number,
+                date_responded: new Date()
+            };
+
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    /* */
+                }
+            };
+            req.open('POST','/users/posts/rsvp');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(requestData));
+        },
+        markPostAsRead(id) {
+            if (vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].Post_viewed === 1) {
+                return;
+            }
+            vueinst.posts[vueinst.posts.findIndex((x) => x.id === id)].Post_viewed = 1;
+
+            const requestData = {
+                post_id: id
+            };
+
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    /* */
+                }
+            };
+            req.open('POST','/users/posts/mark-as-read');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(requestData));
+
+            const notificationBadge = document.querySelector("#notifications");
+            notificationBadge.innerText = Number(notificationBadge.innerText) - 1;
+        },
+        getUserInfo() {
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    vueinst.user_id = req.responseText;
+                    let res = JSON.parse(req.responseText);
+                    if (res.user_id === "") {
+                        const filter = document.querySelector("#tags");
+                        filter.remove();
+
+                        const profile = document.querySelector("#profile-nav");
+                        profile.remove();
+
+                        const notifications = document.querySelector("#notifications-nav");
+                        notifications.remove();
+
+                        const manage_users = document.querySelector("#manage-users-nav");
+                        manage_users.remove();
+
+                        const manage_clubs = document.querySelector("#manage-clubs-nav");
+                        manage_clubs.remove();
+
+                        const logout = document.querySelector("#logout");
+                        logout.innerText = "Log In/Sign Up";
+                        logout.title = "Log In or Sign Up";
+                    } else if (!res.is_admin) {
+                        const manage_users = document.querySelector("#manage-users-nav");
+                        manage_users.remove();
+
+                        const manage_clubs = document.querySelector("#manage-clubs-nav");
+                        manage_clubs.remove();
+                    }
+                }
+            };
+            req.open('GET',`/users/info`);
+            req.send();
         }
     },
     mounted() {
         this.getPosts();
-        this.updateNumberOfPostsDisplaying();
-
-        const map = new Map();
-
-        let clubsOfPosts = this.posts.filter((club) => {
-            if (map.get(club.clubId)) {
-            return false;
-            }
-            map.set(club.clubId, club);
-            return true;
-        });
-
-        this.userFollowedClubs = clubsOfPosts.map((item) => {
-            let club = item;
-            return { id: club.clubId, name: club.clubName };
-        });
+        this.getUserInfo();
     }
 }).mount("#app");
 
 // Marks the current link page as active
-if (window.location.pathname === "/clubs.html") {
-    document.getElementById("clubs-nav").className = "current-page";
-} else if (window.location.pathname === "/feed.html") {
-    document.getElementById("feed-nav").className = "current-page";
-} else if (window.location.pathname === "/events.html") {
-    document.getElementById("events-nav").className = "current-page";
-} else if (window.location.pathname === "/profile.html") {
-    document.getElementById("profile-nav").className = "current-page";
-} else if (window.location.pathname === "/notifications.html") {
-    document.getElementById("notifications-nav").className = "current-page";
-} else if (window.location.pathname === "/manage-users.html") {
-    document.getElementById("manage-users-nav").className = "current-page";
-} else if (window.location.pathname === "/manage-clubs.html") {
-    document.getElementById("manage-clubs-nav").className = "current-page";
-}
+document.getElementById("events-nav").className = "current-page";
 
 // Hamburger Menu Behaviour
 
@@ -120,10 +186,8 @@ function toggleMenuOff() {
     document.body.classList.remove("stop-scrolling");
 }
 
-if (window.location.pathname !== "/index.html" && window.location.pathname !== "/") {
-    hamburger.addEventListener("click", toggleMenuOn, false);
-    exit.addEventListener("click", toggleMenuOff, false);
-}
+hamburger.addEventListener("click", toggleMenuOn, false);
+exit.addEventListener("click", toggleMenuOff, false);
 
 // To reveal the back to top button
 function revealBackToTop() {
@@ -135,17 +199,56 @@ function revealBackToTop() {
     }
 }
 
-if (window.location.pathname === "/feed.html" || window.location.pathname === "/events.html" || window.location.pathname === "/clubs.html") {
-    document.addEventListener("scroll", revealBackToTop, false);
-}
+document.addEventListener("scroll", revealBackToTop, false);
 
 // In menu shows number of unread posts
-let unreadPosts = 100;
-
 function updateNotificationBadge() {
-    const notificationBadge = document.querySelector("#notifications");
-    notificationBadge.innerText = unreadPosts < 100 ? unreadPosts : "99+";
+    let req = new XMLHttpRequest();
+
+    req.onreadystatechange = function(){
+        if(req.readyState === 4 && req.status === 200){
+            const notificationBadge = document.querySelector("#notifications");
+            notificationBadge.innerText = req.responseText;
+        }
+    };
+    req.open('GET',`/posts/unread`);
+    req.send();
 }
-if (window.location.pathname !== "/index.html" && window.location.pathname !== "/") {
-    updateNotificationBadge();
+
+//logout AJAX function called when user clicks logout button (implemented in the nav.js folder for feed.html)
+function logout()
+{
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.open('POST','/logout');
+    xhttp.send();
+}
+
+updateNotificationBadge();
+
+const vapidPublicKey = "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI";
+
+async function send() {
+    const register = await navigator.serviceWorker.register("./javascripts/service-worker.js");
+
+    const subscription = await register.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI"
+    });
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if(xhttp.readyState === 4 && xhttp.status === 200) {
+            /* */
+        }
+    };
+
+    xhttp.open('POST', '/users/subscribe');
+    xhttp.setRequestHeader('Content-Type','application/json');
+    xhttp.send(JSON.stringify(subscription));
+}
+
+if ("serviceWorker" in navigator) {
+    send().catch((err) => console.error(err));
 }

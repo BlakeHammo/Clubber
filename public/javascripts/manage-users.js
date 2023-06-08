@@ -1,7 +1,8 @@
 const vueinst = new Vue({
     el: '#app',
     data: {
-        users: users,
+        filtered_users: [],
+        all_users: [],
         selected_user: -1,
         delete_modal_visible: false,
         edit_modal_visible: false,
@@ -10,18 +11,53 @@ const vueinst = new Vue({
         edit_last_name: "",
         edit_email: "",
         edit_phone_number: "",
-        edit_role: "",
+        edit_is_admin: "",
         username_filter: "",
         user_role_filter: "all roles"
     },
     methods: {
-        deleteUser: function() {
-            users.splice(this.getSelectedUserIndex(), 1);
-            this.users = users;
-            this.filterUsers();
+        getUsers: function() {
+            let req = new XMLHttpRequest();
 
-            this.selected_user = -1;
-            this.delete_modal_visible = false;
+            req.onreadystatechange = function() {
+                if(req.readyState === 4 && req.status === 200) {
+                    vueinst.filtered_users = JSON.parse(req.responseText);
+                    vueinst.all_users = JSON.parse(req.responseText);
+                }
+            };
+
+            req.open('GET', '/admin/users');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send();
+        },
+        getRoles: function(userId) {
+            let user = this.all_users[this.all_users.findIndex((u) => u.id === userId)];
+            if (user.isAdmin && user.isClubManager) {
+                return "ADMIN, CLUB MANAGER";
+            }
+            if (user.isAdmin) {
+                return "ADMIN";
+            }
+            if (user.isClubManager) {
+                return "CLUB MANAGER";
+            }
+            return "CLUB MEMBER";
+        },
+        deleteUser: function() {
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function() {
+                if(req.readyState === 4 && req.status === 200) {
+                    vueinst.getUsers();
+                    vueinst.filterUsers();
+                    vueinst.selected_user = -1;
+                    vueinst.delete_modal_visible = false;
+                }
+            };
+
+            req.open('DELETE', '/admin/users/' + this.selected_user);
+            req.setRequestHeader('Content-Type','application/json');
+            req.send();
         },
         showEditModal: function(userId) {
             this.edit_modal_visible = true;
@@ -36,62 +72,113 @@ const vueinst = new Vue({
                 this.edit_last_name = "";
                 this.edit_email = "";
                 this.edit_phone_number = "";
-                this.edit_role = "";
+                this.edit_is_admin = "";
             } else {
-                this.edit_username = users[this.getSelectedUserIndex()].username;
-                this.edit_first_name = users[this.getSelectedUserIndex()].firstName;
-                this.edit_last_name = users[this.getSelectedUserIndex()].lastName;
-                this.edit_email = users[this.getSelectedUserIndex()].email;
-                this.edit_phone_number = users[this.getSelectedUserIndex()].phoneNumber;
-                this.edit_role = users[this.getSelectedUserIndex()].role;
+                this.edit_username = this.getSelectedUser().username;
+                this.edit_first_name = this.getSelectedUser().firstName;
+                this.edit_last_name = this.getSelectedUser().lastName;
+                this.edit_email = this.getSelectedUser().email;
+                this.edit_phone_number = this.getSelectedUser().phoneNumber;
+                this.edit_is_admin = this.getSelectedUser().isAdmin;
             }
         },
         editUser: function() {
-            users[this.getSelectedUserIndex()].username = this.edit_username;
-            users[this.getSelectedUserIndex()].firstName = this.edit_first_name;
-            users[this.getSelectedUserIndex()].lastName = this.edit_last_name;
-            users[this.getSelectedUserIndex()].email = this.edit_email;
-            users[this.getSelectedUserIndex()].phoneNumber = this.edit_phone_number;
-            users[this.getSelectedUserIndex()].role = this.edit_role;
+            let requestData = {
+                username: this.edit_username,
+                first_name: this.edit_first_name,
+                last_name: this.edit_last_name,
+                email: this.edit_email,
+                phone_number: this.edit_phone_number,
+                is_admin: this.edit_is_admin
+            };
 
-            this.users = users;
-            this.filterUsers();
+            let req = new XMLHttpRequest();
 
-            this.selected_user = -1;
-            this.edit_modal_visible = false;
-            this.setEditValues();
+            req.onreadystatechange = function() {
+                if(req.readyState === 4 && req.status === 200) {
+                    vueinst.getUsers();
+                    vueinst.filterUsers();
+                    vueinst.edit_modal_visible = false;
+                    vueinst.selected_user = -1;
+                    vueinst.setEditValues();
+                }
+            };
+
+            req.open('POST', '/admin/users/' + this.selected_user);
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(requestData));
         },
         filterUsers: function() {
-            this.users = users.filter((user) => user.username.includes(this.username_filter));
-            if (this.user_role_filter !== "all roles") {
-                this.users = this.users.filter((user) => user.role === this.user_role_filter);
+            this.filtered_users = this.all_users.filter(
+                (user) => user.username.includes(this.username_filter)
+            );
+            if (this.user_role_filter === "ADMIN") {
+                this.filtered_users = this.filtered_users.filter(
+                    (user) => user.isAdmin
+                );
+            } else if (this.user_role_filter === "CLUB MANAGER") {
+                this.filtered_users = this.filtered_users.filter(
+                    (user) => user.isClubManager
+                );
+            } else if (this.user_role_filter === "CLUB MEMBER") {
+                this.filtered_users = this.filtered_users.filter(
+                    (user) => !user.isAdmin && !user.isClubManager
+                );
             }
         },
         getSelectedUserIndex: function() {
-            return users.findIndex((user) => user.id === this.selected_user);
+            return this.all_users.findIndex((user) => user.id === this.selected_user);
         },
         getSelectedUser: function() {
-            return users[this.getSelectedUserIndex()];
+            return this.all_users[this.getSelectedUserIndex()];
+        },
+        getUserInfo() {
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    vueinst.user_id = req.responseText;
+                    let res = JSON.parse(req.responseText);
+                    if (res.user_id === "") {
+                        const filter = document.querySelector("#tags");
+                        filter.remove();
+
+                        const profile = document.querySelector("#profile-nav");
+                        profile.remove();
+
+                        const notifications = document.querySelector("#notifications-nav");
+                        notifications.remove();
+
+                        const manage_users = document.querySelector("#manage-users-nav");
+                        manage_users.remove();
+
+                        const manage_clubs = document.querySelector("#manage-clubs-nav");
+                        manage_clubs.remove();
+
+                        const logout = document.querySelector("#logout");
+                        logout.innerText = "Log In/Sign Up";
+                        logout.title = "Log In or Sign Up";
+                    } else if (!res.is_admin) {
+                        const manage_users = document.querySelector("#manage-users-nav");
+                        manage_users.remove();
+
+                        const manage_clubs = document.querySelector("#manage-clubs-nav");
+                        manage_clubs.remove();
+                    }
+                }
+            };
+            req.open('GET',`/users/info`);
+            req.send();
         }
+    },
+    mounted: function() {
+        this.getUsers();
+        this.getUserInfo();
     }
 });
 
 // Marks the current link page as active
-if (window.location.pathname === "/clubs.html") {
-    document.getElementById("clubs-nav").className = "current-page";
-} else if (window.location.pathname === "/feed.html") {
-    document.getElementById("feed-nav").className = "current-page";
-} else if (window.location.pathname === "/events.html") {
-    document.getElementById("events-nav").className = "current-page";
-} else if (window.location.pathname === "/profile.html") {
-    document.getElementById("profile-nav").className = "current-page";
-} else if (window.location.pathname === "/notifications.html") {
-    document.getElementById("notifications-nav").className = "current-page";
-} else if (window.location.pathname === "/manage-users.html") {
-    document.getElementById("manage-users-nav").className = "current-page";
-} else if (window.location.pathname === "/manage-clubs.html") {
-    document.getElementById("manage-clubs-nav").className = "current-page";
-}
+document.getElementById("manage-users-nav").className = "current-page";
 
 // Hamburger Menu Behaviour
 
@@ -113,10 +200,8 @@ function toggleMenuOff() {
     document.body.classList.remove("stop-scrolling");
 }
 
-if (window.location.pathname !== "/index.html" && window.location.pathname !== "/") {
-    hamburger.addEventListener("click", toggleMenuOn, false);
-    exit.addEventListener("click", toggleMenuOff, false);
-}
+hamburger.addEventListener("click", toggleMenuOn, false);
+exit.addEventListener("click", toggleMenuOff, false);
 
 // To reveal the back to top button
 function revealBackToTop() {
@@ -128,17 +213,56 @@ function revealBackToTop() {
     }
 }
 
-if (window.location.pathname === "/feed.html" || window.location.pathname === "/events.html" || window.location.pathname === "/clubs.html") {
-    document.addEventListener("scroll", revealBackToTop, false);
-}
+document.addEventListener("scroll", revealBackToTop, false);
 
 // In menu shows number of unread posts
-let unreadPosts = 100;
-
 function updateNotificationBadge() {
-    const notificationBadge = document.querySelector("#notifications");
-    notificationBadge.innerText = unreadPosts < 100 ? unreadPosts : "99+";
+    let req = new XMLHttpRequest();
+
+    req.onreadystatechange = function(){
+        if(req.readyState === 4 && req.status === 200){
+            const notificationBadge = document.querySelector("#notifications");
+            notificationBadge.innerText = req.responseText;
+        }
+    };
+    req.open('GET',`/posts/unread`);
+    req.send();
 }
-if (window.location.pathname !== "/index.html" && window.location.pathname !== "/") {
-    updateNotificationBadge();
+
+//logout AJAX function called when user clicks logout button (implemented in the nav.js folder for feed.html)
+function logout()
+{
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.open('POST','/logout');
+    xhttp.send();
+}
+
+updateNotificationBadge();
+
+const vapidPublicKey = "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI";
+
+async function send() {
+    const register = await navigator.serviceWorker.register("./javascripts/service-worker.js");
+
+    const subscription = await register.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI"
+    });
+
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if(xhttp.readyState === 4 && xhttp.status === 200) {
+            /* */
+        }
+    };
+
+    xhttp.open('POST', '/users/subscribe');
+    xhttp.setRequestHeader('Content-Type','application/json');
+    xhttp.send(JSON.stringify(subscription));
+}
+
+if ("serviceWorker" in navigator) {
+    send().catch((err) => console.error(err));
 }
