@@ -33,10 +33,6 @@ const vueinst = Vue.createApp({
                             timeStyle: "short"
                         });
 
-                        if (post.tag === "event" && new Date(post.event_date_time) < new Date()) {
-                            post.disable_rsvp = true;
-                        }
-
                         post.creation_date_time = formatter.format(new Date(post.creation_date_time));
                         if (post.tag === 'event') {
                             post.event_date_time = formatter.format(new Date(post.event_date_time));
@@ -229,6 +225,8 @@ function logout()
 }
 
 updateNotificationBadge();
+
+const vapidPublicKey = "BJDu8opIvUamtiZsKy5XZka2YxuOBNWxd6nKyYt2Cy1GQAl00ts9EdMJoxt9POBxyy0iEyZXmb-uvjaHUeey0XI";
 
 async function send() {
     const register = await navigator.serviceWorker.register("./javascripts/service-worker.js");

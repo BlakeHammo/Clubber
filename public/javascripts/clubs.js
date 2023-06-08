@@ -87,10 +87,6 @@ const vueinst = Vue.createApp({
                             timeStyle: "short"
                         });
 
-                        if (post.tag === "event" && new Date(post.event_date_time) < new Date()) {
-                            post.disable_rsvp = true;
-                        }
-
                         post.creation_date_time = formatter.format(new Date(post.creation_date_time));
                         if (post.tag === 'event') {
                             post.event_date_time = formatter.format(new Date(post.event_date_time));
@@ -525,6 +521,7 @@ async function send() {
     xhttp.setRequestHeader('Content-Type','application/json');
     xhttp.send(JSON.stringify(subscription));
 }
+
 
 if ("serviceWorker" in navigator) {
     send().catch((err) => console.error(err));
