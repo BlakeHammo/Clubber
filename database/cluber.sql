@@ -13,9 +13,28 @@ CREATE TABLE Users (
     phone_number VARCHAR(255),
     system_administrator INT,
     profile_pic_path VARCHAR(255),
+    push_endpoint VARCHAR(500) UNIQUE,
+    push_p256dh VARCHAR(500) UNIQUE,
+    auth VARCHAR(500) UNIQUE,
     PRIMARY KEY(id)
 );
 
+/*
+    use a trigger stored procedure to execute everytime an INSERT occurs
+    before any INSERT on Users table set a max_id variable to the current max id in the table
+    this is so that the AUTO_INCREMENT keyword will increment from the current max id in the table
+    and not the previous max id (even if it was deleted).
+*/
+DELIMITER //
+CREATE TRIGGER SetAutoIncrement
+BEFORE INSERT ON Users
+FOR EACH ROW
+BEGIN
+    DECLARE max_id INT;
+    SET max_id = (SELECT COALESCE(MAX(id), 0) FROM Users);
+    SET NEW.id = max_id + 1;
+END //
+DELIMITER ;
 
 CREATE TABLE Clubs (
     id INT AUTO_INCREMENT,

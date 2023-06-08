@@ -12,6 +12,8 @@
         <script src="./javascripts/manage-users.js" defer></script>
         <script src="./components/header.js"></script>
         <script src="./components/nav.js"></script>
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#455db2">
         <title>CLUBER - Manage Users</title>
     </head>
     <body>
@@ -41,18 +43,18 @@
                                     <th class="hidden-column-550">Last Name</th>
                                     <th class="hidden-column-1100">Email</th>
                                     <th class="hidden-column-1200">Phone Number</th>
-                                    <th>Role</th>
+                                    <th>Roles</th>
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody v-for="user in users">
+                            <tbody v-for="user in filtered_users">
                                 <tr>
                                     <td>{{user.username}}</td>
                                     <td class="hidden-column-550">{{user.firstName}}</td>
                                     <td class="hidden-column-550">{{user.lastName}}</td>
                                     <td class="hidden-column-1100">{{user.email}}</td>
                                     <td class="hidden-column-1200">{{user.phoneNumber}}</td>
-                                    <td>{{user.role}}</td>
+                                    <td>{{getRoles(user.id)}}</td>
                                     <td>
                                         <i class="fa fa-solid fa-pen edit" v-on:click="showEditModal(user.id)"></i>
                                         <i class="fa fa-solid fa-trash delete" v-on:click="delete_modal_visible = true; selected_user = user.id"></i>
@@ -102,12 +104,8 @@
                                 <input id="email-input" type="text" v-model="edit_email">
                                 <label for="phone-number-input">Phone Number</label>
                                 <input id="phone-number-input" type="text" v-model="edit_phone_number">
-                                <label for="role-input">Role</label>
-                                <select id="role-input" v-model="edit_role">
-                                    <option>ADMIN</option>
-                                    <option>CLUB MANAGER</option>
-                                    <option>CLUB MEMBER</option>
-                                </select>
+                                <input type="checkbox" id="is-admin-input" name="is-admin" v-model="edit_is_admin">
+                                <label for="is-admin"> Is ADMIN</label><br>
                             </div>
                             <div class="right-aligned">
                                 <button type="button" class="cancel-button close" v-on:click="edit_modal_visible = false; selected_user = -1">Cancel</button>

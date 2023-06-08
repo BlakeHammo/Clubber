@@ -1,5 +1,16 @@
 var express = require('express');
+const PoolCluster = require('mysql/lib/PoolCluster');
 var router = express.Router();
+
+//google ID essentials
+/*-----------------------------------------------------*/
+const CLIENT_ID = '526111756235-7mr4l5b07tn1snd0ahl1l768c4kf51cm.apps.googleusercontent.com'
+const {OAuth2Client} = require('google-auth-library');
+const client = new OAuth2Client(CLIENT_ID);
+/*-----------------------------------------------------*/
+
+//argon2 hashing + salting
+const argon2 = require('argon2');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -12,39 +23,152 @@ router.post('/accountCreationComplete',function(req, res, next)
   res.redirect("/index.html"); // bring user back to sign-in page
 });
 
-router.post('/login', function(req,res,next)
+router.post('/login', async function(req,res,next)
 {
-  if('username' in req.body && 'password' in req.body) // check if username and password variable exist in req.body
+  var pool = req.pool; // easy variable to query directly from req.pool connection pool
+  //google login
+  /*----------------------------------------------------------- */
+  if ('client_id' in req.body && 'credential in req.body')
   {
-    let pool = req.pool; // easy variable to query directly from req.pool connection pool
-    let query = "SELECT id,username,email,passwords,profile_pic_path FROM Users WHERE username = ? AND passwords = ?";
+      const ticket = await client.verifyIdToken({
+          idToken: req.body.credential,
+          audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
+          // Or, if multiple clients access the backend:
+          //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+      });
+      const payload = ticket.getPayload();
+      const userid = payload['sub'];
 
-    // query with prepared statements using username and password sent from client
-    pool.query(query, [req.body.username, req.body.password], function(err, result, fields)
+      console.log(payload['email']);
+      console.log(payload['sub']);
+      // If request specified a G Suite domain:
+      // const domain = payload['hd'];
+
+      //check if this user has logged into cluber with google sign in API before
+      let query = "SELECT id,username,email,passwords,profile_pic_path,system_administrator FROM Users WHERE email = ?";
+
+      pool.query(query, [payload['email']], function(cerr, result, fields)
+      {
+        if(cerr)
+        {
+          res.sendStatus(500);
+          return;
+        }
+        if(result.length > 0) //if they have, set their session token
+        {
+          console.log('google user already exists');
+          [req.session.user] = result; // using array destructuring to save all the user info to this "user variable"
+          req.session.username = result[0].username; // attach username to the session.username variable
+          req.session.user_id = result[0].id; // attach id to user_id session variable
+          req.session.email = result[0].email;
+          res.sendStatus(200);
+        }
+        else // if is no user with that username, add them to the database since they are already verified with google (essentially sign up)
+        {
+          console.log('google user DOES NOT exists');
+          let insertQuery = `INSERT INTO Users (
+                              first_name,
+                              last_name,
+                              username,
+                              email,
+                              passwords
+                            ) VALUES (
+                              ?,
+                              ?,
+                              ?,
+                              ?,
+                              ?
+                          );`;
+          /*
+            !!!!!!!! NOTE, currently using 'sub' from payload as their password so someone else can't just use the
+            traditional login with a gmail and no password to access someone elses account
+
+            ALSO Inserting user's first name, last name, username (their first name be default), and email from credential response
+           from google's payload
+
+            Also using nested callback functions here (the getInfoQuery is nested inside the insertQuery)
+            this is so the getInfoQuery will only execute AFTER the insertQuery is done inserting the user info into the database
+          */
+            pool.query(insertQuery, [payload['given_name'], payload['family_name'],payload['given_name'],payload['email'], payload['sub']], function(err, result, fields)
+            {
+              if(err)
+              {
+                console.error('Error executing query:', err);
+                res.sendStatus(500);
+                return;
+              }
+              let getInfoQuery = "SELECT id,username,email,passwords,profile_pic_path,system_administrator FROM Users WHERE email = ?";
+
+              //now after creating entry for first time google sign in user, must attach info to their session token
+              pool.query(getInfoQuery, [payload['email']], function(qerr, row, fields)
+              {
+                if(qerr)
+                {
+                    console.error('Error executing query:', qerr);
+                    res.sendStatus(500);
+                    return;
+                }
+                console.log('Email:', payload['email']);
+                console.log('ADDING NEWLY ADDED GOOGLE USERS INFO TO SESSION');
+                console.log('Row Length:', row.length);
+                console.log('Row:', row);
+                [req.session.user] = row; // using array destructuring to save all the user info to this "user variable"
+                req.session.username = row[0].username; // attach username to the session.username variable
+                req.session.user_id = row[0].id; // attachk id to user_id session variable
+                console.log(req.session.user_id);
+                res.sendStatus(200);
+              });
+            });
+        }
+      });
+  // traditional login
+  /*-----------------------------------------------------------*/
+  }
+  else if('username' in req.body && 'password' in req.body) // check if username and password variable exist in req.body
+  {
+    let query = "SELECT id,username,email,passwords,profile_pic_path,system_administrator FROM Users WHERE username = ?"; //argon2 query
+
+    req.pool.getConnection(function (gCerr, connection)
     {
-      if(err)
+        // query with prepared statements using username and password sent from client
+      connection.query(query, [req.body.username], async function(qerr, result, fields)
       {
-        console.error('Error executing query:', err);
-        res.sendStatus(500);
-        return;
-      }
+        connection.release();
+        if(qerr)
+        {
+          console.error('Error executing query:', qerr);
+          res.sendStatus(500);
+          return;
+        }
 
-      console.log(JSON.stringify(result));
+        console.log(JSON.stringify(result));
 
-      // if result from query (returned as an array) is > 0 (it exists)
-      if(result.length > 0)
-      {
-        req.session.username = result[0].username; // attach username to the session.username variable
-        req.session.user_id = result[0].id; // attachk id to user_id session variable
+        // if result from query (returned as an array) is > 0 (it exists)
+        if(result.length > 0)
+        {
+          if(await argon2.verify(result[0].passwords, req.body.password)) //if password sent from user = hashed stored password
+          {
+            let [dummy_user] = result;
+            delete dummy_user.passwords;
 
-        console.log('login successful for: ' + req.body.username + " " + req.session.user_id);
+            [req.session.user] = result; //using array destructuring to save all the user info to this "user variable"
+            req.session.username = result[0].username; // attach username to the session.username variable
+            req.session.user_id = result[0].id; // attach id to user_id session variable
 
-        res.sendStatus(200);
-      }
-      else
-      {
-        res.sendStatus(401);
-      }
+            console.log('login successful for: ' + req.body.username + " " + req.session.user_id);
+
+            res.sendStatus(200);
+          }
+          else //if password wrong send error
+          {
+            res.sendStatus(401);
+          }
+        }
+        else
+        {
+          res.sendStatus(401);
+        }
+      });
     });
   }
 });
@@ -55,36 +179,92 @@ router.post("/signup", function(req, res, next)
   {
     console.log('signup payload object recieved from ' + req.body.username + " " + req.body.email);
 
-    let pool = req.pool;
-    // query used to insert username, email and password into database
-    let query = `INSERT INTO Users (
-                    first_name,
-                    last_name,
-                    username,
-                    email,
-                    passwords
-                ) VALUES (
-                    NULL,
-                    NULL,
-                    ?,
-                    ?,
-                    ?
-                );`;
-
-    pool.query(query, [req.body.username, req.body.email, req.body.password], function(err, result, fields)
+    // check if password length is > 12, if not, send 400 error and return out of method
+    if(req.body.password.length < 12)
     {
-      if(err)
+      res.sendStatus(422);
+      return;
+    }
+
+    let pool = req.pool;
+
+    // query database to see if the username or email already exist (must be unique)
+    let validateQuery = "SELECT COUNT(*) AS count FROM Users WHERE username = ? OR email = ?";
+    pool.query(validateQuery, [req.body.username, req.body.email], function(qerr, result, fields)
+    {
+      if(qerr)
       {
-        console.error('Error executing query:', err);
+        console.error('Error executing query:', qerr);
         res.sendStatus(500);
         return;
       }
-      res.end();
+
+      // if username or email already exist, send 409 and return
+      console.log(result[0].count);
+      if(result[0].count > 0)
+      {
+        res.sendStatus(409);
+        return;
+      }
+
+      // if username and email unqiue and password > 12, allow user to create account
+      req.pool.getConnection(async function (gCerr, connection)
+      {
+        if(gCerr)
+        {
+          res.sendStatus(500);
+          return;
+        }
+        const hash = await argon2.hash(req.body.password); // hash password from req.body
+
+        // query used to insert username, email and password into database
+        let query = `INSERT INTO Users (
+                        first_name,
+                        last_name,
+                        username,
+                        email,
+                        passwords
+                    ) VALUES (
+                        NULL,
+                        NULL,
+                        ?,
+                        ?,
+                        ?
+                    );`;
+
+        connection.query(query, [req.body.username, req.body.email, hash], function(qerr, result, fields)
+        {
+          connection.release();
+
+          if(qerr)
+          {
+            console.error('Error executing query:', qerr);
+            res.sendStatus(500);
+            return;
+          }
+          res.end();
+        });
+      });
     });
   }
   else
   {
     res.sendStatus(401);
+  }
+});
+
+//delete a user's user_id from the session token to log them out
+router.post('/logout', function (req, res, next)
+{
+  if ('user_id' in req.session)
+  {
+      console.log("deleting user_id: " + req.session.user_id);
+      delete req.session.user_id;
+      console.log("logout successful for " + req.session.username);
+      res.end();
+  } else
+  {
+      res.sendStatus(403);
   }
 });
 
@@ -201,6 +381,19 @@ router.post("/posts", function(req, res, next) {
         posts = posts.map((v) => ({ ...v, isExpanded: false, isHovered: false, notUser: false }));
       }
 
+      function oldPosts(post) {
+        if (post.Post_viewed === 1) {
+          return;
+        }
+        if (((new Date()) - (new Date(post.creation_date_time))) / (24 * 60 * 60 * 1000) >= 7) {
+          post.Post_viewed = 1;
+        }
+      }
+
+      if ('user_id' in req.session) {
+        posts.forEach(oldPosts);
+      }
+
       res.json(posts);
     });
   });
@@ -219,6 +412,7 @@ router.get("/clubs", function(req, res, next) {
       let tag_added = false;
       if (req.query.tag !== "") {
         filter += ` WHERE Clubs.club_tag = '${req.query.tag}'`;
+        tag_added = true;
       }
 
       if (req.query.club !== "") {
@@ -255,6 +449,43 @@ router.get("/clubs", function(req, res, next) {
       res.json(clubs);
     });
   });
+});
+
+router.get("/posts/unread", function(req, res, next) {
+  if (!('user_id' in req.session)) {
+    res.send("?");
+  } else {
+    req.pool.getConnection(function(cerr, connection) {
+      if (cerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      let query = `SELECT COUNT(Posts.id) AS count FROM Posts
+      INNER JOIN Clubs ON Posts.club_id = Clubs.id
+      INNER JOIN Club_members ON Club_members.club_id = Clubs.id AND Club_members.user_id = ?
+      LEFT JOIN Posts_viewed ON Posts.id = Posts_viewed.post_id
+      WHERE Posts_viewed.user_id IS NULL AND Posts.creation_date_time BETWEEN date_sub(NOW(),INTERVAL 1 WEEK) AND NOW();`;
+
+      connection.query(query, [req.session.user_id], function(qerr, rows, fields) {
+
+        connection.release();
+
+        if (qerr) {
+          res.sendStatus(500);
+          return;
+        }
+
+        let number = `${rows[0].count}`;
+
+        if (rows[0].count > 99) {
+          number = "99+";
+        }
+
+        res.send(number);
+      });
+    });
+  }
 });
 
 module.exports = router;

@@ -11,6 +11,8 @@
         <script src="./javascripts/manage-profile.js" defer></script>
         <script src="./components/header.js"></script>
         <script src="./components/nav.js"></script>
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#455db2">
         <title>CLUBER - My Profile</title>
     </head>
     <body>
@@ -25,48 +27,38 @@
                             {{ edit_profile ? 'Save Profile' : 'Edit Profile'}}
                         </button>
                     </div>
-
                     <div class="profile-box">
-
                         <div class="profile-picture">
                             <img class="profile-icon" v-bind:src="image" alt="Profile Image">
                         </div>
-
                         <div class="profile-details">
                             <div class="profile-label-text">
                                 <div class="profile-label"> Username</div>
                                 <div v-if="!edit_profile" class="profile-text profile-text-padding"> {{ username }} </div>
                                 <input v-else type="text" class="profile-text profile-input" v-model="username">
                             </div>
-
                             <div class="profile-label-text">
                                 <div class="profile-label"> First Name</div>
                                 <div v-if="!edit_profile" class="profile-text profile-text-padding"> {{ first_name }} </div>
                                 <input v-else type="text" class="profile-text profile-input" v-model="first_name">
                             </div>
-
                             <div class="profile-label-text">
                                 <div class="profile-label"> Last Name</div>
                                 <div v-if="!edit_profile" class="profile-text profile-text-padding"> {{ last_name }} </div>
                                 <input v-else type="text" class="profile-text profile-input" v-model="last_name">
                             </div>
-
                             <div class="profile-label-text">
                                 <div class="profile-label"> Email</div>
                                 <div v-if="!edit_profile" class="profile-text profile-text-padding"> {{ email }} </div>
                                 <input v-else type="text" class="profile-text profile-input" v-model="email">
                             </div>
-
                             <div class="profile-label-text">
                                 <div class="profile-label"> Phone</div>
                                 <div v-if="!edit_profile" class="profile-text profile-text-padding"> {{ phone }} </div>
                                 <input v-else type="text" class="profile-text profile-input" v-model="phone">
                             </div>
                         </div>
-
-
                     </div>
-
                     <div v-if="edit_profile" class="profile-upload">
                         <label for="image-upload" class="upload-label">
                             <input id="image-upload" type="file" ref="fileInput" accept="image/*" class="upload-input"/>
@@ -74,9 +66,6 @@
                         </label>
                         <button v-on:click="uploadImage()" class="edit-profile-button">Confirm</button>
                     </div>
-
-
-
                 </main>
             </div>
         </div>
