@@ -11,8 +11,6 @@
         <script src="./javascripts/manage-profile.js" defer></script>
         <script src="./components/header.js"></script>
         <script src="./components/nav.js"></script>
-        <link rel="manifest" href="manifest.json">
-        <meta name="theme-color" content="#455db2">
         <title>CLUBER - My Profile</title>
     </head>
     <body>
@@ -23,7 +21,7 @@
                 <main>
                     <h1 class="page-title">My Profile</h1>
                     <div class="button-div">
-                        <button v-on:click="edit_profile = !edit_profile" type="button" class="edit-profile-button">
+                        <button v-on:click="edit_profile ? editProfile() : edit_profile = !edit_profile" type="button" class="edit-profile-button">
                             {{ edit_profile ? 'Save Profile' : 'Edit Profile'}}
                         </button>
                     </div>
@@ -70,9 +68,11 @@
                     </div>
 
                     <div v-if="edit_profile" class="profile-upload">
-                        <button  type="button" class="edit-profile-button">
-                            Upload Image
-                        </button>
+                        <label for="image-upload" class="upload-label">
+                            <input id="image-upload" type="file" ref="fileInput" accept="image/*" class="upload-input"/>
+                                Upload Image
+                        </label>
+                        <button v-on:click="uploadImage()" class="edit-profile-button">Confirm</button>
                     </div>
                 </main>
             </div>

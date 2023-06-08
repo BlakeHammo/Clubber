@@ -2,15 +2,122 @@ const vueinst = new Vue({
     el: '#app',
     data: {
         username: 'Username',
-        first_name: 'First Name',
-        last_name: 'Last Name',
-        email: 'Email',
-        phone: 'Phone',
+        first_name: '...',
+        last_name: '...',
+        email: '...',
+        phone: '...',
         image: '/images/icon.png',
         edit_profile: false,
         profile_page: true
     },
     methods: {
+        editProfile() {
+            let request = {
+                username: this.username,
+                first_name: this.first_name,
+                last_name: this.last_name,
+                email: this.email,
+                phone_number: this.phone
+            };
+
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function(){
+                if(req.readyState === 4 && req.status === 200){
+                    /* */
+                }
+            };
+            req.open('POST','/users/profile/edit');
+            req.setRequestHeader('Content-Type','application/json');
+            req.send(JSON.stringify(request));
+
+            this.edit_profile = !this.edit_profile;
+        },
+        fetchProfileData() {
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function() {
+                if(req.readyState === 4 && req.status === 200){
+                    const response = JSON.parse(req.responseText);
+                    if (response.length > 0) {
+                        const userData = response[0];
+                        this.username = userData.username;
+                        this.email = userData.email;
+                        if (userData.first_name){
+                            this.first_name = userData.first_name;
+                        }
+                        if (userData.last_name){
+                            this.last_name = userData.last_name;
+                        }
+                        if (userData.phone_number){
+                            this.phone = userData.phone_number;
+                        }
+                        if (userData.profile_pic_path){
+                            this.image = userData.profile_pic_path;
+                        }
+                    }
+                }
+            }.bind(this);
+
+            req.open('GET', '/users/profile', true);
+            req.send();
+
+        },
+        fetchProfileImage() {
+            let req = new XMLHttpRequest();
+
+            req.onreadystatechange = function() {
+                if(req.readyState === 4 && req.status === 200){
+                    const response = JSON.parse(req.responseText);
+                    if (response.length > 0) {
+                        const userData = response[0];
+                        this.image = userData.profile_pic_path;
+                    }
+                }
+            }.bind(this);
+
+            req.open('GET', '/users/profile/', true);
+            req.send();
+
+        },
+        uploadImage() {
+            const { fileInput } = this.$refs;
+            const file = fileInput.files[0];
+
+            if (!file) {
+              // Handle case when no file is selected
+              return;
+            }
+
+            // Create a FormData object to send the file
+            const formData = new FormData();
+            formData.append('image', file);
+
+            // Send the file using an XMLHttpRequest
+            const req = new XMLHttpRequest();
+            req.onreadystatechange = () => {
+              if (req.readyState === 4) {
+                if (req.status === 200) {
+                    this.fetchProfileImage();
+                  // Handle successful upload
+                  console.log('Image uploaded successfully');
+                } else if (req.status == 400) {
+                    // Handle bad request (invalid image)
+                    console.error('Error uploading image: Invalid image');
+                } else {
+                  // Handle upload error
+                  console.error('Error uploading image: Server error');
+                }
+              }
+            };
+            req.open('POST', '/users/profile/upload');
+            req.onerror = function() {
+                // Handle network errors
+                console.error('Error uploading image: Network error');
+              };
+            req.send(formData);
+
+        },
         getUserInfo() {
             let req = new XMLHttpRequest();
 
@@ -19,9 +126,6 @@ const vueinst = new Vue({
                     vueinst.user_id = req.responseText;
                     let res = JSON.parse(req.responseText);
                     if (res.user_id === "") {
-                        const filter = document.querySelector("#tags");
-                        filter.remove();
-
                         const profile = document.querySelector("#profile-nav");
                         profile.remove();
 
@@ -51,6 +155,7 @@ const vueinst = new Vue({
         }
     },
     mounted: function() {
+        this.fetchProfileData();
         this.getUserInfo();
     }
 });

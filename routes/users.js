@@ -1,7 +1,43 @@
 var express = require('express');
+const multer = require("multer");
 var router = express.Router();
+var path = require('path');
 
 var nodemailer = require('nodemailer');
+
+//Assure only images are uploaded
+const checkFileType = function (file, cb) {
+  //Allowed file extensions
+  const fileTypes = /jpeg|jpg|png|gif|svg/;
+
+  //check extension names
+  const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
+
+  const mimeType = fileTypes.test(file.mimetype);
+
+  if (mimeType && extName) {
+    return cb(null, true);
+  } else {
+    cb("Error: File not an image");
+  }
+};
+
+//setting storage engine
+const storageEngine = multer.diskStorage ({
+  destination: "/workspaces/23S1_WDC_PG001_enjoyable-turns-super/public/images",
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}--${file.originalname}`);
+  }
+});
+
+//initializing multer
+const upload = multer({
+  storage: storageEngine,
+  limits: { filesize: 1000000 },
+  fileFilter: (req, file, cb) => {
+    checkFileType(file, cb);
+  }
+});
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.ethereal.email',
@@ -79,6 +115,85 @@ router.use('/', function(req, res, next) {
   } else {
     next();
   }
+});
+
+router.post("/profile/upload", upload.single("image"), (req, res, next) => {
+  if (req.file) {
+    // Save the image path or filename in the SQL database
+    let imagePath = req.file.path.replace('/workspaces/23S1_WDC_PG001_enjoyable-turns-super/public', '');
+
+    req.pool.getConnection(function(cerr, connection) {
+      if (cerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      // Update the user's profile in the database with the image path
+      let query = 'UPDATE Users SET profile_pic_path = ? WHERE id = ?';
+
+      connection.query(query, [imagePath, req.session.user_id], function(qerr, result) {
+        connection.release();
+
+        if (qerr) {
+          res.sendStatus(500);
+          return;
+        }
+
+        res.sendStatus(200);
+      });
+    });
+  } else {
+    res.status(400).send("Please upload a valid image");
+  }
+});
+
+
+router.get("/profile", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    let query = `SELECT first_name, last_name, username, email, phone_number, profile_pic_path FROM Users WHERE id = ?`;
+
+    connection.query(query, [req.session.user_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      let user_data = rows;
+
+      res.json(user_data);
+    });
+  });
+});
+
+
+router.post("/profile/edit", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    let query = `UPDATE Users SET first_name = ?, last_name = ?, username = ?, email = ?, phone_number = ? WHERE id = ?`
+
+    connection.query(query, [req.body.first_name, req.body.last_name, req.body.username,req.body.email, req.body.phone_number, req.session.user_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+      res.send();
+    });
+  });
 });
 
 router.post("/clubs/join", function(req, res, next) {
@@ -215,6 +330,28 @@ router.post("/notifications/update", function(req, res, next) {
 const webPush = require('web-push');
 
 router.post("/notifications/send", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    const query = "SELECT user_id FROM Club_members WHERE user_id = ? AND club_id = ? AND club_manager = 1;";
+
+    connection.query(query, [req.session.user_id, req.body.club_id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      if (!rows) {
+        res.sendStatus(403);
+      }
+    });
+  });
   let recipients = [];
   let query = ``;
   if (req.body.tag === 'post') {
@@ -317,6 +454,29 @@ router.post("/posts/create", function(req, res, next) {
       return;
     }
 
+    const query = "SELECT user_id FROM Club_members WHERE user_id = ? AND club_id = ? AND club_manager = 1;";
+
+    connection.query(query, [req.session.user_id, req.body.clubId], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      if (!rows) {
+        res.sendStatus(403);
+      }
+    });
+  });
+
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
     let query = `INSERT INTO Posts (title, content, event_date_time, event_location, tag, event_type, club_id, creation_date_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
     connection.query(query, [req.body.title, req.body.content, req.body.eventDate, req.body.location, req.body.tag, req.body.type, req.body.clubId, req.body.creation_date_time], function(qerr, rows, fields) {
@@ -333,6 +493,33 @@ router.post("/posts/create", function(req, res, next) {
 });
 
 router.get("/posts/rsvp-users", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    const query = `SELECT user_id FROM Club_members
+    INNER JOIN Clubs ON
+    Club_members.club_id = Clubs.id
+    INNER JOIN Posts ON
+    Clubs.id = Posts.club_id WHERE user_id = ? AND Posts.id = ? AND club_manager = 1;`;
+
+    connection.query(query, [req.session.user_id, req.query.id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      if (!rows) {
+        res.sendStatus(403);
+      }
+    });
+  });
+
   req.pool.getConnection(function(cerr, connection) {
     if (cerr) {
       res.sendStatus(500);
@@ -359,6 +546,29 @@ router.get("/posts/rsvp-users", function(req, res, next) {
 });
 
 router.get("/clubs/members", function(req, res, next) {
+  req.pool.getConnection(function(cerr, connection) {
+    if (cerr) {
+      res.sendStatus(500);
+      return;
+    }
+
+    const query = "SELECT user_id FROM Club_members WHERE user_id = ? AND club_id = ? AND club_manager = 1;";
+
+    connection.query(query, [req.session.user_id, req.query.id], function(qerr, rows, fields) {
+
+      connection.release();
+
+      if (qerr) {
+        res.sendStatus(500);
+        return;
+      }
+
+      if (!rows) {
+        res.sendStatus(403);
+      }
+    });
+  });
+
   req.pool.getConnection(function(cerr, connection) {
     if (cerr) {
       res.sendStatus(500);
