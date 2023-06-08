@@ -68,10 +68,13 @@
                     </div>
 
                     <div v-if="edit_profile" class="profile-upload">
-                        <button  type="button" class="edit-profile-button">
-                            Upload Image
-                        </button>
+                        <label for="image-upload" class="upload-label">
+                            <input id="image-upload" type="file" ref="fileInput" accept="image/*" class="upload-input"/>
+                                Upload Image
+                        </label>
+                        <button v-on:click="uploadImage()" class="edit-profile-button">Save Image</button>
                     </div>
+
 
 
                 </main>

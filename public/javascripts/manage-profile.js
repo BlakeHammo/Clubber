@@ -46,12 +46,50 @@ const vueinst = new Vue({
                         this.last_name = userData.last_name;
                         this.email = userData.email;
                         this.phone = userData.phone_number;
+                        this.image = userData.profile_pic_path;
                     }
                 }
             }.bind(this);
 
             req.open('GET', '/users/profile', true);
             req.send();
+
+        },
+        uploadImage() {
+            const { fileInput } = this.$refs;
+            const file = fileInput.files[0];
+
+            if (!file) {
+              // Handle case when no file is selected
+              return;
+            }
+
+            // Create a FormData object to send the file
+            const formData = new FormData();
+            formData.append('image', file);
+
+            // Send the file using an XMLHttpRequest
+            const req = new XMLHttpRequest();
+            req.onreadystatechange = () => {
+              if (req.readyState === 4) {
+                if (req.status === 200) {
+                  // Handle successful upload
+                  console.log('Image uploaded successfully');
+                } else if (req.status == 400) {
+                    // Handle bad request (invalid image)
+                    console.error('Error uploading image: Invalid image');
+                } else {
+                  // Handle upload error
+                  console.error('Error uploading image: Server error');
+                }
+              }
+            };
+            req.open('POST', '/users/profile/upload');
+            req.onerror = function() {
+                // Handle network errors
+                console.error('Error uploading image: Network error');
+              };
+            req.send(formData);
 
         }
     },
