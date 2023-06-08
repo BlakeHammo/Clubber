@@ -980,7 +980,6 @@ table th {
 	}
 }
 
-
 .profile-box {
 	margin: auto;
 	padding: 30px;
@@ -995,8 +994,8 @@ table th {
 
 
 .profile-icon {
-	width: 275px;
-	height: 275px;
+	width: 330px;
+	height: 330px;
 	left: calc(50% - 200px/2 - 178px);
 	top: calc(50% - 200px/2 - 152px);
 
@@ -1043,6 +1042,7 @@ table th {
 
 .profile-details {
     flex: 1 1 auto;
+	padding-top: 15px;
 }
 
 .profile-upload {
@@ -1057,6 +1057,46 @@ table th {
 
 .profile-text-padding {
 	padding-left: 7px;
+}
+
+@media (max-width: 600px) {
+	.profile-box {
+		flex-direction: column;
+		max-width: 100%;
+		margin-top: 0%;
+		border: none;
+	}
+
+	.profile-icon {
+		width: 100%;
+		height: auto;
+		margin: auto;
+	}
+
+	.profile-details {
+		margin-top: 20px;
+	}
+
+	.profile-label,
+	.profile-text {
+		text-align: left;
+	}
+
+	.profile-label-text {
+		text-align: left;
+	}
+
+	.profile-text,
+	.profile-input {
+  		width: 100%;
+	}
+
+	.profile-upload {
+		margin-top: 0px;
+		margin-bottom: 20px;
+		margin-left: 30px;
+	}
+
 }
 
 /*Styles for google sign in button*/
