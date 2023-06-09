@@ -52,7 +52,9 @@ pass: enDbPF1FrRWbXFAFmT
 
 ---------------------------------------------------
 
-Our site is optimised for mobile as well
+Our site is optimised for mobile as well.
+
+Please note if you want push notifications you will need to unregister your service worker to get the working. We need a fresh one assigned as we assume someone using your device is only one user.
 
 ---------------------------------------------------
 
@@ -61,3 +63,11 @@ You can use the sql query file to create the database and run a few basic querie
 Make sure you drop the existing cluber database beforehand
 
 $ mysql < database/queries.sql (We are assuming you are in the parent directory)
+
+---------------------------------------------------
+
+You can use the database'queries.sql file to test our database implementation
+
+mysql < database/queries.sql (We are assuming you are in the parent directory)
+
+This will load dummy data in and that file is easier to read than the backup
