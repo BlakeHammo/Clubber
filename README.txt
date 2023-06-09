@@ -10,7 +10,7 @@ Petra Curdova a1894079
 
 Blake Hammond a1881913
 
-IMPORTANT: The video submission showcasing our web app is called Cluber Overview.mkv and is within this WDC_PG001_ENJOYABLE_TURNS_SUPER folder
+IMPORTANT: The video submission showcasing our web app is called "Cluber Overview.mkv" and is within this WDC_PG001_ENJOYABLE_TURNS_SUPER folder
 
 ----------------------------------------------------
 
