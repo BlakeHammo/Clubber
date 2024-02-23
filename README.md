@@ -1,12 +1,61 @@
 # Group Repository for COMP SCI 2207/7207 Web & Database Computing Web Application Project (2023 Semester 1) 
 
-Your group's shared repository for the WDC 2023 Web App Project. 
+Our web application utilises both vue.js and express.js. In order to run the web application:
 
-Auto commit/push/sync to Github is disabled by default in this repository.  
-- Enable the GitDoc extension to use this fucntionality (either in your VSCode settings, or in the Dev Container settings) 
+1. ensure node.js is installed
 
-See [HERE](https://myuni.adelaide.edu.au/courses/85266/pages/2023-web-application-group-project-specification) for the project specification.
+2. $ npm install (should install all modules required for the application to run specified in the package-lock.json)
 
-We recommend using the 'Shared Repository Model (Branch & Pull)' to collaborate on your work in this single repostory.
-- You can read more about collaborating on GitHub repositories [HERE](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests)
-- When working on the same file at the same time, the 'Live Share' feature in VSCode can also help.
+3. ensure MySQL is installed and set up
+
+4. $ mysql < database/backup.sql (We are assuming you are in the parent directory)
+
+5. $ service mysql start (start up the MySQL database)
+
+6. $ npm start (start up the express server)
+
+The web application should now be live on http://localhost:8080
+
+---------------------------------------------------
+The following user is a system administrator. They can be used to test all functionaility.
+
+Username: queenofhearts
+Password: Rgb78@#9kmngt
+
+All users in the system can be used to test. Another user that is a club manager is:
+
+Username:lady_death
+Password: Rgb78@#9kmngt
+
+All users currently in the system have the same password for easy testing. We would expect as for an actual site this isn't the case.
+
+---------------------------------------------------
+
+We have notification set up to use Ethereal.
+Login details for Ethereal mail
+
+user: ike88@ethereal.email
+
+pass: enDbPF1FrRWbXFAFmT
+
+---------------------------------------------------
+
+Our site is optimised for mobile as well.
+
+Please note if you want push notifications you will need to unregister your service worker to get the working. We need a fresh one assigned as we assume someone using your device is only one user.
+
+---------------------------------------------------
+
+You can use the sql query file to create the database and run a few basic queries to populate database
+
+Make sure you drop the existing cluber database beforehand
+
+$ mysql < database/queries.sql (We are assuming you are in the parent directory)
+
+---------------------------------------------------
+
+You can use the database'queries.sql file to test our database implementation
+
+mysql < database/queries.sql (We are assuming you are in the parent directory)
+
+This will load dummy data in and that file is easier to read than the backup
